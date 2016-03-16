@@ -1,0 +1,70 @@
+<div class="header clear_fix">
+    
+	<p><img src="<%$smarty.const.ACW_BASE_URL%>shared/img/logo_small.jpg" style="height: 40px;margin-top: 5px;">
+    <%$smarty.const.AKAGANE_TITLE%></p>
+	<ul class="subnav">
+		<li><a href="#">Help</a></li>
+		<li><a href="<%$smarty.const.ACW_BASE_URL%>login/delete">Thoát</a></li>
+		<li>Xin chào　<%$user_info.user_name%><%*これはLogin_model::check()で入ります*%></li>
+	</ul>
+	<ul class="gnav">
+		<!--<li><a href="<%$smarty.const.ACW_BASE_URL%>category" class="gnav_1">Folder</a></li>-->
+        <!--<li><a href="<%$smarty.const.ACW_BASE_URL%>mscolor" class="gnav_1">mscolor</a></li>-->
+        <%if $user_info.upload=="1" || $user_info.kiemtra=="1" || $user_info.duyet=="1" || $user_info.trungtam_quanly=="1"%>
+        <li><a href="<%$smarty.const.ACW_BASE_URL%>don" id="menu_kt" class="gnav_1">Kiểm tra yêu cầu XD</a></li>
+        <li><a href="<%$smarty.const.ACW_BASE_URL%>don/edit" id="menu_lapyc" class="gnav_1">Lập yêu cầu XD</a></li>
+        <li><a href="javascript:void(0);" id="menu_lsyc" class="gnav_2">Lịch sử yêu cầu XD</a>
+            <ul class="sub">
+                <li><a href="<%$smarty.const.ACW_BASE_URL%>don/history" >Lịch sử yêu cầu XD</a></li>
+                <li><a href="<%$smarty.const.ACW_BASE_URL%>file/mtblank" >Lịch sử mượn trả file</a></li>
+            </ul>
+        </li>  
+        <li><a href="<%$smarty.const.ACW_BASE_URL%>don/muonblank" id="menu_muon" class="gnav_1">Mượn bản vẽ</a></li>
+        <!--<li><a href="<%$smarty.const.ACW_BASE_URL%>don/muon" class="gnav_1">Đưa Bản vẽ vào máy</a></li>-->
+        <%/if%> 
+        <%if $user_info.trungtam_quanly=="1" || $user_info.duyet=="1"%>
+        <li><a href="javascript:void(0);" id="menu_phanbo" class="gnav_2">Phân bổ file</a>
+            <ul class="sub">
+                <%if $user_info.trungtam_quanly=="1"%>
+                <li><a href="<%$smarty.const.ACW_BASE_URL%>folderfile" >Phân bổ file</a></li>
+                <li><a href="<%$smarty.const.ACW_BASE_URL%>folderfile/history" >Lịch sử phân bổ file</a></li>
+                <%/if%>
+                <li><a href="<%$smarty.const.ACW_BASE_URL%>may" >Danh sách máy</a></li>
+                <li><a href="<%$smarty.const.ACW_BASE_URL%>folderfile/history" >Đưa Bản vẽ vào máy</a></li>
+            </ul>
+        </li>
+        <%/if%>
+        <%if $user_info.print=="1"%>
+        <li><a href="javascript:void(0);" id="menu_in" class="gnav_2">IN File</a>
+            <ul class="sub">
+                <li><a href="<%$smarty.const.ACW_BASE_URL%>file/blank" >In File</a></li>
+                <li><a href="<%$smarty.const.ACW_BASE_URL%>print" >Lịch sử In file</a></li>
+            </ul>
+        </li>
+        <%/if%>
+        <%if $user_info.print=="1" || $user_info.trungtam_quanly=="1"%>
+        <li><a href="javascript:void(0);" id="menu_capphat" class="gnav_2">Cấp phát file</a>
+            <ul class="sub">
+                <%if $user_info.print=="1"%>
+                    <li><a href="<%$smarty.const.ACW_BASE_URL%>file/capphat" >Cấp phát file</a></li>
+                <%/if%>
+                <li><a href="<%$smarty.const.ACW_BASE_URL%>capphat/history" >Lịch sử Cấp phát file</a></li>
+            </ul>
+        </li>
+        <%/if%>
+        <%if $user_info.admin=="1"%>
+		<li><a href="javascript:void(0);" id="menu_admin" class="gnav_2">Admin</a>
+			<ul class="sub">				
+                <li><a href="<%$smarty.const.ACW_BASE_URL%>donvi">Đơn vị</a></li>
+                <li><a href="<%$smarty.const.ACW_BASE_URL%>phongban">Phòng ban</a></li>
+                <li><a href="<%$smarty.const.ACW_BASE_URL%>tonhom">Tổ nhóm</a></li>
+                <li><a href="<%$smarty.const.ACW_BASE_URL%>user">User</a></li>
+                <li><a href="<%$smarty.const.ACW_BASE_URL%>category">Folder</a></li>
+				<li><a href="<%$smarty.const.ACW_BASE_URL%>foldernhom">Phân quyền</a></li>						
+				<li><a href="<%$smarty.const.ACW_BASE_URL%>download">Lịch sử download</a></li>								
+				<li><a href="<%$smarty.const.ACW_BASE_URL%>don/delete">Xóa Đơn</a></li>							
+			</ul>
+        </li>
+		<%/if%>
+	</ul>
+</div><!-- / .header -->

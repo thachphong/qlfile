@@ -1,0 +1,55 @@
+<meta http-equiv="X-UA-Compatible" content="IE=100" /><%* IEを互換表示させない設定（常に最新Verで表示） *%>
+<link href="<%$smarty.const.ACW_BASE_URL%>shared/css/reset.css" rel="stylesheet" type="text/css" />
+<link href="<%$smarty.const.ACW_BASE_URL%>shared/css/common.css" rel="stylesheet" type="text/css" />
+<link href="<%$smarty.const.ACW_BASE_URL%>shared/css/main_contents.css" rel="stylesheet" type="text/css" />
+<link href="<%$smarty.const.ACW_BASE_URL%>shared/css/side_contents.css" rel="stylesheet" type="text/css" />
+<link href="<%$smarty.const.ACW_BASE_URL%>shared/css/series.css" rel="stylesheet" type="text/css" />
+<link href="<%$smarty.const.ACW_BASE_URL%>css/jquery-ui-1.10.3.custom.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="<%$smarty.const.ACW_BASE_URL%>js/jquery-1.9.1.js"></script>
+<script type="text/javascript" src="<%$smarty.const.ACW_BASE_URL%>shared/js/jquery.droppy.js"></script>
+<script type="text/javascript" src="<%$smarty.const.ACW_BASE_URL%>js/jquery-ui-1.10.3.custom.js"></script>
+<script type='text/javascript'>
+  $(function() {	
+	$(".gnav_2,.gnav_3,.gnav_4,.gnav_5,.gnav_6,.gnav_7,.gnav_8, .gnav_9").click(function() {
+		$(this).next(".sub").slideToggle("fast");
+		$(this).toggleClass("active");
+		return false;
+	});
+	$(".gnav_2,.gnav_3,.gnav_4,.gnav_5,.gnav_6,.gnav_7,.gnav_8, .gnav_9").mouseover(function() {
+		$(".sub").hide();
+	});
+	$(":not([class='sub'],[class*='gnav_'])").click(function() {
+		$(".sub").hide();
+	});
+    	
+	$.fn.enterKey = function (fnc) {
+	    return this.each(function () {
+	        $(this).keypress(function (ev) {
+	            var keycode = (ev.keyCode ? ev.keyCode : ev.which);
+	            if (keycode == '13') {
+	                fnc.call(this, ev);
+	            }
+	        })
+	    })
+	}
+    
+  });
+  function htmlEncode(str) {
+    return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+    }
+
+    function htmlDecode(value){
+        return String(value)
+            .replace(/&quot;/g, '"')
+            .replace(/&#39;/g, "'")
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>')
+            .replace(/&amp;/g, '&');
+    }	
+</script>
+<script type="text/javascript" src="<%$smarty.const.ACW_BASE_URL%>js/mustache.js"></script>

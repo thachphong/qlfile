@@ -1,0 +1,289 @@
+<style>
+.comment_text_area
+{
+	width: 400px;
+	height: 150px;
+}
+</style>
+<script type="text/javascript">
+$(document).ready(function () {
+    
+        
+        var submit_button_ajax = new Argo_ajax('json');
+        submit_button_ajax.done_func = function(datas) {
+            if (datas.error) {
+                if (datas.error.length > 0) {
+                   Argo_ajax.message_box_error('', datas.error[0]['info']);
+                }else{
+                    
+                    var json_ajax = new Argo_ajax("json");
+                    json_ajax.done_func = function(data) {
+                            
+                            if(data.msg){
+                                Argo_ajax.message_box(' ', data.msg);
+                            }
+                            
+                            if (data.error) {
+                                    if (data.error.length > 0) {
+                                            Argo_ajax.message_box_error(' ', data.error[0]['info']);//Edit - Trung VNIT - 2014/08/04
+                                    }
+                            }
+                            if (data.status == 'OK') {                                    
+                                    location.reload();
+                            }
+                            
+                            if(data.status == 'double_user'){
+                                Argo_ajax.message_box_error(' ', 'Tên đăng nhập này đã có, vui lòng nhập tên khác');
+                        }
+                            
+                    };
+                    var data = $("form#edit_form").serializeArray();
+                    json_ajax.connect("POST", "User/update", data);
+                }
+            }
+        };
+	
+    $(document).off("click", ".btn_save");
+	
+	$(document).on("click", ".btn_save", function () {
+	    
+		var json_ajax = new Argo_ajax("json");
+		json_ajax.done_func = function(data) {
+            
+            if(data.msg){
+                Argo_ajax.message_box(' ', data.msg);
+            }
+            
+			if (data.error) {
+				if (data.error.length > 0) {
+					Argo_ajax.message_box_error(' ', data.error[0]['info']);
+				}
+			}			
+			if(data.msg_pm_notify){
+                Argo_ajax.message_box(" ", data.msg_pm_notify,function(){
+					location.reload();
+                });
+            }            
+			else if (data.status == 'OK') {
+				// 編集画面閉じる
+				location.reload();
+			}           
+            if(data.status == 'double_user'){
+                Argo_ajax.message_box_error(' ', 'Tên đăng nhập này đã có, vui lòng nhập tên khác');
+        	}
+           
+		};
+		var data = $("form#edit_form").serializeArray();
+		json_ajax.connect("POST", "User/update", data);
+	});	
+	$(document).off("click", ".btn_close");
+	
+	$(document).on("click", ".btn_close", function () {
+		// 編集画面閉じる
+		$("#user_dialog").dialog("close");
+	});
+<%if $user_row.user_id != null%>
+	$(document).on("change", "#pass_change", function () {
+		if ($("#pass_change").is(":checked")) {
+			$("input[name='pass']").css("background-color", "#fff");
+			$("input[name='pass']").removeAttr("readonly");
+		} else {
+			$("input[name='pass']").css("background-color", "#eee");
+			$("input[name='pass']").attr("readonly", "readonly");
+		}
+	});
+	$("#pass_change").attr("checked", "checked");
+	$("#pass_change").click();
+<%/if%>
+    var phongban_list ='<%if isset($phong_ban)%><%$phong_ban%><%else%><%/if%>';    
+    phongban_list=htmlDecode(phongban_list);   
+    $(document).off('change','#don_vi');
+    $(document).on('change','#don_vi',function(){        						
+		load_phongban();
+	});
+    var load_phongban= function(){
+        var data =  $.parseJSON(phongban_list);//JSON.parse(tonhom_list);        
+			if(phongban_list == ''){
+				return;
+			}			
+            var phongban_id ="<%$user_row.phong_ban%>";
+			$('#phong_ban').empty();
+			$('#phong_ban').append("<option></option>");
+			var donvi_id = $('#don_vi').val();
+			$.each( data, function( key, value ) {
+				if(donvi_id == data[key]["donvi_id"]){					
+					var name = data[key]["phongban_name"];
+					var val = data[key]["phongban_id"];	
+                    if(phongban_id.length > 0 && phongban_id== val){
+                        $('#phong_ban').append($("<option selected></option>").attr("value",val).text(name)); 
+                    }else{
+                        $('#phong_ban').append($("<option></option>").attr("value",val).text(name)); 
+                    }
+				}
+			});	
+    };
+    var tonhom_list ='<%if isset($to_nhom)%><%$to_nhom%><%else%><%/if%>';    
+    tonhom_list=htmlDecode(tonhom_list); //tonhom_list.replace(/&quot;/g,'"');
+    $(document).off('change','#phong_ban');
+    $(document).on('change','#phong_ban',function(){        						
+		load_tonhom();
+	});
+    var load_tonhom= function(){
+        var data =  $.parseJSON(tonhom_list);//JSON.parse(tonhom_list);        
+			if(tonhom_list == ''){
+				return;
+			}		
+            var tonhom_id ="<%$user_row.to_nhom%>";	
+			$('#to_nhom').empty();
+			$('#to_nhom').append("<option></option>");
+			var phongban_id = $('#phong_ban').val();
+			$.each( data, function( key, value ) {
+				if(phongban_id == data[key]["phongban_id"]){					
+					var name = data[key]["tonhom_name"];
+					var val = data[key]["tonhom_id"];	
+                    if(tonhom_id.length > 0 && tonhom_id== val){
+                        $('#to_nhom').append($("<option selected></option>").attr("value",val).text(name)); 	
+                    }else{
+                        $('#to_nhom').append($("<option></option>").attr("value",val).text(name)); 
+                    }
+				}
+			});
+    };
+    load_phongban();
+    load_tonhom();
+});
+</script>
+<div class="main_contents">
+	<div class="series_wrap">
+		<div class="title_wrap clear_fix">
+			<h2>Thêm mới user</h2>
+		</div>
+		<div class="info_wrap">
+			<div class="hl_wrap">
+				<ul class="btn_wrap">
+					<li><input type="button" value="Thoát" class="img_opacity btn_close" /></li>
+					<li><input type="button" value="Cập nhật" class="img_opacity btn_save" /></li>
+				</ul>
+			</div>
+			<form id="edit_form">
+			<div style="padding: 10px;">
+				<table style="width: 100%;">
+					<tr>
+						<th>
+							Tên đăng nhập <span class="edit_require">*</span>
+						</th>
+						<td>
+							<input type="hidden" name="user_id" value="<%$user_row.user_id%>"  style="width:200px;" />
+<%if $user_row.user_id == null%>
+					    <input type="text" name="user_name" value="<%$user_row.user_name%>" maxlength="50"  style="width:200px;" />
+<%else%>
+					    <input type="text" name="user_name" value="<%$user_row.user_name%>" maxlength="50" readonly="readonly" style="background-color: #eee;width:200px;" />
+<%/if%>
+						</td>
+					</tr>
+					<tr>
+						<th>
+							Mật khẩu
+						</th>
+						<td>
+							<input type="password" name="pass" value=""  style="width:200px;" />
+<%if $user_row.user_id != null%>
+							<label><input maxlength="50" type="checkbox" id="pass_change">Thay đổi mật khẩu</input></label>
+<%/if%>
+						</td>
+					</tr>
+                    <tr>
+						<th>
+							Họ và tên
+						</th>
+						<td>
+							<input  type="text" name="user_name_disp" value="<%$user_row.user_name_disp%>" style="width:200px;" maxlength="100"/>
+						</td>
+					</tr>
+                    <tr>
+						<th>
+							Email
+						</th>
+						<td>
+							<input  type="email" autocomplete="off" name="email" value="<%$user_row.email%>" style="width:200px;" maxlength="50"/>
+						</td>
+					</tr>
+					<tr>
+						<th>
+							Đơn vị 
+						</th>
+						<td>
+							<select name="don_vi" id="don_vi">
+                            <option value=""></option>
+							<%foreach $don_vi as $row%>
+								<option value="<%$row.donvi_id%>" 
+                                <%if $row.donvi_id == $user_row.donvi%>selected="selected"
+                                <%/if%>><%$row.donvi_name%>                                    
+                                </option>
+							<%/foreach%>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<th>
+							Phòng ban
+						</th>
+						<td>
+							<select name="phong_ban" id="phong_ban">
+                            <option value=""></option>
+							
+							
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<th>
+							Tổ nhóm 
+						</th>
+						<td>
+							<select name="to_nhom" id="to_nhom">
+                            <option value=""></option>
+							
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<th>
+							IP máy
+						</th>
+						<td>
+							<input  type="text" name="ip" value="<%$user_row.ip%>" style="width:200px;" maxlength="20"/>
+						</td>
+					</tr>
+					<tr>
+						<th>
+							Quyền user
+						</th>
+						<td>
+							<label><input name="lev_in" type="checkbox" <%if $user_row.print==1%>checked<%/if%> style="margin-left: 10px">In</label>
+                            <!--<label><input name="lev_phanbo"type="checkbox" <%if $user_row.phanbo==1%>checked<%/if%> style="margin-left: 10px">Cấp phát</label>-->
+                            <label><input name="lev_upload"type="checkbox" <%if $user_row.upload==1%>checked<%/if%> style="margin-left: 10px">Upload</label>
+                            <label><input name="lev_kiemtra"type="checkbox" <%if $user_row.kiemtra==1%>checked<%/if%> style="margin-left: 10px">Kiểm tra</label>
+                            <label><input name="lev_duyet"type="checkbox" <%if $user_row.duyet==1%>checked<%/if%> style="margin-left: 10px" >Duyệt</label>
+                            <label><input name="lev_ttql"type="checkbox" <%if $user_row.trungtam_quanly==1%>checked<%/if%> style="margin-left: 10px">Trung tâm quản lý</label>
+                            <label><input name="lev_admin"type="checkbox" <%if $user_row.admin==1%>checked<%/if%> style="margin-left: 10px">Admin</label>
+						</td>
+					</tr>
+					<tr>
+						<th>
+							Trạng thái
+						</th>
+						<td>
+							<select name="del_flg">							
+								<option value="0" <%if $user_row.del_flg == 0 %>selected="selected"<%/if%>>Sử dụng</option>
+							    <option value="1" <%if $user_row.del_flg == 1 %>selected="selected"<%/if%>>Ngưng sử dụng</option>
+							</select>
+						</td>
+					</tr>
+				</table>
+				</div>
+			</form>
+		</div>
+		<!-- / .free_wrap -->
+	</div><!-- / .series_wrap -->
+</div><!-- / .main_contents -->

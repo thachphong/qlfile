@@ -1,0 +1,131 @@
+<script type="text/javascript">
+$(document).ready(function () {
+    
+        
+        var submit_button_ajax = new Argo_ajax('json');
+        submit_button_ajax.done_func = function(datas) {
+            if (datas.error) {
+                if (datas.error.length > 0) {
+                   Argo_ajax.message_box_error('', datas.error[0]['info']);
+                }else{
+                    
+                    var json_ajax = new Argo_ajax("json");
+                    json_ajax.done_func = function(data) {
+                            
+                            if(data.msg){
+                                Argo_ajax.message_box(' ', data.msg);
+                            }
+                            
+                            if (data.error) {
+                                    if (data.error.length > 0) {
+                                            Argo_ajax.message_box_error(' ', data.error[0]['info']);//Edit - Trung VNIT - 2014/08/04
+                                    }
+                            }
+                            if (data.status == 'OK') {                                    
+                                    location.reload();
+                            }
+                            
+                            if(data.status == 'double_user'){
+                                Argo_ajax.message_box_error(' ', 'Tên đăng nhập này đã có, vui lòng nhập tên khác');
+                        }
+                            
+                    };
+                    var data = $("form#edit_form").serializeArray();
+                    json_ajax.connect("POST", "donvi/update", data);
+                }
+            }
+        };
+	
+    $(document).off("click", ".btn_save");
+	
+	$(document).on("click", ".btn_save", function () {
+	    
+		var json_ajax = new Argo_ajax("json");
+		json_ajax.done_func = function(data) {
+            
+            if(data.msg){
+                Argo_ajax.message_box(' ', data.msg);
+            }
+            
+			if (data.error) {
+				if (data.error.length > 0) {
+					Argo_ajax.message_box_error(' ', data.error[0]['info']);
+				}
+			}			
+			if(data.msg_pm_notify){
+                Argo_ajax.message_box(" ", data.msg_pm_notify,function(){
+					location.reload();
+                });
+            }            
+			else if (data.status == 'OK') {
+				// 編集画面閉じる
+				location.reload();
+			}
+           
+		};
+		var data = $("form#edit_form").serializeArray();
+		json_ajax.connect("POST", "may/update", data);
+	});	
+	$(document).off("click", ".btn_close");
+	
+	$(document).on("click", ".btn_close", function () {
+		// 編集画面閉じる
+		$("#edit_dialog").dialog("close");
+	});
+
+});
+</script>
+<div class="main_contents">
+	<div class="series_wrap">
+		<div class="title_wrap clear_fix">
+			<h2><%if $data_row.may_id == null%>Thêm mới Máy<%else%>Sửa Máy<%/if%></h2>
+		</div>
+		<div class="info_wrap">
+			<div class="hl_wrap">
+				<ul class="btn_wrap">
+					<li><input type="button" value="Thoát" class="img_opacity btn_close" /></li>
+					<li><input type="button" value="Cập nhật" class="img_opacity btn_save" /></li>
+				</ul>
+			</div>
+			<form id="edit_form">
+			<div style="padding: 10px;">
+				<table style="width: 100%;">
+					<tr>
+						<th>
+							Mã máy <span class="edit_require">*</span>
+						</th>
+						<td>
+							<input type="hidden" name="may_id" value="<%$data_row.may_id%>"  style="width:250px;" />
+<%if $data_row.may_id == null%>
+					    <input type="text" name="may_no" value="<%$data_row.may_no%>" maxlength="100"  style="width:250px;" />
+<%else%>
+					    <input type="text" name="may_no" value="<%$data_row.may_no%>" maxlength="100" readonly="readonly" style="background-color: #eee;width:250px;" />
+<%/if%>
+						</td>
+					</tr>
+					<tr>
+						<th>
+							Tên Máy
+						</th>
+						<td>
+							<input type="text" name="may_name" value="<%$data_row.may_name%>" maxlength="100" />
+						</td>
+					</tr>
+					<tr>
+						<th>
+							Trạng thái
+						</th>
+						<td>
+							<select name="del_flg">							
+								<option value="0" <%if $data_row.del_flg == 0 %>selected="selected"<%/if%>>Sử dụng</option>
+							    <option value="1" <%if $data_row.del_flg == 1 %>selected="selected"<%/if%>>Ngưng sử dụng</option>
+							</select>
+						</td>
+					</tr>
+				</table>
+				</div>
+			</form>
+		</div>
+		<!-- / .free_wrap -->
+	</div><!-- / .series_wrap -->
+</div><!-- / .main_contents -->

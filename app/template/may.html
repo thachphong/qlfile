@@ -1,0 +1,153 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/base.dwt" codeOutsideHTMLIsLocked="false" --><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Quản lý Máy</title>
+		<%include 'include/head.html'%>
+		<link href="<%$smarty.const.ACW_BASE_URL%>shared/css/baitai.css" rel="stylesheet" type="text/css" />
+        
+</head>
+<body class="column_1">
+<div class="bg">
+<div class="container">
+		<%include 'include/menu.html'%>
+<div class="contents_wrap"> 
+<!-- InstanceBeginEditable name="top_contents" -->
+	<div class="search_wrap">
+		<form id="search_form" action="<%$smarty.const.ACW_BASE_URL%>may/" method="POST">
+		<table class="kensaku">
+			<colgroup>
+				<col width="85px" />
+				<col width="200px" />
+				<col width="" />
+			</colgroup>
+			<tr>
+				<th>Điều kiện tìm</th>
+				<td class="first">Mã máy  <input type="text" maxlength="30" size="20" name="s_may_no" id="s_may_no" value="<%$data_search.s_may_no%>" /></td>
+                <td>Tên máy  <input type="text" maxlength="100" size="30" name="s_may_name" id="s_may_name" value="<%$data_search.s_may_name%>" /></td>
+                                <td class="al_l"><button type="button" id="btn_search">Tìm</button> <button type="button" id="btn_clear">Xóa</button></td></tr>
+		</table>
+		</form>
+	</div>
+	<ul class="topic_path">
+		<li><h2>Quản lý máy</h2></li>
+	</ul>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="side_contents" -->
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="main_contents" -->
+<div class="main_contents">
+<div class="main_innner height2">
+	<div class="baitai_wrap">
+		<p class="clear_fix" style="text-align: right;"><input type="button" value="Thêm mới" id="btn_new" /></p>
+		<table id="data_list">
+			<thead>
+			<tr>
+				<th style="width: 100px;">Mã máy</th>
+                <th style="width: 100px;">Tên máy</th>
+                <th style="width: 100px;text-align: center;">Ngưng sử dụng</th>
+			</tr>
+			</thead>
+			<tbody>
+<%foreach $data_rows as $row%>
+			<tr>				
+				<td>
+					<input type="hidden" class="may_id" value="<%$row.may_id%>" />
+					<a href="javascript:void(0);" class="btn_edit"><%$row.may_no%></a>
+				</td>
+                <td>				
+					<%$row.may_name%>
+				</td>
+				<td style="text-align: center;">
+					<%if $row.del_flg == 1%><input type="checkbox" checked="checked" disabled="disabled" /><%else%><input type="checkbox" disabled="disabled" /><%/if%>
+				</td>
+			</tr>
+<%/foreach%>
+			</tbody>
+		</table>
+	</div><!-- / .top_wrap -->
+</div><!-- / .main_innner -->
+</div><!-- / .main_contents -->
+<!-- InstanceEndEditable -->
+<%include 'include/footer.html'%>
+</div><!-- / .contents_wrap -->
+</div><!-- / .container -->
+</div><!-- / .bg -->
+<%include 'include/argo_ajax.html'%>
+<%include 'include/table_shima.html'%>
+<script type='text/javascript'>
+$(function() {
+    $('#menu_phanbo').addClass('selected');  
+	$("#edit_dialog").dialog({
+		autoOpen: false,
+		width: 500,
+		/*height: $(window).height() - 100,*/
+		modal: true,
+		title: 'Thông tin Máy'
+	});
+	
+        //Add Start - Trung VNIT - 2014/08/21
+        var search_user_ajax = new Argo_ajax('json');
+        search_user_ajax.done_func = function(data) {
+            if (data.error) {
+                if (data.error.length > 0) {
+                    $('#data_list tbody').empty();
+                   Argo_ajax.message_box_error('', data.error[0]['info']);
+                }else{
+                    $('#search_form').submit();
+                }
+            }
+        };	
+        
+	// 検索ボタン
+	$('#btn_search').click(function(){        
+            $arr = $('#search_form').serializeArray();
+            search_user_ajax.connect('POST', 'donvi/checkmaxlenght', $arr);
+          
+	});
+            
+    $("#s_may_name").keydown(function (e) {
+        if (e.keyCode == 13) {
+                $('#btn_search').click();
+        }
+    });
+ 
+	
+	$('#btn_clear').click(function(){
+		$('#search_form').find("textarea, :text, select").val("");
+	});
+	
+	$(document).on("click", "#btn_new", function () {
+		open_may_edit(null);
+	});
+
+	$(document).on("click", ".btn_edit", function () {		
+		var donvi_id = $(this).prev().val();
+		open_may_edit(donvi_id);
+	});
+	table_shimashima('#data_list');
+	
+	$(window).on("load resize", function(){
+		var wh = $(window).height();
+		$(".height2").height(wh - 206);	
+	});
+});
+
+function open_may_edit(may_id)
+{
+	var html_ajax = new Argo_ajax("html");
+	html_ajax.done_func = function(html) {
+		$("#edit_dialog").html(html);
+		$("#edit_dialog").dialog("open");
+	};
+	html_ajax.connect("POST", "may/edit", {
+		"may_id": may_id
+	});
+}
+
+
+</script>
+<div id="edit_dialog">
+	
+</div>
+</body>
+<!-- InstanceEnd --></html>

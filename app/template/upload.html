@@ -1,0 +1,1110 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/base.dwt" codeOutsideHTMLIsLocked="false" --><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Upload file</title>
+		<%include 'include/head.html'%>
+		<link href="<%$smarty.const.ACW_BASE_URL%>shared/css/baitai.css" rel="stylesheet" type="text/css" />
+        <link href="<%$smarty.const.ACW_BASE_URL%>shared/css/jquery.datetimepicker.css" rel="stylesheet" type="text/css" />
+        <script type="text/javascript" src="<%$smarty.const.ACW_BASE_URL%>shared/js/jquery.datetimepicker.full.min.js"></script>
+        <!--<script type="text/javascript" src="<%$smarty.const.ACW_BASE_URL%>js/jquery.upload-1.0.2.js"></script>-->
+        <!--<link href="<%$smarty.const.ACW_BASE_URL%>shared/css/jquery.modal.css" rel="stylesheet" type="text/css" />
+        <script type="text/javascript" src="<%$smarty.const.ACW_BASE_URL%>shared/js/jquery.modal.js"></script>-->
+</head>
+<body class="column_1">
+<div class="bg">
+<div class="container">
+		<%include 'include/menu.html'%>
+<div class="contents_wrap"> 
+<!-- InstanceBeginEditable name="top_contents" -->
+	<!--<div class="search_wrap">
+		<form id="search_form" action="file/" method="POST">
+		<table class="kensaku">
+			<colgroup>
+				<col width="85px" />
+				<col width="200px" />
+				<col width="" />
+			</colgroup>
+			<tr>
+				<th>Điều kiện tìm</th>
+				<td class="first">Tên file  <input type="text" maxlength="50" size="20" name="search_file_name" id="search_file_name" value="" /></td>
+                                <td class="al_l"><button type="button" id="btn_search">Tìm</button> <button type="button" id="btn_clear">Xóa</button></td></tr>
+		</table>
+		</form>
+	</div>-->
+	<!--<ul class="topic_path">
+		<li><h2>Upload File</h2></li>		
+	</ul>-->
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="side_contents" -->
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="main_contents" -->
+<%assign var='tra_kt' value=$smarty.const.DON_STATUS_TRA_KT%>
+<%assign var='tra_duyet' value=$smarty.const.DON_STATUS_TRA_DUYET%>
+<%assign var='tra_ttql' value=$smarty.const.DON_STATUS_TRA_TTQL%>
+<%assign var='tra_cn' value=$smarty.const.DON_STATUS_TRA_CN%>
+<div class="main_contents">
+<div class="main_innner ">
+	<div class="baitai_wrap">
+		<!--<p class="clear_fix" style="text-align: right;"><input type="button" value="Cập nhật" id="btn_upload" /></p>-->
+        <form id="from_update" action="" method="post" style=" margin:20px auto;" enctype="multipart/form-data">  
+            <input type="hidden" name="mode" id="mode" value="<%$mode%>">
+            <input type="hidden" name="flg_muon" value="<%$flg_muon%>">
+            <input type="hidden" name="flg_capnhat" id="flg_capnhat" value="<%$flg_capnhat%>"> 
+            <input type="hidden" name="don_id" id="don_id" value="<%$data_row.don_id%>"> 
+            <!--<input type="hidden" name="ver_id" id="ver_id" value=""> -->
+            <!--<input type="hidden" name="version" id="ver_id" value=""> -->
+            <table class="table_kiemtra" >
+    			<tr>
+    				<td style="width: 50px;">Người lập</td>
+                    <td style="width: 80px;"><input type="text" readonly="true" value="<%$data_row.user_name_disp%>"></td>
+                    <td style="width: 40px;">Bộ phận</td>
+                    <td style="width: 80px;"><input type="text" readonly="true" value="<%$data_row.phongban_name%>"></td>
+                    <td style="width: 50px;">Loại bản vẻ</td>
+                    <td style="width: 80px;">
+                        <!--<input  type="hidden" name="loaidon" value="<%$loaidon%>"/>-->
+                    	<select name="loaidon" id="loai_ban_ve" >
+                            <option></option>
+                    		<option value="0" <%if $data_row.loaidon =='0' || $loaidon=='0'%>selected<%/if%> >Tạo mới</option>
+                    		<option value="1" <%if $data_row.loaidon =='1' || $loaidon=='1'%>selected<%/if%> >Cập nhật</option>
+                    	</select>
+                    </td>
+                    <td style="width: 40px;">Ngày lập</td>
+                    <td style="width: 80px;"><input type="text" readonly="true" value="<%$data_row.add_datetime%>"></td>
+                    <td style="width: 80px;">Mã số xét duyệt</td>
+                    <td style="width: 80px;"><input type="text" readonly="true" size="10" value="<%$data_row.maso_duyet%>"></td>
+    			</tr>                
+            </table>
+            <table class="table_don" >
+                <tr>
+                    <td style="font-weight: bold">Tiêu đề</td>
+                    <td colspan="9">
+                        <input type="text" maxlength="255" value="<%$data_row.tieude%>" size="100" name="tieude" id="tieude" <%if $mode!= "new" || $loaidon =='1'%>readonly="true"<%/if%> >
+                    </td>
+                </tr>
+                <tr> <td style="font-weight: bold">Mã bản vẽ tổng</td>
+                    <td colspan="9">
+                        <input type="text" maxlength="20" value="<%$data_row.don_no%>" size="30" name="don_no" id="don_no" <%if $mode!= "new" || $loaidon =='1'%>readonly="true"<%/if%> >
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="10" style="font-weight: bold">Nội dung(lập mới - chỉnh sửa bản vẽ)</td>
+                </tr>
+                
+                <tr>
+                    <td colspan="10">
+                        <textarea style="height: 150px;width: 810px" name="noidung" id="noidung" <%if $mode!= "new" && $mode!= "upload" && $mode!= "kiemtra" && $mode!= "duyet" && $mode!= "ttql"%>readonly="true"<%/if%> ><%$data_row.noidung%></textarea>
+                    </td>
+                </tr>
+    		</table>
+    	</form>
+        <form role="form" id="form_change_file" action="" method="POST" enctype="multipart/form-data">
+            <input style="display: none" name="change_file" type="file" accept=".DWG"  class="change_file" id="change_file_select" />
+            <input type="hidden" name="change_file_id" id="change_file_id" >
+            <input type="hidden" name="folder_tmp"  id="folder_tmp" value="<%$data_row.folder_tmp%>" />
+        </form>
+    	<form role="form" id="uploadfile" action="" method="POST" enctype="multipart/form-data">
+            <div class="clear_fix" style="text-align: left;">
+                <div style="max-height: 300px;overflow-y: scroll;float:left;margin-bottom: 10px">
+		        <table class="table_don" style="float:left; <%if $flg_muon=='0'%>width:450px<%else%>width:550px<%/if%>;margin-left:15px; " id="selectedFiles" >
+		            <colgroup>
+		        		<col width="30px" />
+		        		<col width="" />  
+                        <col width="<%if $flg_muon=='0' && $flg_capnhat!='1'%>30px<%/if%>" />    
+                        <col width="30px" />   				
+		    	    </colgroup>
+		            <tr >
+		                <td colspan="4" style="text-align: center; font-weight: bold">Đính kèm bản vẽ</td> 
+		            </tr>
+                    <%foreach $filelist as $file%>
+                    <tr>
+                        <td style="height: 25px"><%$file.stt%></td>
+                        <td id="view_file_name_<%$file.file_id%>"><%if $file.file_type=="pdf"%>
+                            <a href="<%$smarty.const.ACW_BASE_URL%>file/view/<%$file.don_id%>/<%$file.ver_id%>/<%$data_row.trangthai%>/<%$file.file_id%>">
+                        <%/if%>
+                        <%$file.file_name%>
+                        <%if $file.file_type=="pdf"%>    
+                            </a>
+                        <%/if%>                        
+                        </td>
+                        <td style="height: 25px;font-weight: bold;" class="<%if $flg_muon=='1' || ($flg_capnhat=='1'&&($file.status=='4'||$file.status=='5'||$file.status=='6'))%>att_file<%/if%>" id="file_change_name_<%$file.file_id%>">
+                            <%if $file.status =='9'%>
+                                <img class="img_new" src="<%$smarty.const.ACW_BASE_URL%>shared/img/muon.png">
+                            <%else if $file.new_flg=='1' && ($file.status!='4'&&$file.status!='5'&&$file.status!='6')%>
+                                <img class="img_new" src="<%$smarty.const.ACW_BASE_URL%>shared/img/new.png">
+                            <%/if%>
+                            
+                        </td>
+                        <td>
+                            <%if ($mode =="kiemtra" && $file.status=='0') || ($mode =="duyet"&&$file.status=='1') || ($mode =="ttql"&&$file.status=='2') || ($mode =="duyet_cn" && $file.status=='9') || $mode =="cho_duyet_cn"%>
+                            <!--<a href="<%$smarty.const.ACW_BASE_URL%>file/download/<%$file.don_id%>/<%$data_row.trangthai%>/<%$file.file_id%>">       -->
+                            <img class="download_file"  data="<%$file.don_id%>/<%$data_row.trangthai%>/<%$file.file_id%>" filename="<%$file.file_name%>" src="<%$smarty.const.ACW_BASE_URL%>shared/img/download.ico"  />
+                            <!--</a>-->
+                            <%else if $flg_muon=='1'|| ($mode =="upload" &&($file.status=='4'||$file.status=='5'||$file.status=='6'))%>
+                                <img class="download_file btn_change_file" data="<%$file.file_id%>" src="<%$smarty.const.ACW_BASE_URL%>shared/img/upload2.png"  />
+                            <%/if%>
+                             
+                        </td>
+                    </tr>
+                    <%/foreach%>                                     
+		        </table>
+                </div>
+		        <input type="button" class="button_blue" <%if ($mode!= "new" && $mode!= "upload")||$flg_muon=='1'||$flg_capnhat=='1'%>disabled<%/if%> id="chonfile" value="Chọn file"  style="margin: 6px 10px;" >
+                
+                <input style="display: none" name="file_upload[]" type="file" multiple="multiple" accept=".DWG"  id="file_upload" />           
+                <input type="hidden" name="folder_tmp"  id="folder_tmp" value="<%$data_row.folder_tmp%>" />
+            </div>          
+			<input type="button" class="button_blue" style="margin-left:15px;" value="Save" id="btn_save" <%if $mode!= "new" && $mode!= "upload" && $mode!= "kiemtra" && $mode!= "duyet" && $mode!= "ttql"%>disabled<%/if%> >
+			<input type="button" class="button_blue" style="margin-left:15px;" value="Gửi mail yêu cầu kiểm tra" id="btn_update" <%if $mode!= "upload" || $flg_capnhat=='1'%>disabled<%/if%> >	
+            <input type="button" class="button_blue" style="margin-left:15px;" value="Gửi mail mượn bản vẽ" id="btn_xin_cn" <%if $mode != "xin_cn" && $mode !="duyet_cn" %>disabled<%/if%>  >
+            <!--<input type="button" class="button_blue" style="margin-left:15px;" value="Tạo đơn cập nhật" id="btn_tao_cn" <%if $mode != "duyet_cn" %>disabled<%/if%> onclick="location.href='<%$smarty.const.ACW_BASE_URL%>don/edit/cn/<%$data_row.don_id%>';" >-->
+            <input type="button" class="button_blue" style="margin-left:15px;" value="Xóa đơn" id="btn_xoa_don" <%if $mode != "upload" %>disabled<%/if%>  >	
+			<!--<div id="selectedFiles"></div>-->
+			<!--<div id="show_img"></div>-->
+            <table class="table_kiemtra" style="border: none">
+                <colgroup>
+    				<col width="100px" />
+    				<col width="100px" />
+                    <col width="50px" />
+                   <!-- <col width="50px" />-->
+                    <col width="75px" />
+                    <col width="100px" />
+                    <col width="" />
+                    <!--<col width="75px" />-->
+                    <!--<col width="100px" />-->
+    				<!--<col width="" />-->
+			    </colgroup>
+                <tr >
+                    <td  style="height:35px">Người kiểm tra</td>
+                    <td  style="">
+                        <select class="width2" name="usr_kiemtra"  id="usr_kiemtra" <%if $mode!= "new" || $loaidon =='1'%>disabled<%/if%>>
+                            <option></option>
+                            <%foreach $kiemtra_list as $kt%>
+                            <option value="<%$kt.user_id%>" <%if $data_row.user_kt==$kt.user_id%>selected<%/if%>><%$kt.user_name_disp%></option>
+                            <%/foreach%>
+                        </select>
+                    </td>
+                    <td  style="">
+                        <input type="button" class="button_green" value="Kiểm tra" id="btn_kiemtra" <%if $mode !="kiemtra"%>disabled<%/if%> />
+                    </td>
+                    <!--<td  style=""><input type="button" value="Duyệt" id="btn_duyet"></td>-->
+                    <td  style="text-align:right">Ngày tháng</td>
+                    <td  style=""><input type="text" size="20" readonly="true" value="<%if $data_row.trangthai != $tra_kt %><%$data_row.ngay_kt%><%/if%>"></td>
+                    <td ><input type="button" class="button_red btn_traduyet" value="Trả yêu cầu chỉnh sửa" id="btn_tra_<%$tra_kt%>" <%if $mode !="kiemtra"%>disabled<%/if%> style="margin-right:10px"/><!--</td>-->
+                    <!--<td  style="text-align:right ">-->Ngày tháng<!--</td>-->
+                    <!--<td  style="">--><input type="text" style="margin-left:5px" size="20" readonly="true" value="<%if $data_row.trangthai == $tra_kt %><%$data_row.ngay_kt%><%/if%>">
+                        
+                    </td>
+                    <!--<td  style=""><input type="button" value="Gửi mail yêu cầu duyệt" id="btn_mailduyet" <%if $mode !="kiemtra"%>disabled<%/if%> /></td>-->
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td >
+                        <textarea name="ghichu_<%$tra_kt%>" id="ghichu_<%$tra_kt%>" style="height: 50px;width: 300px; <%if $data_row.trangthai != $tra_kt %>display:none;<%/if%>" <%if $data_row.trangthai == $tra_kt %>readonly="true"<%/if%> ><%if $data_row.trangthai == $tra_kt %><%$data_row.ghichu%><%/if%></textarea> 
+                        <input trangthai="<%$tra_kt%>" id="updtra_<%$tra_kt%>" class="update_traduyet" style="display:none" type="button" value="OK" />
+                    </td>
+                </tr>
+                <tr >
+                    <td  style="height:35px">Người Duyệt</td>
+                    <td  style="">
+                        <select class="width2" name="usr_duyet"  id="usr_duyet" <%if $mode!= "new" || $loaidon =='1'%>disabled<%/if%>>
+                            <option></option>
+                            <%foreach $duyet_list as $duyet%>
+                            	<option value="<%$duyet.user_id%>" <%if $data_row.user_duyet==$duyet.user_id%>selected<%/if%> ><%$duyet.user_name_disp%></option>
+                            <%/foreach%>
+                        </select>
+                    </td>
+                    <!--<td  style="">
+                        <input type="button" value="Kiểm tra" id="btn_kiemtra">
+                    </td>-->
+                    <td  style=""><input type="button" class="button_green" value="Duyệt" style="width:68px" id="btn_duyet" <%if $mode !="duyet"%>disabled<%/if%> /></td>
+                    <td  style="text-align:right">Ngày tháng</td>
+                    <td  style=""><input type="text" size="20" readonly="true" value="<%if $data_row.trangthai != $tra_duyet %><%$data_row.ngay_duyet%><%/if%>"></td>
+                    <td  ><input type="button" class="button_red btn_traduyet" value="Trả yêu cầu chỉnh sửa" id="btn_tra_<%$tra_duyet%>" <%if $mode !="duyet"%>disabled<%/if%> style="margin-right:10px" /><!--</td>--> Ngày tháng
+                    <!--<td  style="text-align:right ">Ngày tháng</td>-->
+                    <!--<td  style="">--><input style="margin-left:5px" type="text" size="20" readonly="true" value="<%if $data_row.trangthai == $tra_duyet %><%$data_row.ngay_kt%><%/if%>">
+                        
+                    </td>
+                    <!--<td  style=""><input type="button" value="Gửi mail yêu cầu duyệt" id="btn_mailduyet" <%if $mode !="duyet"%>disabled<%/if%> /></td>-->
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td >
+                        <textarea name="ghichu_<%$tra_duyet%>" id="ghichu_<%$tra_duyet%>" style="height: 50px;width: 300px;<%if $data_row.trangthai != $tra_duyet %>display:none;<%/if%>" <%if $data_row.trangthai == $tra_duyet %>readonly="true"<%/if%> ><%if $data_row.trangthai == $tra_duyet %><%$data_row.ghichu%><%/if%></textarea> 
+                        <input trangthai="<%$tra_duyet%>" id="updtra_<%$tra_duyet%>" class="update_traduyet" style="display:none" type="button" value="OK" />
+                    </td>
+                </tr>
+                <tr >
+                    <td  style="">TTQL bản vẽ xét duyệt</td>
+                    <td  style="">
+                        <select class="width2" name="usr_ttql"  id="usr_ttql" <%if $mode!= "new" || $loaidon =='1'%>disabled<%/if%> >
+                            <option></option>
+                            <%foreach $ttql_list as $ttql%>
+                            	<option value="<%$ttql.user_id%>" <%if $data_row.user_ttql==$ttql.user_id%>selected<%/if%> ><%$ttql.user_name_disp%></option>
+                            <%/foreach%>
+                        </select>
+                    </td>
+                    <!--<td  style="">
+                        <input type="button" value="Kiểm tra" id="btn_kiemtra">
+                    </td>-->
+                    <td  style=""><input type="button" class="button_green" value="Duyệt" style="width:68px" id="btn_ttql_duyet" <%if $mode !="ttql"%>disabled<%/if%> ></td>
+                    <td  style="text-align:right">Ngày tháng</td>
+                    <td  style=""><input type="text" size="20" readonly="true" value="<%if $data_row.trangthai != tra_ttql %><%$data_row.ngay_ttql%><%/if%>"></td>
+                    <td  ><input type="button" class="button_red btn_traduyet" value="Trả yêu cầu chỉnh sửa" id="btn_tra_<%$tra_ttql%>" <%if $mode !="ttql"%>disabled<%/if%> style="margin-right:10px" /><!--</td>-->
+                    <!--<td  style="text-align:right ">-->Ngày tháng<!--</td>-->
+                    <!--<td  style="">--><input type="text" size="20" readonly="true" style="margin-left:5px" value="<%if $data_row.trangthai == $tra_ttql %><%$data_row.ngay_ttql%><%/if%>">
+                        
+                    </td>
+                    <!--<td  style=""><input type="button" value="Chuyển lưu trữ server" id="btn_luuchuyen" <%if $mode !="ttql"%>disabled<%/if%> /></td>-->
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td >
+                        <textarea name="ghichu_<%$tra_ttql%>" id="ghichu_<%$tra_ttql%>" style="height: 50px;width: 300px;<%if $data_row.trangthai != $tra_ttql %>display:none;<%/if%>" <%if $data_row.trangthai == $tra_ttql %>readonly="true"<%/if%> ><%if $data_row.trangthai == $tra_ttql %><%$data_row.ghichu%><%/if%></textarea> 
+                        <input  id="updtra_<%$tra_ttql%>" class="update_traduyet" style="display:none" type="button" value="OK" />
+                    </td>
+                </tr>
+                
+                <tr >
+                    <td></td>
+                    <!--<td>
+                    </td>-->
+                    <td  colspan="2"><input type="button" class="button_green" value="Duyệt mượn" style="float: right" id="btn_duyet_cn" <%if $mode != "cho_duyet_cn" %>disabled<%/if%> ></td>
+                    <td  style="text-align:right">Ngày tháng</td>
+                    <td  ><input type="text" size="20" readonly="true" value="<%if $data_row.trangthai != $tra_cn %><%$data_row.ngay_duyet_cn%><%/if%>"></td>
+                    <td><input type="button" class="button_red btn_traduyet" value="Trả yêu cầu mượn" id="btn_tra_<%$tra_cn%>"  style="margin-right:10px" <%if $mode != "cho_duyet_cn" %>disabled<%/if%>/>
+                    Ngày tháng
+                    <input type="text" size="20" readonly="true" style="margin-left:5px" value="<%if $data_row.trangthai ==$tra_cn %><%$data_row.ngay_duyet_cn%><%/if%>">
+                        
+                    </td>
+                    
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td >
+                        <textarea name="ghichu_<%$tra_cn%>" id="ghichu_<%$tra_cn%>" style="height: 50px;width: 300px;<%if $data_row.trangthai != $tra_cn %>display:none;<%/if%>" <%if $data_row.trangthai == $tra_cn %>readonly="true"<%/if%> ><%if $data_row.trangthai == $tra_cn %><%$data_row.ghichu%><%/if%></textarea> 
+                        <input  id="updtra_<%$tra_cn%>" class="update_traduyet" style="display:none" type="button" value="OK" />
+                    </td>
+                </tr>
+            </table>
+		</form>
+	</div><!-- / .top_wrap -->
+</div><!-- / .main_innner -->
+</div>
+<!-- InstanceEndEditable -->
+<%include 'include/footer.html'%>
+</div><!-- / .contents_wrap -->
+</div><!-- / .container -->
+</div><!-- / .bg -->
+<%include 'include/argo_ajax.html'%>
+<%include 'include/table_shima.html'%>
+
+<div id="capnhat_dialog" class="modal" style="display:none;">
+	<h3 style="font-size: 18px;margin-bottom: 20px">Bạn muốn xin mượn bản vẽ hay bổ xung file ?</h3>
+    
+    <div>
+    <button class="button_blue" id="muon_ban_ve" style="margin-right: 10px;">Mượn bản vẽ</button>
+    <button class="button_green" id="bo_xung_file">Bổ xung file</button>
+    </div>
+</div>
+<div id="muon_ban_ve_dialog" class="modal" style="display:none;">
+    <div class="main_contents">
+	<div class="series_wrap" style="padding-top: 10px">
+		<!--<div class="title_wrap clear_fix">
+			<h2>Mượn bản vẽ</h2>
+		</div>-->
+		<div class="info_wrap">
+			<div class="hl_wrap">
+				<ul class="btn_wrap">
+					<li><input type="button" value="Thoát" class="img_opacity" id="btn_close_muon" /></li>
+					<li><input type="button" value="Cập nhật" class="img_opacity" id="btn_save_muon"  /></li>
+				</ul>
+			</div>
+			<form id="edit_form"  >
+			<div  style="padding: 10px; max-height: 400px;overflow-y: scroll;margin-bottom: 10px">
+		    <table style="width: 100%;" class="table_don">
+    			<colgroup>
+        		 	<col width="30px" />
+        		    <col width="" />
+        		</colgroup>
+                <thead>
+                <tr>
+                    <td class="header_table"><input type="checkbox" id="check_all"></td>
+                    <td style="font-weight: bold" class="header_table">Tên file</td>
+                </tr>
+                </thead>
+                <%foreach $filelist as $file%>
+                <%if $file.status=="3"%>
+                <tr>
+                    <td><input type="checkbox" class="file_muon" name="file_muon" id="f_<%$file.file_id%>"></td>
+                    <td><%$file.file_name%></td>
+                </tr>
+                <%/if%>
+                <%/foreach%>                
+			</table>
+				</div>
+                <table style="width: 100%;" class="table_don">
+                    <tr>
+                        <td style="font-weight: bold;width: 100px" class="header_table">Ngày hẹn trả</td>
+                        <td style="font-weight: bold" class="header_table">Lý do mượn</td>
+                    </tr>
+                    <tr>
+                        <td ><input id="ngay_hen_tra" type="text" style="width: 90px" class="datetimepicker"></td>
+                        <td >
+                            <textarea style="width: 97%;height: 50px;margin-top: 10px" id="lydo_muon" ></textarea>
+                        </td>
+                    </tr>
+                </table>
+                
+			</form>
+		</div>
+		<!-- / .free_wrap -->
+	</div><!-- / .series_wrap -->
+</div><!-- / .main_contents -->
+   
+   
+</div>
+<div id="bo_xung_file_dialog" class="modal" style="display:none;" >
+	<div class="main_contents">
+    	<div class="series_wrap" style="padding-top: 10px">    		
+    		<div class="info_wrap">
+    			<div class="hl_wrap">
+    				<ul class="btn_wrap">
+    					<li><input type="button" value="Thoát" class="img_opacity" id="btn_close_boxung" /></li>
+    					<li><input type="button" value="Cập nhật" class="img_opacity" id="btn_save_boxung"  /></li>
+    				</ul>
+    			</div>
+    			<form id="edit_form"  >
+                    <table style="width: 100%;" class="table_don">
+                        <tr>
+                            <td style="font-weight: bold" class="header_table">Lý do bổ xung</td>
+                        </tr>
+                        <tr>
+                            <td >
+                                <textarea style="width: 97%;height: 50px;margin-top: 10px" id="lydo_boxung" ></textarea>
+                            </td>
+                        </tr>
+                    </table>
+                    
+    			</form>
+    		</div>
+    		<!-- / .free_wrap -->
+    	</div><!-- / .series_wrap -->
+    </div><!-- / .main_contents -->
+</div>
+<div id="tra_yeucau_dialog" class="modal" style="display:none;">
+    <div class="main_contents">
+    	<div class="series_wrap" style="padding-top: 10px">
+    		<div class="info_wrap">
+    			<div class="hl_wrap">
+    				<ul class="btn_wrap">
+    					<li><input type="button" value="Thoát" class="img_opacity" id="btn_close_tra" /></li>
+    					<li><input type="button" value="Cập nhật" class="img_opacity" id="btn_save_tra"  /></li>
+    				</ul>
+    			</div>
+    			<form id="edit_form"  >
+                <input type="hidden" name="trangthai_tra" id="trangthai_tra">
+    			<div  style="padding: 10px; max-height: 400px;overflow-y: scroll;margin-bottom: 10px">
+    		    <table style="width: 100%;" class="table_don">
+        			<colgroup>
+            		 	<col width="30px" />
+            		    <col width="" />
+            		</colgroup>
+                    <thead>
+                    <tr>
+                        <td class="header_table"><input type="checkbox" id="check_tra_all"></td>
+                        <td style="font-weight: bold" class="header_table">Tên file</td>
+                    </tr>
+                    </thead>
+                    <%foreach $filelist as $file%>
+                    <tr>
+                        <td><input type="checkbox" class="file_tra" name="file_tra" id="f_<%$file.file_id%>"></td>
+                        <td><%$file.file_name%></td>
+                    </tr>
+                    <%/foreach%>                
+    			</table>
+    				</div>
+                    <table style="width: 100%;" class="table_don">
+                        <tr>
+                            <td style="font-weight: bold" class="header_table">Lý do trả yêu cầu</td>
+                        </tr>
+                        <tr>
+                            <td >
+                                <textarea style="width: 97%;height: 50px;margin-top: 10px" id="lydo_tra" ></textarea>
+                            </td>
+                        </tr>
+                    </table>
+                    
+    			</form>
+    		</div>
+    		<!-- / .free_wrap -->
+    	</div><!-- / .series_wrap -->
+    </div><!-- / .main_contents -->
+</div>
+<script type='text/javascript'>
+var _countFile = 0;
+//console.log("<%$mode%>");
+$(function() {
+    var quyen_tao_moi ='<%$quyen_tao_moi%>';
+    if(quyen_tao_moi=='0'){
+        Argo_ajax.message_box('','Bạn không có quyền tạo yêu cầu mới !');
+        location.href = '<%$smarty.const.ACW_BASE_URL%>' ;
+    }
+        /*var search_user_ajax = new Argo_ajax('json');
+        search_user_ajax.done_func = function(data) {
+            if (data.error) {
+                if (data.error.length > 0) {
+                    $('#data_list tbody').empty();
+                   Argo_ajax.message_box_error('', data.error[0]['info']);
+                }else{
+                    $('#search_form').submit();
+                }
+            }
+        };	*/
+        
+	
+	/*$('#btn_search').click(function(){        
+            $arr = $('#search_form').serializeArray();
+            search_user_ajax.connect('POST', 'donvi/checkmaxlenght', $arr);
+          
+	});*/
+    $('#menu_lapyc').addClass('selected');        
+    $("#search_file_name").keydown(function (e) {
+        if (e.keyCode == 13) {
+                $('#btn_search').click();
+        }
+    });
+ 
+	
+	$('#btn_clear').click(function(){
+		$('#search_form').find("textarea, :text, select").val("");
+	});
+	$(document).off("click", "#chonfile");
+	$(document).on("click", "#chonfile", function () {
+		$('#file_upload').click();
+		//$("#uploadfile").submit();
+	});
+    $(document).off("click", ".btn_traduyet");
+	$(document).on("click", ".btn_traduyet", function () {
+        var id = $(this).attr('id');
+        id = id.replace('btn_tra_','');
+        /*if ($('#ghichu_'+ id).css('display') == 'none') {
+            $('#ghichu_'+ id).show();
+            $('#updtra_'+ id).show();
+        }else{
+            $('#ghichu_'+ id).hide();
+            $('#updtra_'+ id).hide();
+        }*/
+        
+        $('#tra_yeucau_dialog').dialog("open");
+        $("#trangthai_tra").val(id);
+    });
+    $(document).off("click", ".update_traduyet");
+	$(document).on("click", ".update_traduyet", function () {
+        var id = $(this).attr('id');
+        id = id.replace('updtra_','');
+        $arr = $('#from_update').serializeArray();	
+        $arr.push({name: 'trangthai', value: id});
+        $arr.push({name: 'ghichu', value: $('#ghichu_'+ id).val()});
+        don_update($arr,'','#btn_tra_'+id);
+        $('#ghichu_'+ id).hide();
+        $(this).hide();
+        $('#btn_kiemtra').prop('disabled',true);
+        $('#btn_duyet').prop('disabled',true);
+        $('#btn_ttql_duyet').prop('disabled',true);
+        $('#btn_save').prop('disabled',true);
+    });
+    $(document).off("click", "#btn_kiemtra");
+	$(document).on("click", "#btn_kiemtra", function () {
+		$arr = $('#from_update').serializeArray();	
+        $arr.push({name: 'trangthai', value: 1});
+        don_update($arr,this,'#btn_tra_kt');
+        $('.btn_traduyet').prop('disabled',true);
+        $('#btn_save').prop('disabled',true);
+	});
+    /*$(document).off("click", "#btn_tra_kt");
+	$(document).on("click", "#btn_tra_kt", function () {
+		$arr = $('#from_update').serializeArray();	
+        $arr.push({name: 'trangthai', value: 4});
+        don_update($arr,this,'#btn_kiemtra');
+        //$('#')
+	});*/
+    $(document).off("click", "#btn_duyet");
+	$(document).on("click", "#btn_duyet", function () {
+		$arr = $('#from_update').serializeArray();	
+        $arr.push({name: 'trangthai', value: 2});
+        don_update($arr,this,'#btn_tra_duyet');
+        $('.btn_traduyet').prop('disabled',true);
+        $('#btn_save').prop('disabled',true);
+	});
+    /*$(document).off("click", "#btn_tra_duyet");
+	$(document).on("click", "#btn_tra_duyet", function () {
+		$arr = $('#from_update').serializeArray();	
+        $arr.push({name: 'trangthai', value: 5});
+        don_update($arr,this,'#btn_duyet');
+	});*/
+    $(document).off("click", "#btn_ttql_duyet");
+	$(document).on("click", "#btn_ttql_duyet", function () {
+		$arr = $('#from_update').serializeArray();	
+        $arr.push({name: 'trangthai', value: 3});
+        don_update($arr,this,'#btn_tra_ttql');
+        $('.btn_traduyet').prop('disabled',true);
+        $('#btn_save').prop('disabled',true);
+	});
+    
+    
+    $(document).off("click", "#btn_duyet_cn");// duyet cập nhật
+	$(document).on("click", "#btn_duyet_cn", function () {
+		$arr = $('#from_update').serializeArray();	
+        $arr.push({name: 'trangthai', value: 9});
+        don_update($arr,this,'');
+        $('.btn_traduyet').prop('disabled',true);
+        $('#btn_save').prop('disabled',true);
+	});
+    /*$(document).off("click", "#btn_tra_ttql");
+	$(document).on("click", "#btn_tra_ttql", function () {
+		$arr = $('#from_update').serializeArray();	
+        $arr.push({name: 'trangthai', value: 6});
+        don_update($arr,this,'#btn_ttql_duyet');
+        $('#btn_luuchuyen').prop('disabled',true);
+	});*/
+	$(document).off("click", ".remove_item");
+	$(document).on("click", ".remove_item", function () {
+		var tr = $(this).parent().parent();
+		var json_ajax = new Argo_ajax('json');
+		json_ajax.done_func = function(data) {			
+			if (data.error.length > 0) {
+				Argo_ajax.message_box_error('', data.error);				
+			} else {
+	            //Argo_ajax.message_box(' ', 'Cập nhật thành công !');				
+				$(tr).remove();
+			}
+		};
+		var file_name = $(this).parent().prev().text();
+		json_ajax.connect('POST', 'file/remove',{'file_name':file_name,'folder_tmp':$('#folder_tmp').val()});
+	});
+	$(document).off("click", "#btn_xoa_don");
+	$(document).on("click", "#btn_xoa_don", function () {
+		var arr =$('#from_update').serializeArray();	
+        //arr.push({name: 'don_id', value: $('#usr_kiemtra').val()});
+           
+		var del_ajax = new Argo_ajax('json');            
+        del_ajax.done_func = function(data) {
+                if (data.status != "OK") {
+                    if (data.error.length > 0) {
+                       Argo_ajax.message_box_error('', data.error[0]['info']);
+                    }else{
+                    }
+                }else{
+                    Argo_ajax.message_box(' ', data.msg);                  
+                    $('#btn_update').prop('disabled',true);	
+                    $('#chonfile').prop('disabled',true);
+                    $('#btn_save').prop('disabled',true);
+                    $('#btn_xoa_don').prop('disabled',true);
+                }
+        };	
+        del_ajax.connect('POST', 'don/delete', arr);
+	});
+    $(document).on("click", "#btn_save", function () {
+        //$('#from_upload').submit();
+        if(check_before_update()){
+        	$arr = $('#from_update').serializeArray();	
+        	$arr.push({name: 'usr_kiemtra', value: $('#usr_kiemtra').val()});
+            $arr.push({name: 'usr_duyet', value: $('#usr_duyet').val()});
+            $arr.push({name: 'usr_ttql', value: $('#usr_ttql').val()});
+        	$arr.push({name: 'folder_tmp', value: $('#folder_tmp').val()});
+            $arr.push({name: 'flg_capnhat', value: $('#flg_capnhat').val()});
+        	var list_file='';
+            var err = false;
+        	$('.att_file').each(function(){
+                var data_file = $(this).text().trim();
+                //console.log('1---');
+                console.log(data_file.length);
+                if(data_file.length == 0){
+                    Argo_ajax.message_box(' ', 'Bạn chưa upload đủ file trả !');
+                    err = true;
+                    return;
+                }
+                if(list_file==''){
+                	list_file += data_file;	
+                }else{
+                	list_file += '|' + data_file;
+                }
+            });
+            if(err){
+                return;
+            }
+            $arr.push({name: 'filelist', value: list_file});         
+            //console.log($arr);
+            var update_ajax = new Argo_ajax('json');
+            
+        	update_ajax.done_func = function(data) {
+                //console.log('ok');
+                if (data.status != "OK") {
+                    if (data.error.length > 0) {
+                       Argo_ajax.message_box_error('', data.error[0]['info']);
+                    }else{
+                    }
+                }else{
+                    Argo_ajax.message_box(' ', data.msg);
+                    location.href = '<%$smarty.const.ACW_BASE_URL%>don/edit/'+ data.don_id ;
+                   /* $('#don_id').val(data.don_id);
+                    $('#btn_update').prop('disabled',false);	
+                    $('#chonfile').prop('disabled',false);*/
+                }
+            };	
+            update_ajax.connect('POST', 'don/update', $arr);
+        }
+	});
+	$(document).on("click", "#btn_update", function () {  // gui mail yeu cau kiem tra
+        $arr = $('#from_update').serializeArray();	
+        $arr.push({name: 'trangthai', value: 0});
+        don_update($arr,this,'#btn_save');
+        $('#chonfile').prop('disabled',true);
+        $('#btn_xoa_don').prop('disabled',true);
+        //$('#from_upload').submit();
+        /*if(check_before_update()){
+        	$arr = $('#from_update').serializeArray();	
+        	$arr.push({name: 'usr_kiemtra', value: $('#usr_kiemtra').val()});
+            $arr.push({name: 'usr_duyet', value: $('#usr_duyet').val()});
+            $arr.push({name: 'usr_ttql', value: $('#usr_ttql').val()});
+        	$arr.push({name: 'folder_tmp', value: $('#folder_tmp').val()});
+        	var list_file='';
+        	$('.att_file').each(function(){
+                var data_file = $(this).text().trim();
+                if(list_file==''){
+                	list_file += data_file;	
+                }else{
+                	list_file += '|' + data_file;
+                }
+            });
+            $arr.push({name: 'filelist', value: list_file});         
+            console.log($arr);
+            var update_ajax = new Argo_ajax('json');
+            
+        	update_ajax.done_func = function(data) {
+                console.log('ok');
+                if (data.status != "OK") {
+                    if (data.error.length > 0) {
+                       Argo_ajax.message_box_error('', data.error[0]['info']);
+                    }else{
+                    }
+                }else{
+                    Argo_ajax.message_box(' ', data.msg);
+                    $('#btn_update').prop('disabled',true);	
+                    $('#chonfile').prop('disabled',true);
+                }
+            };	
+            update_ajax.connect('POST', 'don/update', $arr);
+        }*/
+	});
+		
+	//table_shimashima('#data_list');
+	
+	$(window).on("load resize", function(){
+		var wh = $(window).height();
+		$(".height2").height(wh - 206);	
+	});
+    
+    $(document).off("click", ".btn_change_file");
+	$(document).on("click", ".btn_change_file", function () {
+		$('#change_file_id').val($(this).attr('data'));
+        $('#change_file_select').click();
+	});
+	$("#form_change_file").on('submit',(function(e) {
+		e.preventDefault();
+        var postdata = new FormData(this);
+        console.log(postdata);       
+        //postdata.push({name: 'file_id', value: $('#change_file_select').attr('data')}); 
+		$("#loading_dialog").loading();
+		$.ajax({
+	       	url: "<%$smarty.const.ACW_BASE_URL%>file/changefile",
+			type: "POST",
+			data:  postdata,
+			contentType: false,
+	    	cache: false,
+			processData:false,
+			success: function(data)
+			{	
+				console.log(data);
+				$("#loading_dialog").loading("loadStop");
+                if (data.status != "OK") {
+                    if (data.error.length > 0) {
+                        Argo_ajax.message_box_error('',data.error);
+                    }
+                }else{
+                    //Argo_ajax.message_box(' ', data.msg);
+                    $('#file_change_name_'+data.file_id).text(data.file_name);
+                }			
+			},
+			error: function() 
+		    {
+		    	$("#loading_dialog").loading("loadStop");
+		    } 
+		    ,dataType: 'json'	        
+		});
+	}));
+	$("#uploadfile").on('submit',(function(e) {
+		e.preventDefault();
+		$("#loading_dialog").loading();
+		$.ajax({
+	       	url: "<%$smarty.const.ACW_BASE_URL%>file/upload",
+			type: "POST",
+			data:  new FormData(this),
+			contentType: false,
+	    	cache: false,
+			processData:false,
+			success: function(data)
+			{	
+				//console.log(data);
+				$("#loading_dialog").loading("loadStop");
+				show_result(data);
+			},
+			error: function() 
+		    {
+		    	$("#loading_dialog").loading("loadStop");
+		    } 
+		    ,dataType: 'json'	        
+		});
+		/*var upload_ajax = new Argo_ajax('json');
+		upload_ajax.done_func = function(res) {			
+			if (res.status != "OK") {
+				Argo_ajax.message_box_error('', res.error);				
+			} else {
+	            //Argo_ajax.message_box(' ', 'Cập nhật thành công !');				
+				
+			}
+		};		
+		var data = new FormData(this);
+		upload_ajax.connect('POST', 'file/upload',data);*/	
+	}));
+	var show_result= function(res){
+		if (res.status != "OK") {
+			Argo_ajax.message_box_error('', res.error);				
+		} else {
+	        //Argo_ajax.message_box(' ', 'Cập nhật thành công !');
+	        //sel = $('#selectedFiles');
+	        var html="";
+	        lisfile = res.data_row;
+	        //console.log(lisfile);
+	        for(i=0;i<lisfile.length;i++){
+	        	_countFile++;
+	        	html +="<tr ><td>"+_countFile+"</td><td class=\"att_file\" >"+ lisfile[i] +"</td><td> <img class=\"remove_item\" src=\"<%$smarty.const.ACW_BASE_URL%>shared/img/remove_item_1.jpg\" /></td></tr>";	
+	        	//console.log(lisfile[i]);
+	        }
+	        $('#selectedFiles').append(html);
+	        //sel.innerHTML += html;   
+		}
+	}
+    var don_update= function(param,btnduyet,btntra){
+        var update_ajax = new Argo_ajax('json');
+            
+        update_ajax.done_func = function(data) {
+            if (data.status != "OK") {
+                if (data.error.length > 0) {
+                    Argo_ajax.message_box_error('', data.error[0]['info']);
+                }else{
+                    
+                }
+            }else{
+                Argo_ajax.message_box(' ', data.msg);
+                $(btnduyet).prop('disabled',true);
+                $(btntra).prop('disabled',true);
+            }
+        };	
+        update_ajax.connect('POST', 'don/update', param);
+    }
+    $("#capnhat_dialog").dialog({
+		autoOpen: false,
+		width: 500,
+		modal: true,
+		title: ''
+	});
+    $("#muon_ban_ve_dialog").dialog({
+		autoOpen: false,
+		width: 600,
+		modal: true,
+		title: 'Mượn bản vẽ'
+	});
+    $("#bo_xung_file_dialog").dialog({
+		autoOpen: false,
+		width: 600,
+		modal: true,
+		title: 'Bổ xung file'
+	});
+    $("#tra_yeucau_dialog").dialog({
+		autoOpen: false,
+		width: 600,
+		modal: true,
+		title: 'Trả yêu cầu chỉnh sửa'
+	});
+    $(document).off("click", "#btn_xin_cn");
+	$(document).on("click", "#btn_xin_cn", function () {
+        //$('#capnhat_dialog').dialog("open");
+        $('#muon_ban_ve_dialog').dialog("open");
+	});
+    $(document).off("click", "#muon_ban_ve");
+	$(document).on("click", "#muon_ban_ve", function () {
+        $('#capnhat_dialog').dialog("close");
+        $('#muon_ban_ve_dialog').dialog("open");
+    });    
+    $(document).off("click", "#bo_xung_file");
+	$(document).on("click", "#bo_xung_file", function () {
+        $('#capnhat_dialog').dialog("close");
+        $('#bo_xung_file_dialog').dialog("open");
+    });
+    $(document).off("change", "#check_all");
+    $(document).on("change", "#check_all", function () {
+        if ($(this).is(':checked')) {
+            $('.file_muon').prop('checked',true);
+        }else{
+            $('.file_muon').prop('checked',false);
+        }
+    });
+    $(document).off("change", "#check_tra_all");
+    $(document).on("change", "#check_tra_all", function () {
+        if ($(this).is(':checked')) {
+            $('.file_tra').prop('checked',true);
+        }else{
+            $('.file_tra').prop('checked',false);
+        }
+    });
+    /*$(document).off("change", ".change_file");
+    $(document).on("change", ".change_file", function () {
+        var id = $(this).attr('id');
+        console.log(id);
+        id = id.replace('change_file_','');
+        $(this).upload("<%$smarty.const.ACW_BASE_URL%>file/changefile", {
+            'folder_tmp':$('#folder_tmp').val()    
+            }
+            , function (res) {
+                console.log(res);
+                console.log(res.error);
+                if (res.status != "OK") {
+                    if (res.error.length > 0) {
+                        Argo_ajax.message_box_error('', res.error);
+                    }else{
+                        
+                    }
+                }else{                   
+                    $('#change_file_name_'+id).text(res.file_name);
+                }
+            }, "json");
+        
+    });*/
+    
+    $(document).off("click", "#btn_close_muon");
+	$(document).on("click", "#btn_close_muon", function () {
+        $('#muon_ban_ve_dialog').dialog("close");
+    });
+    $(document).off("click", "#btn_close_boxung");
+	$(document).on("click", "#btn_close_boxung", function () {
+        $('#bo_xung_file_dialog').dialog("close");
+    });
+    $(document).off("click", "#btn_close_tra");
+	$(document).on("click", "#btn_close_tra", function () {
+        $('#tra_yeucau_dialog').dialog("close");
+    });
+    $(document).off("click", "#btn_save_muon");
+	$(document).on("click", "#btn_save_muon", function () {
+        var arr = [];	
+        $('.file_muon').each(function(){
+            if ($(this).is(':checked')) {
+                var id= $(this).attr('id').replace('f_','');
+                arr.push({name: 'file_muon[]', value: id});
+            }
+        });
+        arr.push({name: 'don_id', value: $('#don_id').val()});
+        arr.push({name: 'ver_id', value: $('#ver_id').val()});
+        arr.push({name: 'lydo_muon', value: $('#lydo_muon').val()});
+        arr.push({name: 'ngay_hen_tra', value: $('#ngay_hen_tra').val()});
+        //arr.push({name: 'trangthai', value: 0}); 
+        $('#muon_ban_ve_dialog').dialog("close"); 
+        update_muon(arr); 
+    });
+    $(document).off("click", "#btn_save_boxung");
+	$(document).on("click", "#btn_save_boxung", function () {
+        var arr = [];
+        arr.push({name: 'don_id', value: $('#don_id').val()});
+        arr.push({name: 'ver_id', value: $('#ver_id').val()});
+        arr.push({name: 'lydo_muon', value: $('#lydo_boxung').val()});
+        //arr.push({name: 'ngay_hen_tra', value: $('#ngay_hen_tra').val()});
+        //arr.push({name: 'trangthai', value: 0}); 
+        update_muon(arr);       
+        $('#bo_xung_file_dialog').dialog("close");
+    });
+    $(document).off("click", "#btn_save_tra");
+	$(document).on("click", "#btn_save_tra", function () {
+        var arr = [];	
+        $('.file_tra').each(function(){
+            if ($(this).is(':checked')) {
+                var id= $(this).attr('id').replace('f_','');
+                arr.push({name: 'file_tra[]', value: id});
+            }
+        });
+        arr.push({name: 'mode', value: $('#mode').val()});
+        arr.push({name: 'don_id', value: $('#don_id').val()});
+       // arr.push({name: 'ver_id', value: $('#ver_id').val()});
+        arr.push({name: 'ghichu', value: $('#lydo_tra').val()});
+        arr.push({name: 'trangthai', value: $('#trangthai_tra').val()});
+        
+        $('#tra_yeucau_dialog').dialog("close"); 
+        var tra_ajax = new Argo_ajax('json');            
+        tra_ajax.done_func = function(data) {
+            if (data.status != "OK") {
+                if (data.error.length > 0) {
+                    Argo_ajax.message_box_error('', data.error);
+                }else{
+                    
+                }
+            }else{
+                Argo_ajax.message_box(' ', data.msg);
+                location.href = '<%$smarty.const.ACW_BASE_URL%>don/edit/'+$('#don_id').val() ;
+                $('.btn_traduyet').prop('disabled',true);
+                $('#btn_kiemtra').prop('disabled',true);
+                $('#btn_duyet').prop('disabled',true);
+                $('#btn_ttql_duyet').prop('disabled',true);
+                $('#btn_save').prop('disabled',true);
+            }
+        };	
+        tra_ajax.connect('POST', 'don/trayeucau', arr);
+    });
+    var update_muon = function(arr){
+        var muon_ajax = new Argo_ajax('json');
+            
+        muon_ajax.done_func = function(data) {
+            if (data.status != "OK") {
+                if (data.error.length > 0) {
+                    Argo_ajax.message_box_error('', data.error);
+                }else{
+                    
+                }
+            }else{
+                Argo_ajax.message_box(' ', data.msg);
+                
+                $('#btn_xin_cn').prop('disabled',true);
+                $('#btn_duyet_cn').prop('disabled',true);
+            }
+        };	
+        muon_ajax.connect('POST', 'don/muonbanve', arr);
+    };
+    $('.datetimepicker').datetimepicker({
+          format:'d/m/Y',
+          inline:false,
+          lang:'ru',
+          timepicker:false
+    });
+    
+    $(document).off("click", ".download_file");
+	$(document).on("click", ".download_file", function (){
+        var data_link= $(this).attr('data');
+        var info = data_link.split('/');
+        $('#view_file_name_'+info['2']).addClass('hover_view');
+        location.href = '<%$smarty.const.ACW_BASE_URL%>file/download/'+data_link;
+    });
+});
+	
+	function check_before_update(){		
+		if($('#tieude').val()==""){
+			Argo_ajax.message_box(' ', 'Bạn chưa nhập tiêu đề !');
+			return false;
+		}
+        if($('#don_no').val()==""){
+			Argo_ajax.message_box(' ', 'Bạn chưa nhập mã bản vẽ tổng !');
+            $('#don_no').focus();
+			return false;
+		}
+        if($('#loai_ban_ve').val()==""){
+			Argo_ajax.message_box(' ', 'Bạn chưa chọn loại bản vẽ !');
+			return false;
+		}
+		if($('#noidung').val()==""){
+			Argo_ajax.message_box(' ', 'Bạn chưa nhập nội dung !');
+			return false;
+		}
+		if($('#usr_kiemtra').val()==""){
+			Argo_ajax.message_box(' ', 'Bạn chưa chọn người kiểm tra !');
+			return false;
+		}
+		if($('#usr_duyet').val()==""){
+			Argo_ajax.message_box(' ', 'Bạn chưa chọn người duyệt !');
+			return false;
+		}
+		if($('#usr_ttql').val()==""){
+			Argo_ajax.message_box(' ', 'Bạn chưa chọn trung tâm quản lý đuyệt !');
+			return false;
+		}
+		return true;
+	}
+	
+	
+	var selDiv = "";
+    var i=0;    
+    document.addEventListener("DOMContentLoaded", init, false);    
+    function init() {
+        document.querySelector('#file_upload').addEventListener('change', handleFileSelect, false);
+        document.querySelector('#change_file_select').addEventListener('change', handleFileChangeSelect, false);
+        selDiv = document.querySelector("#selectedFiles");
+    }
+        
+    function handleFileSelect(e) {
+        
+        if(!e.target.files || !window.FileReader) return;
+
+        //selDiv.innerHTML = "<colgroup><col width=\"20px\" /><col width=\"150px\" /></colgroup><tr ><td colspan=\"2\" style=\"text-align: center; font-weight: bold\">Đính kèm bản vẽ</td></tr>";
+        //selDiv.innerHTML ="";
+        var files = e.target.files;
+        var filesArr = Array.prototype.slice.call(files);
+        //var i=0;
+        filesArr.forEach(function(f) {
+            /*if(!f.type.match("image.*|application/pdf")) {
+                return;
+            }*/
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                //var html = "<div><img src=\"" + e.target.result + "\">";  // hien thi anh
+                //var html ="<span>"+ f.name +"</span>";
+                /*i++;
+                var html ="<tr ><td>"+i+"</td><td >"+ f.name +" <img class=\"remove_item\" src=\"<%$smarty.const.ACW_BASE_URL%>shared/img/remove_item_1.jpg\" /></td></tr>";
+                selDiv.innerHTML += html;    */             
+            }
+            reader.readAsDataURL(f); 
+        });
+        $("#uploadfile").submit();
+    }
+    function handleFileChangeSelect(e) {
+        
+        if(!e.target.files || !window.FileReader) return;
+        var files = e.target.files;
+        var filesArr = Array.prototype.slice.call(files);
+        //var i=0;
+        filesArr.forEach(function(f) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+            }
+            reader.readAsDataURL(f); 
+        });
+        var id = e.target.id;
+        console.log(id);
+        $("#form_change_file").submit();
+    }
+
+</script>
+
+</body>
+<!-- InstanceEnd --></html>

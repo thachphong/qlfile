@@ -1,0 +1,250 @@
+<style>
+.width_selectbox
+{
+	width: 180px;
+}
+</style>
+<script type="text/javascript">
+$(document).ready(function () {
+    
+    var str_donvi='';
+        
+        /*var submit_button_ajax = new Argo_ajax('json');
+        submit_button_ajax.done_func = function(datas) {
+            if (datas.error) {
+                if (datas.error.length > 0) {
+                   Argo_ajax.message_box_error('', datas.error[0]['info']);
+                }else{
+                    
+                    var json_ajax = new Argo_ajax("json");
+                    json_ajax.done_func = function(data) {
+                            
+                            if(data.msg){
+                                Argo_ajax.message_box(' ', data.msg);
+                            }
+                            
+                            if (data.error) {
+                                    if (data.error.length > 0) {
+                                            Argo_ajax.message_box_error(' ', data.error[0]['info']);
+                                    }
+                            }
+                            if (data.status == 'OK') {                                    
+                                    location.reload();
+                            }
+                            
+                            if(data.status == 'double_user'){
+                                Argo_ajax.message_box_error(' ', 'Tên đăng nhập này đã có, vui lòng nhập tên khác');
+                        }
+                            
+                    };
+                    var data = $("form#edit_form").serializeArray();
+                    json_ajax.connect("POST", "donvi/update", data);
+                }
+            }
+        };*/
+	
+    $(document).off("click", ".btn_save");	
+	$(document).on("click", ".btn_save", function () {
+	    
+		var json_ajax = new Argo_ajax("json");
+		json_ajax.done_func = function(data) {
+                   
+			if (data.status == 'OK') {
+				Argo_ajax.message_box(' ', 'Cập nhật thành công !');
+                $("#edit_dialog").dialog("close");				
+			}else{
+                if (data.error) {
+    				if (data.error.length > 0) {
+    					Argo_ajax.message_box_error(' ', data.error[0]['info']);
+    				}
+    			}	
+            }           
+            if(data.status == 'double_user'){
+                Argo_ajax.message_box_error(' ', 'Tên đăng nhập này đã có, vui lòng nhập tên khác');
+        	}
+           
+		};
+		var data = $("form#edit_form").serializeArray();
+		json_ajax.connect("POST", "file/capphatupdate", data);
+	});	
+    var _countAdd =0;
+    $(document).off("click", ".btn_add");	
+	$(document).on("click", ".btn_add", function (){
+        _countAdd++;
+        var id ='add_'+_countAdd;
+        var html_data = '<tr><td><select name="add_donvi[]" class="width_selectbox donvi" id="donvi_'+id+'">';
+        html_data +='<option value="0" ></option></option></select></td><td>';
+        html_data +='<select name="add_phongban[]" class="width_selectbox phongban" id="phongban_'+id+'">';
+		html_data +='<option value="0" ></option> </select>';
+		html_data +='				</td><td>';
+		html_data +='<select name="add_tonhom[]" class="width_selectbox tonhom" id="tonhom_'+id+'" >';
+		html_data +='<option value="0" ></option></select>';
+		html_data +='</td><td><input type="number" size="10" value="" name="add_soluong[]"/></td>';
+        html_data +='<td><img class="remove_item" src="<%$smarty.const.ACW_BASE_URL%>shared/img/icon_remove.png" /></td></tr>';
+        $('#table_data').append(html_data);
+        $('#donvi_'+id).append(str_donvi);
+    });
+    $(document).off("click", ".remove_item");
+	$(document).on("click", ".remove_item", function () {
+		$(this).parent().parent().remove();
+	});
+  
+	$(document).off("click", ".btn_close");
+	$(document).on("click", ".btn_close", function () {
+		// 編集画面閉じる
+		$("#edit_dialog").dialog("close");
+	});
+    
+    var phongban_list ='<%if isset($phongbanlist)%><%$phongbanlist%><%else%><%/if%>';    
+    phongban_list=htmlDecode(phongban_list);   
+    $(document).off('change','.donvi');
+    $(document).on('change','.donvi',function(){  
+        var donvi_id = $(this).attr('id');      						
+		load_phongban(donvi_id.replace('donvi_',''));
+	});
+    var load_phongban= function(id){
+        var data =  $.parseJSON(phongban_list);//JSON.parse(tonhom_list);        
+			if(phongban_list == ''){
+				return;
+			}			
+           // var phongban_id ="";
+			$('#phongban_'+id).empty();
+			$('#phongban_'+id).append("<option></option>");
+			var donvi_id = $('#donvi_'+id).val();
+            if(id !=''){
+                var str_option="";
+    			$.each( data, function( key, value ) {
+    				if(donvi_id == data[key]["donvi_id"]){					
+    					var name = data[key]["phongban_name"];
+    					var val = data[key]["phongban_id"];	
+                       // if(phongban_id.length > 0 && phongban_id== val){
+                       //     $('#phongban').append($("<option selected></option>").attr("value",val).text(name)); 
+                       // }else{
+                           str_option += '<option value="'+val+'">'+name+'</option>';
+                            //$('#phongban_'+id).append($("<option></option>").attr("value",val).text(name)); 
+                       // }
+    				}
+    			});
+                $('#phongban_'+id).append(str_option); 	
+            }else{
+            }
+    };
+    var tonhom_list ='<%if isset($tonhomlist)%><%$tonhomlist%><%else%><%/if%>';    
+    tonhom_list=htmlDecode(tonhom_list); //tonhom_list.replace(/&quot;/g,'"');
+    $(document).off('change','.phongban');
+    $(document).on('change','.phongban',function(){ 
+        var phongban_id = $(this).attr('id');      						
+		load_tonhom(phongban_id.replace('phongban_','')); 
+	});
+    var load_tonhom= function(id){
+        var data =  $.parseJSON(tonhom_list);//JSON.parse(tonhom_list);        
+			if(tonhom_list == ''){
+				return;
+			}		
+            var tonhom_id ="";	
+			$('#tonhom_'+id).empty();
+			$('#tonhom_'+id).append("<option></option>");
+			var phongban_id = $('#phongban_'+id).val();
+            if(id !=''){
+                var str_option
+    			$.each( data, function( key, value ) {
+    				if(phongban_id == data[key]["phongban_id"]){					
+    					var name = data[key]["tonhom_name"];
+    					var val = data[key]["tonhom_id"];	
+                        //if(tonhom_id.length > 0 && tonhom_id== val){
+                        //    $('#tonhom_'+id).append($("<option selected></option>").attr("value",val).text(name)); 	
+                        //}else{
+                            str_option += '<option value="'+val+'">'+name+'</option>';
+                            //$('#tonhom_'+id).append($("<option></option>").attr("value",val).text(name)); 
+                        //}
+    				}
+    			});
+                $('#tonhom_'+id).append(str_option);
+            }
+    };
+    var donvi_list ='<%if isset($donvi)%><%$donvi%><%else%><%/if%>';    
+    donvi_list=htmlDecode(donvi_list);
+    
+    var load_donvi= function(){
+        var data =  $.parseJSON(donvi_list)
+        console.log(data);
+        $.each( data, function( key, value ) {
+            var name = data[key]["donvi_name"];
+    		var val = data[key]["donvi_id"];	
+            str_donvi += '<option value="'+val+'">'+name+'</option>';
+        });
+        console.log(str_donvi);
+    };
+    load_donvi();
+    load_phongban('');
+    load_tonhom('');
+    var count_data = '<%$count%>';
+    if(count_data =='0'){
+        $(".btn_add").click();
+    }
+});
+</script>
+<div class="main_contents">
+	<div class="series_wrap" style="padding-top: 5px; height: auto;">
+		<!--<div class="title_wrap clear_fix">
+			
+		</div>-->
+		<div class="info_wrap" style="height: 400px;">
+			<div class="hl_wrap">
+				<ul class="btn_wrap">
+					<li><input type="button" value="Thoát" class="img_opacity btn_close" /></li>
+					<li><input type="button" value="Cập nhật" class="img_opacity btn_save" /></li>
+					<li><input type="button" value="Thêm" class="img_opacity btn_add" /></li>
+				</ul>
+			</div>
+			<form id="edit_form"    style=" overflow-y: scroll;    height: 380px;">
+			<div style="padding: 10px;">
+                <input type="hidden" name="file_id" value="<%$file_id%>" />
+				<table style="width: 100%;" id="table_data">
+					<colgroup>
+                        <col width="100px" />
+						<col width="100px" />
+						<col width="100px" />
+		                <col width="80px" />
+					</colgroup>
+					<tr style="font-weight:bold">
+                        <td>
+							Đơn vị
+						</td>
+						<td>
+							Phòng ban
+						</td>
+						<td>
+							Tổ nhóm
+						</td>
+						<td>
+							Số lượng
+						</td>
+					</tr>
+					<%foreach $data_rows as $item%>
+					<tr>
+						<td>
+							<%$item.donvi_name%>
+						</td>
+                        <td>
+							<%$item.phongban_name%>
+						</td>
+						<td>
+							<%$item.tonhom_name%>
+						</td>
+						<td>
+							<input type="number" size="10" value="<%$item.soluong%>" name="soluong[]"/>
+                            <input type="hidden" name="capphat_id[]" value="<%$item.capphat_id%>">
+						</td>
+                        <td>
+                            <img class="remove_item" src="<%$smarty.const.ACW_BASE_URL%>shared/img/icon_remove.png" />
+                        </td>
+					</tr>
+                    <%/foreach%>
+				</table>
+				</div>
+			</form>
+		</div>
+		<!-- / .free_wrap -->
+	</div><!-- / .series_wrap -->
+</div><!-- / .main_contents -->

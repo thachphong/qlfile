@@ -1,0 +1,84 @@
+<script type="text/javascript">
+var ImageFixAspect = function() {
+};
+
+ImageFixAspect.replace = function(imgdiv, _width, _height, comment_flg) {//Edit  LIXD-355 hungtn VNIT 20151118
+	var trueHeight, trueWidth = 0;
+	var img_height, img_width;
+	var imgsrc = imgdiv.attr('imgsrc');
+	var img_id = imgdiv.attr('id');
+	if (imgsrc == '') {
+		return;
+	}
+
+	var img = new Image();
+	img.onload = function() {
+		var d;
+		trueHeight = this.height;
+		trueWidth = this.width;
+		if (_height >= _width) {
+			// 縦またはどちらも同じの場合
+			d = _height / trueHeight;
+			img_height = trueHeight * d;
+			img_width = trueWidth * d;
+		} else {
+			// 横の場合
+			d = _width / trueWidth;
+			img_height = trueHeight * d;
+			img_width = trueWidth * d;
+		}
+
+		if (trueWidth > _width || trueHeight > _height) {
+			// とどめたいサイズ内におさまっていない場合
+			// 縦横どちら基準で縦横比を変更するのか
+			if (trueHeight >= trueWidth) {
+				// 縦またはどちらも同じの場合
+				d = _height / trueHeight;
+				img_height = trueHeight * d;
+				img_width = trueWidth * d;
+			} else {
+				// 横の場合
+				d = _width / trueWidth;
+				img_height = trueHeight * d;
+				img_width = trueWidth * d;
+			}
+			if (img_width > _width) {
+				d = _width / img_width;
+				img_height = img_height * d;
+				img_width = img_width * d;
+			}
+			if (img_height > _height) {
+				d = _height / img_height;
+				img_height = img_height * d;
+				img_width = img_width * d;
+			}
+		}
+		/*if (option.parentFixture == true) {
+			div.parent().css('height',_height);
+			div.parent().css('width',_width);
+			div.parent().css('text-align','center');
+			div.css('padding-top',(_height/2)-((trueHeight)/2)+'px');
+		}*/
+		var imgtag = $('<img />');
+		if (img_id) {
+			imgtag.attr('id', img_id);
+		}
+		imgtag.attr({src:this.src, width: img_width, height:img_height});
+		imgdiv.replaceWith(imgtag);
+        
+        //Add Start LIXD-355 hungtn VNIT 20151118
+        if(comment_flg == true) {
+            comment = document.createComment(imgtag.get(0).outerHTML);
+            imgtag.replaceWith(comment);    
+        }
+        //Add End LIXD-355 hungtn VNIT 20151118
+	};
+	img.src = imgsrc;
+};
+
+ImageFixAspect.exec = function(divname, comment_flg) {//Edit  LIXD-355 hungtn VNIT 20151118
+	$(divname).each(function () {
+		ImageFixAspect.replace($(this), $(this).width(), $(this).height(), comment_flg);//Edit  LIXD-355 hungtn VNIT 20151118
+	});
+};
+</script>

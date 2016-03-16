@@ -1,0 +1,64 @@
+<script type="text/javascript">
+/**
+ * 一覧系画面とシリーズ・商品情報のリンクをつなぐ
+ */
+function LinkItem() {
+}
+
+// リンク先に飛ぶ
+LinkItem.jump = function (t_series_mei_id, smei_flg) { // Edit - miyazaki U_SYS - 2015/01/05
+	// Add start - miyazaki U_SYS - 2015/01/05
+	if(smei_flg == undefined) {
+		smei_flg = false;
+	}
+	// Add end - miyazaki U_SYS - 2015/01/05
+	// 選択された明細が最新か、チェック
+	var check_ajax = new Argo_ajax('json');
+	check_ajax.done_func = function(data) {
+		if (data.status == 'OK' && '<%$user_info.user_auth%>' == '1') {
+			// 最新
+			// Edit start - miyazaki U_SYS - 2015/01/05
+			if ($(document).find("#yoyaku_mode").size() > 0) {
+				if (smei_flg == true) {
+					location.href = '<%$smarty.const.ACW_BASE_URL%>iteminfo/?t_series_mei_id=' + data.t_series_mei_id;
+				} else {
+					location.href = '<%$smarty.const.ACW_BASE_URL%>iteminfo/yoyaku?t_series_mei_id=' + data.t_series_mei_id + '&m_lang_id=' + data.m_lang_id;
+				}
+			} else {
+				location.href = '<%$smarty.const.ACW_BASE_URL%>iteminfo/?t_series_mei_id=' + data.t_series_mei_id + '&m_lang_id=' + data.m_lang_id;
+			}
+			// Edit end - miyazaki U_SYS - 2015/01/05
+		} else {
+			// 履歴なので、ウィンドウオープン
+			var width = 1200;
+			// Add start - miyazaki U_SYS - 2015/01/05
+			var yoyaku_mode = '';
+			if ($(document).find("#yoyaku_mode").size() > 0) {
+				if (smei_flg == false) {
+					yoyaku_mode = 1;
+				}
+			}
+			// Add end - miyazaki U_SYS - 2015/01/05
+			var param = $.param({
+				't_ctg_head_id': data.t_ctg_head_id
+				,'t_series_head_id': data.t_series_head_id
+				,'m_lang_id': data.m_lang_id
+				,'t_series_mei_id': data.t_series_mei_id
+				,'yoyaku_flg': yoyaku_mode // Add - miyazaki U_SYS - 2015/01/05
+			});
+			var w = window.open('<%$smarty.const.ACW_BASE_URL%>linkitem/detail?' + param, '_blank', 'width=' + width + ', height=' + $(window).height() + ', scrollbars=yes, resizable=yes');
+		}
+	};
+	// Edit start - miyazaki U_SYS - 2015/01/05
+	if ($(document).find("#yoyaku_mode").size() > 0) {
+		if (smei_flg == true) {
+			check_ajax.connect('POST', 'linkitem/check', {t_series_mei_id:t_series_mei_id});
+		} else {
+			check_ajax.connect('POST', 'linkitem/check', {t_series_mei_id:t_series_mei_id, yoyaku_flg:1});
+		}
+	} else {
+		check_ajax.connect('POST', 'linkitem/check', {t_series_mei_id:t_series_mei_id});
+	}
+	// Edit end - miyazaki U_SYS - 2015/01/05
+};
+</script>

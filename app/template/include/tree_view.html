@@ -1,0 +1,1411 @@
+<script type="text/javascript" src="<%$smarty.const.ACW_BASE_URL%>js/jquery.mjs.nestedSortable.js"></script>
+<script type="text/javascript">
+/**
+ *  TreeViewプラグイン
+ */
+function TreeView() {
+}
+var g_tree_data = null;//Add NBKD-494 load tree empty - Minh VNIT - 2014/09/04
+var g_tree_data_r = null;//Add NBKD-494 load tree empty - Minh VNIT - 2014/09/04
+var g_tree_data_c = null;// Add - miyazaki U_SYS - 2014/11/27
+var g_tree_data_filter = [];//Add NBKD-494 load tree empty - Minh VNIT - 2014/09/04
+var g_after_select = null;//Add NBKD-494 load tree empty - Minh VNIT - 2014/09/04
+var g_after_select_r = null;//Add NBKD-494 load tree empty - Minh VNIT - 2014/09/04
+var g_data_parent_has_load = [];//Add NBKD-494 load tree empty - Minh VNIT - 2014/09/04
+var g_data_r_parent_has_load = [];//Add NBKD-494 load tree empty - Minh VNIT - 2014/09/04
+var g_data_c_parent_has_load = [];// Add - miyazaki U_SYS - 2014/11/27
+var g_data_dialog_has_load = [];//Add NBKD-494 load tree empty - Minh VNIT - 2014/09/04
+var g_tree_data_r_client = null;
+var checkbox_flg = null;//Add - LIXD-18 - TrungVNIT - 2015/07/15
+
+TreeView.set = function (tree_id, data, after_select, cbx_flg){
+   
+        //Add Start - LIXD-18 - TrungVNIT - 2015/07/15
+        if(cbx_flg != undefined && cbx_flg == 1){
+            checkbox_flg = cbx_flg;
+        }else{
+            checkbox_flg = null;
+        }
+        //Add End - LIXD-18 - TrungVNIT - 2015/07/15
+      
+	var trview = $(tree_id);
+	g_tree_data_filter = [];//Add NBKD-494 load tree empty - Minh VNIT - 2014/09/04
+	var tree_view_id = trview.parent().attr("id");//Add - Minh VNIT - 2014/08/29
+	
+	g_data_dialog_has_load = [];
+	if(tree_view_id == "tree_view"){
+		g_data_parent_has_load = [];//Add NBKD-494 load tree empty - Minh VNIT - 2014/09/04
+	}
+	else if(tree_view_id == "tree_view_r"){
+		g_data_r_parent_has_load = [];//Add NBKD-494 load tree empty - Minh VNIT - 2014/09/04
+	}
+	else if(tree_view_id == "tree_view_c"){
+		g_data_c_parent_has_load = [];//Add - miyazaki U_SYS - 2014/11/27
+	}
+	trview.empty();
+	if(tree_view_id == "tree_view"){
+		g_after_select = after_select;//Add NBKD-494 load tree empty - Minh VNIT - 2014/09/04
+	}
+	else{
+		g_after_select_r = after_select;//Add NBKD-494 load tree empty - Minh VNIT - 2014/09/04
+	}
+	// 親で分ける
+	var parent_data = TreeView.convert(data,tree_view_id);
+
+	var add_category = function (par_li, parent_id) {
+		var pd = parent_data['p:' + parent_id];
+		if (pd == undefined) {
+			return null;
+		}
+
+		if (par_li == null) {
+			par_li = $("<ul class='categories'>");
+		}
+
+		var obj;
+		var i;
+		for (i = 0; i < pd.length; i ++) {
+			obj = pd[i];
+			// ラベル
+			var img_src = "";
+			if (obj.parent_id == -1) {
+				// トップ
+				img_src = "<%$smarty.const.ACW_BASE_URL%>shared/img/icon_top.gif";
+			} else if (obj.is_folder == false) {
+				// シリーズ
+				img_src = "<%$smarty.const.ACW_BASE_URL%>shared/img/icon_series.gif";
+			} else {
+				// カテゴリ
+				img_src = "<%$smarty.const.ACW_BASE_URL%>shared/img/icon_folder.png";
+			}
+			var li = $("<li class='open'>");
+			li.attr("id", obj.id);
+			var div = $("<div>");
+			if (obj.is_folder) {
+				// 階層閉じるアイコン
+				var m_img = $("<img src='<%$smarty.const.ACW_BASE_URL%>shared/img/icon_close.gif' class='img_close'>");
+				m_img.attr("id", tree_view_id+"_img_close_"+obj.id);//Add - Minh VNIT - 2014/08/29
+                                
+				div.append(m_img);
+				// 階層開くアイコン
+				var p_img = $("<img src='<%$smarty.const.ACW_BASE_URL%>shared/img/icon_open.gif' class='img_open'>");
+				p_img.attr("id", tree_view_id+"_img_open_"+obj.id);//Add - Minh VNIT - 2014/08/29
+				p_img.hide();
+				div.append(p_img);
+			} else {
+				// 階層アイコンの空間埋め用
+				div.append("<span style='margin: 2px;'>");
+			}
+			
+			if (img_src != "") {
+				var img_color = "";
+				if (obj.data_kbn == '1') {
+					// シリーズ
+					if (obj.syuyaku_flg == '1') {
+						// 集約シリーズ
+						img_src = "<%$smarty.const.ACW_BASE_URL%>shared/img/syuyaku.gif";
+						//img_color = "#F9C8FF";
+					} else if (obj.kyoyu_flg == '1') {
+						// 共有シリーズ
+						img_src = "<%$smarty.const.ACW_BASE_URL%>shared/img/kyoyu.gif";
+						//img_color = "#C8DDFF";
+					} else {
+						// 通常シリーズ
+						img_color = "#FFFFFF";
+					}
+				} else if (obj.data_kbn == '2') {
+					// 技術ページ
+					img_src = "<%$smarty.const.ACW_BASE_URL%>shared/img/info.gif";
+					//img_color = "#DDFFC8";
+				} else if (obj.data_kbn == '3') {//Add NBKD-486 Minh Vnit 2014/12/12
+					// 技術ページ
+					img_src = "<%$smarty.const.ACW_BASE_URL%>shared/img/box.png";
+					//img_color = "#DDFFC8";
+				}else {
+					// 通常シリーズ
+					img_color = "#FFFFFF";
+				}
+                                
+                                //Add Start - LIXD-18 - TrungVNIT - 2015/07/15
+                                var cbox = '';
+                                if(tree_view_id != 'tree_view' && checkbox_flg != null && checkbox_flg == 1 && parent_id != -1){
+                                    cbox = '<input type="checkbox" name="cbox_'+obj.id+'" id="cbox_'+obj.id+'" class="cbox_category" onclick="ctg_select('+obj.id+');" value="1"> ';
+                                }
+                                //Add End - LIXD-18 - TrungVNIT - 2015/07/15
+				div.append(cbox+"<img src='" + img_src + "' style='background-color: " + img_color + "'>");
+			}
+			// htmlエスケープする
+			var a = $(Mustache.render("<a href='javascript: void(0);'>{{cate_name}}</a>", {cate_name: obj.category_name}));
+			if (obj.is_folder == false) {
+				a.addClass("treeview_item");
+			}
+			//Add start - NBKD-923 - Tin VNIT - 2014/01/30
+			else if(obj.parent_id != -1 && tree_view_id == "tree_view")
+			{
+				var child_yoyaku = TreeView.check_child_yoyaku(obj.id, false);
+				if(child_yoyaku == true)
+				{
+					a.addClass("yoyaku_bold");
+				}
+				
+			}
+			if (typeof(obj.yoyaku_head_id) != "undefined" && obj.yoyaku_head_id !== null && tree_view_id == "tree_view")
+			{
+				a.addClass("yoyaku_bold");
+			}
+			//Add end - NBKD-923 - Tin VNIT - 2014/01/30
+			if (after_select) {
+				a.click(function() {
+					after_select(this);
+				});
+			}
+			div.append(a);
+
+			li.append(div);
+
+			if (obj.is_folder == true) {
+				li.addClass("folder");
+                                //Add Start - NBKD-40 - Trung VNIT - 2014/10/21
+                                if(obj.del_flg != null && obj.del_flg == 1){
+                                    li.addClass('del_flg');
+                                }
+                                //Add End - NBKD-40 - Trung VNIT - 2014/10/21
+				var add_li = add_category(null, obj.id);
+				if (add_li != null) {
+					// 下層エリア
+					li.append(add_li);
+				}
+			} else {
+				li.addClass("series");
+			}
+			par_li.append(li);
+		}
+		
+		return par_li;
+	};
+
+	add_category(trview, -1);
+    //Add Start - Trung VNIT - 2014/08/29
+    if(tree_view_id != undefined){
+    	if(tree_view_id.indexOf("tree_view_r")!=-1){
+	    	TreeView.fold_all(tree_view_id,$(".tree_fold_r"));
+	    }
+	    else if(tree_view_id.indexOf("tree_view")!= -1)
+	    {
+	    	TreeView.fold_all(tree_view_id,$(".tree_fold"));
+	    }
+		// Add start - miyazaki U_SYS - 2014/11/27
+		else if(tree_view_id.indexOf("tree_view_c")!= -1 || tree_view_id.indexOf("tree_view_c_syu")!= -1) // add NBKD-927 Phong VNIT 20150213
+	    {
+	    	TreeView.fold_all(tree_view_id,$(".tree_fold_c"));
+	    }
+		// Add end - miyazaki U_SYS - 2014/11/27
+	    TreeView.tree_view_replace_id_all(tree_view_id);
+    }
+    //Add End - Trung VNIT - 2014/08/29
+    
+	return trview;
+};
+
+TreeView.convert = function (opts,tree_id){
+	var pdh = [];
+	var obj;
+	var i;
+	
+	//Add Start NBKD-494 - Minh Vnit 2014/09/04
+	if(tree_id == "tree_view_r" 
+		|| tree_id == "tree_view_r_relation" 
+		|| tree_id == "tree_view_r_info"
+		|| tree_id == "tree_view_r_syuyaku"
+		|| tree_id == "tree_view_r_syu"     // add NBKD-927 Phong VNIT 20150213        
+		|| tree_id == "tree_view_r_kyoyu"
+	){
+		g_tree_data_r = opts;
+		TreeView.init_series(g_tree_data_r);
+		g_tree_data_r_client = g_tree_data_r.slice();
+	}
+	else if(tree_id == "tree_view"){
+		g_tree_data = opts;
+		TreeView.init_series(g_tree_data);
+	}
+	// Add start - miyazaki U_SYS - 2014/11/27
+	else if(tree_id == "tree_view_c" || tree_id == "tree_view_c_syu"){   // add NBKD-927 Phong VNIT 20150213
+		g_tree_data_c = opts;
+		TreeView.init_series(g_tree_data_c);
+	}
+	// Add end - miyazaki U_SYS - 2014/11/27
+	else{
+		//case when media add folder dont clear data of other tree
+	}
+	//Add End NBKD-494 - Minh Vnit 2014/09/04
+	var top_id = 1;
+	for (i = 0; i < opts.length; i ++) {
+		obj = opts[i];
+		if(/*obj.is_folder == true &&*/ (obj.parent_id == 1 || obj.parent_id == -1 || obj.parent_id == top_id)//Add NBKD-494 load tree empty - Minh Vnit 2014/09/04
+		){
+			if(obj.category_name === "TOP"){
+				top_id = obj.id;
+			}
+			if (pdh['p:' + obj.parent_id] == undefined) {
+				pdh['p:' + obj.parent_id] = [obj];
+			} else {
+				pdh['p:' + obj.parent_id].push(obj);
+			}
+		}
+	}
+	
+	return pdh;
+};
+
+//Add Start - Minh VNIT - 2014/08/29
+var g_has_children  = null;
+var g_has_click = [];
+TreeView.insert_all_tree_data = function (data,tree_view_id){//Add NBKD-494 load tree empty - Minh Vnit 2014/09/04
+	g_has_children  = $( "#"+tree_view_id+" li" ).length;
+	$( "#"+tree_view_id+" li" ).each(function( index ) {
+		var folder_id = $(this).attr("id");
+		if($.inArray(tree_view_id+"_"+folder_id,g_has_click) == -1){
+			g_has_click.push(tree_view_id+"_"+folder_id);
+			folder_id = folder_id.replace("ltree_","");
+			folder_id = folder_id.replace("rtree_","");
+			folder_id = folder_id.replace("ctree_","");		// Add - miyazaki U_SYS - 2014/11/28
+			if(folder_id != 1){//not is TOP
+				var id = $(this).attr("id");
+				//id = id.replace("rtree_s_","");
+				//id = id.replace("ltree_","");
+				//id = id.replace("rtree_","");
+				//TreeView.get_child_item(data,id,folder_id);
+				id = $("#"+id+" .img_open").attr("id");
+				if(id != undefined){
+					//id = id.replace("tree_view_img_open_","");
+					//id = id.replace("tree_view_r_img_open_","");
+					//TreeView.get_child_item(data,id,folder_id);
+					$("#"+id).click();
+				}
+			}
+		}
+	});
+	if(g_has_children < $( "#"+tree_view_id+" li" ).length )
+	{
+		TreeView.insert_all_tree_data(data,tree_view_id);
+	}
+	TreeView.unfold_all(tree_view_id,null);
+	
+};
+
+TreeView.open_folder_by_id = function (folder_id){
+	var id = folder_id.replace("ltree_","");
+	id = folder_id.replace("rtree_","");
+	id = folder_id.replace("ctree_","");		// Add - miyazaki U_SYS - 2014/11/28
+	if(id != 1){//not is TOP
+		id = $("#"+folder_id+" .img_open").attr("id");
+		if(id != undefined){
+			if($("#"+folder_id+ " ul").css("display") === undefined){
+				$("#"+id).click();
+				$("#"+folder_id+ " ul").hide();	
+			  	$("#"+$("#"+folder_id+" .img_close").attr("id")).hide();
+			  	$("#"+$("#"+folder_id+" .img_open").attr("id")).show();
+			}
+			var folder_selected = $("#"+folder_id).find(".folder");
+			TreeView.open_folder_by_id_exec(folder_selected);
+		}
+	}
+};
+//Add Start NBKD-494 Media tree - Tin Vnit - 2012/9/22
+TreeView.open_folder_by_tree_id = function (tree_view_id){
+	var i = 0;
+	$( "#"+tree_view_id+" .categories  .categories .folder" ).each(function( index ) {
+		TreeView.open_folder_by_id($(this).attr("id"));
+	});
+};
+//Add End NBKD-494 Media tree - Tin Vnit - 2012/9/22
+TreeView.open_folder_by_id_exec = function (folder_selected){
+	if(folder_selected.length > 0){
+		folder_selected.each(function( index ) {
+			var folder_id = $(this).attr("id");
+			var id = $(this).attr("id");
+			id = id.replace("ltree_","");
+			id = id.replace("rtree_","");
+			id = id.replace("ctree_","");	// Add - miyazaki U_SYS - 2014/11/28
+			if(id != 1){//not is TOP
+				id = $(this).attr("id");
+				id = $("#"+id+" .img_open").attr("id");
+				if(id != undefined){
+					if($("#"+folder_id+ " ul").css("display") === undefined){
+						$("#"+id).click();
+						$("#"+folder_id+ " ul").hide();	
+					  	$("#"+$("#"+folder_id+" .img_close").attr("id")).hide();
+					  	$("#"+$("#"+folder_id+" .img_open").attr("id")).show();
+				  	}
+				}
+				var folder_current = $("#"+folder_id).find(".folder");
+				TreeView.open_folder_by_id_exec(folder_current);
+			}
+		});
+	}
+};
+
+TreeView.unfold_all = function (tree_view_id,btn_fold,init){//Open all
+	TreeView.show_tree_top(tree_view_id);
+	$( "#"+tree_view_id+" ul" ).not(".top").each(function( index ) {
+		$(this).find("ul").show();	
+	  	$(this).find(".img_close").show();
+	  	$(this).find(".img_open").hide();
+	});
+	if(btn_fold != null){
+		btn_fold.val('<%$smarty.const.FOLD_TEXT%>');
+	}
+	
+	if(init === false)//when click in button NBKD-494 load tree empty
+	{
+		TreeView.insert_all_tree_data(g_tree_data,tree_view_id);
+	}
+	
+	TreeView.open_selected(tree_view_id,true);
+	TreeView.tree_view_replace_id_all(tree_view_id);
+};
+
+TreeView.fold_all = function (tree_view_id,btn_fold){//Close all
+        
+	TreeView.show_tree_top(tree_view_id);
+	$( "#"+tree_view_id+" ul" ).not(".top").each(function( index ) {
+		$(this).find("ul").hide();	
+	  	$(this).find(".img_close").hide();
+	  	$(this).find(".img_open").show();
+	});
+	if(btn_fold != null){
+		btn_fold.val('<%$smarty.const.UNFOLD_TEXT%>');
+	}
+	TreeView.open_selected(tree_view_id,false);
+};
+
+TreeView.show_tree_top = function (tree_view_id){//Open all
+	$( "#"+tree_view_id+" ul" ).find("ul").show();
+	$( "#"+tree_view_id+" ul" ).find(".img_close").show();
+	$( "#"+tree_view_id+" ul" ).find(".img_open").hide();
+};
+
+TreeView.open_selected = function (tree_view_id,fold){
+	var id_top = $("#"+tree_view_id+" .top").children("li").attr("id");
+	$( "#"+tree_view_id+" .category_selected" ).parents("ul").show();
+	$( "#"+tree_view_id+" .category_selected" ).parents("li").each(function( index ) {
+		var id = $(this).attr("id");
+		if(id_top != id){
+			id = id.toString();
+			
+			id = id.replace("rtree_s_","");
+			id = id.replace("ltree_s_","");
+			id = id.replace("ntree_s_","");
+			id = id.replace("rtree_","");
+			id = id.replace("ltree_","");
+			id = id.replace("ntree_","");
+			
+			// Add start - miyazaki U_SYS - 2014/11/28
+			id = id.replace("ctree_s_","");
+			id = id.replace("ctree_","");
+			// Add end - miyazaki U_SYS - 2014/11/28
+			
+			if(id.indexOf("nctg_") != -1){//MEDIA TREE ADD NEW
+				if(index == 0  && fold == false){
+					$("#undefined_img_close_rtree_"+id).hide();//MEDIA TREE
+					$("#undefined_img_open_rtree_"+id).show();//MEDIA TREE
+				}
+				else
+				{
+					$("#undefined_img_close_rtree_"+id).show();//MEDIA TREE
+					$("#undefined_img_open_rtree_"+id).hide();//MEDIA TREE
+				}
+			}
+			else{
+				if(index == 0 &&  fold == false){
+					$("#"+tree_view_id+"_img_close_"+id).hide();
+					$("#"+tree_view_id+"_img_open_"+id).show();
+				}
+				else
+				{
+					$("#"+tree_view_id+"_img_close_"+id).show();
+					$("#"+tree_view_id+"_img_open_"+id).hide();
+				}
+			}
+		}
+		
+	});	
+	$( "#"+tree_view_id+" .category_selected" ).focus();
+	$( "#"+tree_view_id+" .category_selected" ).blur();
+};
+
+TreeView.fold = function (tree_view_id,b_fold,btn_fold){
+	if(b_fold === true){
+		b_fold = false;
+		TreeView.fold_all(tree_view_id,btn_fold);
+	}
+	else{
+		b_fold = true;
+		TreeView.unfold_all(tree_view_id,btn_fold,false);//Add NBKD-494 load tree empty - Minh Vnit 2014/09/04
+	}
+	
+	return b_fold;
+};
+
+TreeView.tree_view_replace_id_all = function (tree_view_id){
+	if(tree_view_id == "tree_view_r"){
+		// ID変更
+		TreeView.replace_id("#tree_view_r li", 'rtree');
+	}
+	else if(tree_view_id == "tree_view"){
+		// ID変更
+		TreeView.replace_id("#tree_view li", 'ltree');
+	}
+	// Add start - miyazaki U_SYS - 2014/11/27
+	else if(tree_view_id == "tree_view_c"){
+		// ID変更
+		TreeView.replace_id("#tree_view_c li", 'ctree');
+	}
+	else if(tree_view_id == "tree_view_c_syu"){ // add NBKD-927 Phong VNIT 20150213
+		// ID変更
+		TreeView.replace_id("#tree_view_c_syu li", 'ctree');
+	}	
+	// Add end - miyazaki U_SYS - 2014/11/25
+};
+//Add End - Minh VNIT - 2014/08/29
+
+/*
+ * ユーティリティ
+ *
+ */
+/**
+ *
+ * 名前でフィルタリング
+ */
+TreeView.filter = function (tree_data, cate_name, series_name, get_empty, search_flag) {//Edit NBKD-494 Search Item_Info - Tin VNIT - 2014/09/19
+	g_has_click = [];//Add NBKD-494 - Minh Vnit - 2014/09/23
+	//Add Start NBKD-494 Search Item_Info - Tin VNIT - 2014/09/18
+	if(get_empty == null)
+	{
+		get_empty = false;
+	}
+	//Add End NBKD-494 Search Item_Info - Tin VNIT - 2014/09/18
+	// 親で分ける
+	var child_data = (function (opts) {
+		var pdh = [];
+		var obj;
+		var i;
+		for (i = 0; i < opts.length; i ++) {
+			obj = opts[i];
+			if (pdh['p:' + obj.parent_id] == undefined) {
+				pdh['p:' + obj.parent_id] = [obj];
+			} else {
+				pdh['p:' + obj.parent_id].push(obj);
+			}
+		}
+		return pdh;
+	})(tree_data);
+
+	var filter_opt = {name: cate_name.toLowerCase()};//Edit - Minh Vnit 2014/08/26
+	if (series_name) {
+		filter_opt.series_name = series_name.toLowerCase();//Edit - Minh Vnit 2014/08/26
+	} else {
+		filter_opt.series_name = '';
+	}
+	//Edit Start NBKD-494 Search Item_Info: change from OR to AND - Tin VNIT - 2014/10/10
+	var delete_empty_category = function(parent_id)
+	{
+		var ret = 0;
+		var cdt = child_data['p:' + parent_id];
+		var obj;
+		var i;
+		var sret;
+		if (cdt != undefined) {
+			// あり
+			for (i = cdt.length - 1; i >= 0; i --) {
+				obj = cdt[i];
+				
+				if (obj.is_folder) {
+					// カテゴリの場合
+					sret = delete_empty_category(obj.id);
+					if (sret == 0) {//Edit NBKD-494 Search Item_Info - Tin VNIT - 2014/09/18
+						// 子供なし
+						// 元データから子供を消す
+						delete child_data['p:' + obj.id];
+						cdt.splice(i, 1);	// 子供カテゴリがいない場合自分を消す
+					}
+					else {
+						// シリーズまたはカテゴリあり
+						ret |= sret | 0x10;	// フィルタなしなので自分の分のカテゴリありにする
+					}
+				} 
+				else
+				{
+					ret |= 1;
+				}
+			}
+		}
+		
+		return ret;
+	}
+	var delete_series = function(parent_id)
+	{
+		var cdt = child_data['p:' + parent_id];
+		var obj;
+		var i;
+		if (cdt != undefined) 
+		{
+			for (i = cdt.length - 1; i >= 0; i --) 
+			{
+				obj = cdt[i];
+				if (obj.is_folder == false) 
+				{
+					cdt.splice(i, 1);
+				}
+			}
+		}
+	}
+	
+	var check_series_filter = function (parent_id)
+	{
+		var ret = 0;
+		var cdt = child_data['p:' + parent_id];
+		var obj;
+		var i;
+		var sret;
+		if (cdt != undefined) {
+			for (i = cdt.length - 1; i >= 0; i --) {
+				obj = cdt[i];
+				
+				if (obj.is_folder) {
+					sret = check_series_filter(obj.id);
+					if (sret == 0) {
+						delete child_data['p:' + obj.id];
+						cdt.splice(i, 1);
+					}
+					else {
+						ret |= sret | 0x10;
+					}
+				} 
+				else if (obj.category_name.toLowerCase().indexOf(filter_opt.series_name, 0) != -1)
+				{
+					ret |= 1;
+				} 
+				else 
+				{
+					cdt.splice(i, 1);
+				}
+			}
+		}
+		
+		return ret;
+	}
+	var check_category_filter = function (parent_id) {
+		var ret = 0;
+		var cdt = child_data['p:' + parent_id];
+		var obj;
+		var i;
+		var sret;
+		if (cdt != undefined) {
+			for (i = cdt.length - 1; i >= 0; i --) {
+				obj = cdt[i];
+				if (obj.is_folder) 
+				{
+					var exits = (obj.category_name.toLowerCase().indexOf(filter_opt.name, 0) != -1);
+					if(!exits)
+					{
+						sret = check_category_filter(obj.id);
+						
+						if (sret == 0) {
+							delete child_data['p:' + obj.id];
+							cdt.splice(i, 1);
+						}
+						else 
+						{
+							if ((sret & 0x10) == 0) 
+							{
+								delete child_data['p:' + obj.id];	
+								cdt.splice(i, 1);} 
+							else 
+							{
+								//if not exit delete all series that dirrect children of this category
+								delete_series(obj.id);
+								ret |= sret;
+							}
+						}
+					}
+					else
+					{
+						ret |= sret | 0x10;
+					}
+						
+				}
+				else
+				{
+					ret |= 1;	
+				}
+			}
+		}
+		return ret;
+	};
+	var check_top_category_filter = function (parent_id) 
+	{
+		var cdt = child_data['p:' + parent_id];
+		var obj;
+		var i;
+		var cet;
+		var self_delete;
+		if (filter_opt.name != "" && cdt != undefined) 
+		{
+			for (i = cdt.length - 1; i >= 0; i --) 
+			{
+				self_delete = false;
+				obj = cdt[i];
+				
+				if (obj.is_folder) 
+				{
+					var exits = (obj.category_name.toLowerCase().indexOf(filter_opt.name, 0) != -1);
+					if(!exits)
+					{
+						cet = check_category_filter(obj.id);
+						if ((cet & 0x10) == 0) 
+						{
+							self_delete = true;
+						}
+						else
+						{
+							//if not exit delete all series that dirrect children of this category
+							delete_series(obj.id);
+						}
+					}
+					if (self_delete) {
+						delete child_data['p:' + obj.id];
+						cdt.splice(i, 1);	// 自分を消す
+					}
+				}
+			}	
+		}
+	}
+	var check_loop_filter = function ()
+	{
+		var cdt = child_data['p:-1'];
+		var i;
+		if(cdt != undefined)
+		{
+			if(get_empty == false)
+			{
+				for (i = cdt.length - 1; i >= 0; i --) {
+					obj = cdt[i];
+					delete_empty_category(obj.id);
+				}
+			}
+			else
+			{
+				//Add Start NBKD-63 - Tin Vnit 2014/10/15
+				var update_user_name = $('#update_user_name').val();
+				if(update_user_name == undefined)
+				{
+					update_user_name = '';
+				}
+				//Add End NBKD-63 - Tin Vnit 2014/10/15
+				var item_no = $('#item_no').val();
+				//Add Start NBKD-63 - Tin Vnit 2014/10/15
+				if(item_no == undefined)
+				{
+					item_no = '';
+				}
+				//Add End NBKD-63 - Tin Vnit 2014/10/15
+				search_stop_only = $('#search_stop_only').prop('checked');
+				item_deleted = $('#item_deleted').prop('checked');//Add NBKD-40,52 - Tin Vnit 2014/10/16
+                                item_deleted_advanced = $('#item_deleted_advanced').prop('checked');//Add NBKD-66 - TrungVNIT - 2014/12/22
+				var item_no_advanced = $('#item_no_advanced').val();
+                                if(item_no_advanced == undefined)
+				{
+					item_no_advanced = '';
+				}
+                                var section_input_1 = $('#section_input_1').val();
+                                if(section_input_1 == undefined)
+				{
+					section_input_1 = '';
+				}
+                                var section_input_2 = $('#section_input_2').val();
+                                if(section_input_2 == undefined)
+				{
+					section_input_2 = '';
+				}
+                                var section_input_3 = $('#section_input_3').val();
+                                if(section_input_3 == undefined)
+				{
+					section_input_3 = '';
+				}
+                                if(section_input_1 != '' || section_input_2 != '' || section_input_3 != '' || update_user_name != '' || item_no != '' || search_stop_only == true || item_deleted == true || item_deleted_advanced == true || item_no_advanced != '')//Edit NBKD-40,52 - Tin Vnit 2014/10/16
+				{
+					for (i = cdt.length - 1; i >= 0; i --) {
+						obj = cdt[i];
+						delete_empty_category(obj.id);
+					}
+				}
+			}
+		}
+		var cdt = child_data['p:-1'];
+		var i;
+		if(cdt != undefined)
+		{
+			if(filter_opt.series_name != '')
+			{
+				for (i = cdt.length - 1; i >= 0; i --) {
+					obj = cdt[i];
+					check_series_filter(obj.id);
+				}
+			}
+		}
+		
+		var cdt = child_data['p:-1'];
+		var i;
+		if(cdt != undefined)
+		{
+			if(filter_opt.name != '')
+			{
+				for (i = cdt.length - 1; i >= 0; i --) {
+					obj = cdt[i];
+					if (obj.is_folder) {
+						check_top_category_filter(obj.id);
+					}
+					if(get_empty == false && filter_opt.series_name == '')
+					{
+						delete_empty_category(obj.id);
+					}
+				}
+			}
+		}
+	}
+	check_loop_filter();
+	//Edit End NBKD-494 Search Item_Info: change from OR to AND - Tin VNIT - 2014/10/10
+	tree_data = [];
+	for (var a in child_data) {
+		tree_data = tree_data.concat(child_data[a]);
+	}
+	
+	return tree_data;
+};
+
+// ツリーを今記憶しているデータで再描画
+TreeView.reload = function (tree_data, search_flag, cate_sel_func, get_empty) {//Edit NBKD-494 Search Item_Info - Tin VNIT - 2014/09/19
+	var category_val = (search_flag == true) ? $('#category_name').val() : '';
+	var series_val = (search_flag == true) ? $('#series_name').val() : '';
+	//Add Start NBKD-494 Search Item_Info - Tin VNIT - 2014/09/18
+	var item_no = (search_flag == true) ? $('#item_no').val() : '';
+	if(search_flag == true && category_val == '' && series_val == '' && item_no == '')
+	{
+		search_flag = false;
+	}
+	//Add End NBKD-494 Search Item_Info - Tin VNIT - 2014/09/18
+	$('#tree_view').empty();
+	$('#tree_view').append('<ul class="categories top"></ul>');
+	// 左だけにフィルタ	
+	tree_data = TreeView.filter(tree_data, category_val, series_val, get_empty, search_flag);//Edit NBKD-494 Search Item_Info - Tin VNIT - 2014/09/19
+	// ツリービューplugin設定
+	TreeView.set("#tree_view .top", tree_data, cate_sel_func);
+};
+
+TreeView.reload_advanced = function (tree_data, search_flag, cate_sel_func, get_empty, screen) {
+	var category_val = (search_flag == true) ? $('#category_name_advanced').val() : '';
+	var series_val = (search_flag == true) ? $('#series_name_advanced').val() : '';
+        var queue_creator = (search_flag == true) ? $('#queue_creator_advanced').val() : '';
+        var item_no = (search_flag == true) ? $('#item_no_advanced').val() : '';
+        var section_input_1 = (search_flag == true) ? $('#section_input_1').val() : '';
+        var section_input_2 = (search_flag == true) ? $('#section_input_2').val() : '';
+        var section_input_3 = (search_flag == true) ? $('#section_input_3').val() : '';
+	var item_no = (search_flag == true) ? $('#item_no').val() : '';
+	if(search_flag == true && category_val == '' && series_val == '' && item_no == '' && queue_creator == '' && section_input_1 == '' && section_input_2 == '' && section_input_3 == '')
+	{
+		search_flag = false;
+	}
+	$('#tree_view').empty();
+	$('#tree_view').append('<ul class="categories top"></ul>');
+        get_empty = false;
+        tree_data = TreeView.filter(tree_data, '', '', get_empty, search_flag); 
+	TreeView.set("#tree_view .top", tree_data, cate_sel_func);
+};
+
+// 初期データを変更
+TreeView.init_series = function (tree_data) {
+	for (var i = 0; i < tree_data.length; i ++) {
+		var obj = tree_data[i];
+		if (obj.is_folder) {
+		} else {
+			// 重複を避ける
+			var tmp_str = obj.id +"";
+			if(tmp_str.indexOf('s_') == -1){//Add NBKD-494 load tree empty - Minh Vnit 2014/09/04
+				obj.id = 's_' + tmp_str;
+			}
+		}
+	}
+};
+
+// ツリーが複数ある場合にIDを変更
+TreeView.replace_id = function (name, prefix) {
+	$(name).each(function () {
+		var cid = $(this).attr('id');
+		if(cid.indexOf(prefix) == -1){//Add NBKD-494 load tree empty - Minh Vnit 2014/09/04
+		$(this).attr('id', prefix + '_' + cid);
+		}
+	});
+};
+
+// カテゴリ配下のカテゴリidを全て取ってくる
+TreeView.get_all_category_id = function (cate_li) {
+	var cids = null;
+	if (cate_li.hasClass('series') == false) {
+		// カテゴリ
+		cids = [cate_li.attr('id').toString().replace("ltree_","")];//EDIT NBKD-494 - Minh Vnit 2014/09/18
+		cate_li.find('.folder').each(function () {cids.push($(this).attr('id').toString().replace("ltree_",""));});//EDIT NBKD-494 - Minh Vnit 2014/09/18
+		cids = cids.join(',');
+		category_flag = 1;
+	}
+	return cids;
+};
+
+//Add Start NBKD-494 - Trung VNIT - 2014/09/23
+var g_str_cat_id = "";
+var g_child_cat = [];
+TreeView.get_all_child_category_id = function(parent_id, limit){
+    if(limit === undefined){
+        g_child_cat = [];
+        g_child_cat.push(parent_id);
+    }
+    $.each(g_tree_data, function (key, data) {
+        if(parent_id == data['parent_id'] && data['is_folder'] == true && data['id'] > 0){
+            var child_id = data['id'].toString();
+            g_child_cat.push(child_id);
+            TreeView.get_all_child_category_id(child_id, 1);
+        }
+    });
+    g_str_cat_id = g_child_cat.join(",");
+    return g_str_cat_id;
+};
+// add start NBKD-66 Phong VNIT 20141222
+TreeView.get_child_category_id = function(parent_id, limit){
+    if(limit === undefined){    	
+        g_child_cat = [];
+        if(TreeView.check_serie_id(parent_id)== true){
+        	g_child_cat.push(parent_id);
+        }
+    }
+    $.each(g_tree_data, function (key, data) {
+        if(parent_id == data['parent_id'] && data['is_folder'] == true && data['id'] > 0){
+            var child_id = data['id'].toString();
+            if(TreeView.check_serie_id(child_id)==true){
+            	g_child_cat.push(child_id);
+            }
+            TreeView.get_child_category_id(child_id, 1);
+        }
+    });
+    g_str_cat_id = g_child_cat.join(",");
+    return g_str_cat_id;
+};
+TreeView.check_serie_id = function(parent_id){    
+	var v_result = false;
+    $.each(g_tree_data, function (key, data) {
+        if(parent_id == data['parent_id'] && data['is_folder'] == false){
+            v_result = true;
+            //break;
+        }
+    });    
+    return v_result;
+};
+// add end NBKD-66 - Phong VNIT  20141222
+//Add End NBKD-494 - Trung VNIT - 2014/09/23
+
+//Add Start NBKD-494 - Minh VNIT - 2014/09/23
+//get all child category_code (folder,series) by folder parent id
+TreeView.get_all_child_category_code = function(parent_id, limit){
+    if(limit === undefined){
+        g_child_cat = [];
+        //g_child_cat.push(parent_id);
+    }
+    $.each(g_tree_data, function (key, data) {
+    	var is_folder = data['is_folder'].toString();
+    	if(parent_id == data['id'] && limit === undefined){
+        	g_child_cat.push(is_folder +"-"+data['category_code'].toString());
+        }
+        else if(parent_id == data['parent_id']){
+            var category_code = data['category_code'].toString();
+            var child_id = data['id'].toString();
+            g_child_cat.push(is_folder+"-"+category_code);
+            TreeView.get_all_child_category_code(child_id, 1);
+        }
+    });
+    return g_child_cat;
+};
+//get all child id (folder,series) by folder parent id
+TreeView.get_all_child_id = function(parent_id, limit){
+    if(limit === undefined){
+        g_child_cat = [];
+        g_child_cat.push(parent_id);
+    }
+    $.each(g_tree_data, function (key, data) {
+    	if(parent_id == data['parent_id']){
+            var child_id = data['id'].toString();
+            g_child_cat.push(child_id);
+            TreeView.get_all_child_id(child_id, 1);
+        }
+    });
+    return g_child_cat;
+};
+//Add start - NBKD-923 - Tin VNIT - 2014/01/30
+TreeView.check_child_yoyaku = function(parent_id, flag){
+	if(typeof(g_tree_data) != "undefined" && g_tree_data !== null)
+	{
+		$.each(g_tree_data, function (key, data) {
+	    	if(parent_id == data['parent_id']){
+	            if(typeof(data['yoyaku_head_id']) != "undefined" && data['yoyaku_head_id'] !== null)
+	            {
+	            	flag = true;
+	            }
+	            flag = TreeView.check_child_yoyaku( data['id'].toString(), flag);
+	        }
+	    });
+	}
+    return flag;
+};
+//Add end - NBKD-923 - Tin VNIT - 2014/01/30
+//get all child all item object (folder,series) by folder all parent id
+TreeView.get_all_child_obj = function(parent_obj){
+	g_child_cat = [];
+    $.each(g_tree_data, function (key, data) {
+        if($.inArray(data['id'].toString(),parent_obj) != -1){
+            g_child_cat.push(data);
+        }
+    });
+    return g_child_cat;
+};
+//Add End NBKD-494 - Minh VNIT - 2014/09/23
+//Add start LIXD-71 Phong VNIT -20150704
+TreeView.get_all_child_series_id_right = function(parent_id, limit){
+    if(limit === undefined){    	
+        g_child_cat = [];       
+    }
+    $.each(g_tree_data_r, function (key, data) {
+        if(parent_id == data['parent_id'] ){        	
+            var child_id = data['id'].toString();
+            if(data['is_folder']==false){            	
+            	g_child_cat.push({'id':child_id,'name':data['category_name'].toString()});
+            }else{
+            	TreeView.get_all_child_series_id_right(child_id,1);
+            }      
+        }
+    });    
+    return g_child_cat;
+};
+TreeView.get_child_parent_category_id = function(select_id,child_parent, limit){
+    if(limit === undefined){    	
+        g_child_cat = [];        
+    }
+    if(child_parent === undefined || child_parent=="CHILD"){       
+	    $.each(g_tree_data, function (key, data) {
+	        if(select_id == data['parent_id'] && data['is_folder'] == true && data['id'] > 0){
+	            var child_id = data['id'].toString();
+	            g_child_cat.push(child_id);	            
+	            TreeView.get_child_category_id(child_id,"CHILD", 1);
+	        }
+	    });    
+    }
+    if(select_id != 1){
+	    if(child_parent === undefined || child_parent=="PARENT"){
+	    	$.each(g_tree_data, function (key, data) {
+		        if(select_id == data['id'] && data['is_folder'] == true && data['id'] > 0){
+		            var parent_id = data['parent_id'].toString();
+		            if(parent_id > 1){
+			            g_child_cat.push(parent_id);
+			            TreeView.get_child_parent_category_id(parent_id,"PARENT", 1);
+		            }
+		        }
+		    });        
+	    }
+    }
+    return g_child_cat;
+};
+//Add end LIXD-71 Phong VNIT -20150704
+// パンくず設定
+TreeView.set_topic_path = function (elm) {
+	var title = $('head > title').text();
+	$('#t_path').empty();
+	$('#t_path').append('<li><h2>' + title + '</h2></li>');
+	if (elm == undefined) {
+		return;
+	}
+
+	var par = $(elm);
+	var names = [];
+	par = par.parent();
+	var i;
+	while (par.hasClass('top') == false) {
+		if (par.hasClass('folder') || par.hasClass('series')) {
+			names.unshift(par.children('div').find('a').text());
+		}
+		par = par.parent();
+	}
+	//names.shift();// TOP削り
+	$('#t_path').append('<li>' + names.shift() + '</li>');
+	for (i = 0; i < names.length; i ++) {
+		$('#t_path').append('<li>　＞　' + names[i] + '</li>');
+	}
+};
+
+//Add Start NBKD-494 load tree empty - Minh Vnit 2014/09/04
+TreeView.push_item = function (obj,parent_id,tree_check) {
+	var li_child = $("<li class='open'>");
+	tree_view_id = tree_check;
+	li_child.attr("id", obj.id);
+	var div = $("<div>");
+	// 階層アイコンの空間埋め用
+	div.append("<span style='margin: 2px;'>");
+	var img_src = "";
+	if (obj.parent_id == -1) {
+		// トップ
+		img_src = "<%$smarty.const.ACW_BASE_URL%>shared/img/icon_top.gif";
+	} else if (obj.is_folder == false) {
+		// シリーズ
+		img_src = "<%$smarty.const.ACW_BASE_URL%>shared/img/icon_series.gif";
+	} else {
+		// カテゴリ
+		img_src = "<%$smarty.const.ACW_BASE_URL%>shared/img/icon_folder.png";
+	}
+	var li = $("<li class='open'>");
+	li.attr("id", obj.id);
+	var div = $("<div>");
+	if (obj.is_folder) {
+		// 階層閉じるアイコン
+		var m_img = $("<img src='<%$smarty.const.ACW_BASE_URL%>shared/img/icon_close.gif' class='img_close'>");
+		m_img.attr("id", tree_view_id+"_img_close_"+obj.id);//Add - Minh VNIT - 2014/08/29
+		m_img.hide();
+		div.append(m_img);
+		// 階層開くアイコン
+		var p_img = $("<img src='<%$smarty.const.ACW_BASE_URL%>shared/img/icon_open.gif' class='img_open'>");
+		p_img.attr("id", tree_view_id+"_img_open_"+obj.id);//Add - Minh VNIT - 2014/08/29
+		div.append(p_img);
+	} else {
+		// 階層アイコンの空間埋め用
+		div.append("<span style='margin: 2px;'>");
+	}
+
+	if (img_src != "") {
+		var img_color = "";
+		if (obj.data_kbn == '1') {
+			// シリーズ
+			if (obj.syuyaku_flg == '1') {
+				// 集約シリーズ
+				img_src = "<%$smarty.const.ACW_BASE_URL%>shared/img/syuyaku.gif";
+				//img_color = "#F9C8FF";
+			} else if (obj.kyoyu_flg == '1') {
+				// 共有シリーズ
+				img_src = "<%$smarty.const.ACW_BASE_URL%>shared/img/kyoyu.gif";
+				//img_color = "#C8DDFF";
+			} else {
+				// 通常シリーズ
+				img_color = "#FFFFFF";
+			}
+		} else if (obj.data_kbn == '2') {
+			// 技術ページ
+			img_src = "<%$smarty.const.ACW_BASE_URL%>shared/img/info.gif";
+			//img_color = "#DDFFC8";
+		} else if (obj.data_kbn == '3') {//Add NBKD-486 Minh Vnit 2014/12/12
+			// 技術ページ
+			img_src = "<%$smarty.const.ACW_BASE_URL%>shared/img/box.png";
+			//img_color = "#DDFFC8";
+		}else {
+			// 通常シリーズ
+			img_color = "#FFFFFF";
+		}
+	
+                 //Add Start - LIXD-18 - TrungVNIT - 2015/07/15
+                var cbox = '';
+                if(tree_view_id != 'tree_view' && checkbox_flg != null && checkbox_flg == 1 && parent_id != -1){
+                    cbox = '<input type="checkbox" name="cbox_'+obj.id+'" id="cbox_'+obj.id+'" class="cbox_category" onclick="ctg_select('+obj.id+');" value="1"> ';
+                }
+                //Add End - LIXD-18 - TrungVNIT - 2015/07/15
+                
+		div.append(cbox + "<img src='" + img_src + "' style='background-color: " + img_color + "'>");
+	}
+	// htmlエスケープする
+	var a = $(Mustache.render("<a href='javascript: void(0);'>{{cate_name}}</a>", {cate_name: obj.category_name}));
+	if (obj.is_folder == false) {
+		a.addClass("treeview_item");
+	}
+	//Add start - NBKD-923 - Tin VNIT - 2014/01/30
+	else if(obj.parent_id != -1 && tree_view_id == "tree_view")
+	{
+		var child_yoyaku = TreeView.check_child_yoyaku(obj.id, false);
+		if(child_yoyaku == true)
+		{
+			a.addClass("yoyaku_bold");
+		}
+		
+	}
+	if (typeof(obj.yoyaku_head_id) != "undefined" && obj.yoyaku_head_id !== null && tree_view_id == "tree_view")
+	{
+		a.addClass("yoyaku_bold");	
+	}
+	//Add end - NBKD-923 - Tin VNIT - 2014/01/30
+	if(tree_view_id == "tree_view"){
+		if (g_after_select) {
+			a.click(function() {
+				g_after_select(this);
+			});
+		}
+	}
+	else{
+		if (g_after_select_r) {
+			a.click(function() {
+				g_after_select_r(this);
+			});
+		}
+	}
+	
+	div.append(a);
+
+	li_child.append(div);
+
+	if (obj.is_folder == true) {
+		li_child.addClass("folder");
+		li_child.attr('ctg_id', obj.ctg_id);
+	} else {
+		li_child.addClass("series");
+	}
+	
+	//Add Start Minh Vnit NBKD-1062 2015/02/24
+	if(obj.disp_flg == 0){
+		li_child.css("display", "none");
+	}
+	//Add End Minh Vnit NBKD-1062 2015/02/24
+	
+	return li_child;
+};
+
+TreeView.get_child_item = function (data,parent_id,folder_id,tree_id) {
+	if(folder_id.indexOf("ltree") != -1 || folder_id.indexOf("rtree") != -1 || folder_id.indexOf("ctree") != -1){	//Edit - miyazaki U_SYS - 2014/11/25
+		if(tree_id != "tree_view" && tree_id != "tree_view_r" && tree_id != "tree_view_c"){	//Edit - miyazaki U_SYS - 2014/11/25
+			
+			if($.inArray(tree_id+folder_id,g_data_dialog_has_load) == -1){
+			
+				TreeView.get_child_item_exe(data,parent_id,folder_id,tree_id);
+				
+				g_data_dialog_has_load.push(tree_id + folder_id);
+			
+			}
+				
+		}
+		else if($.inArray(tree_id+folder_id,g_data_parent_has_load) == -1 && tree_id == "tree_view"){
+			
+			TreeView.get_child_item_exe(data,parent_id,folder_id,tree_id);
+			
+			g_data_parent_has_load.push(tree_id + folder_id);
+		
+		}
+		else if($.inArray(tree_id+folder_id,g_data_r_parent_has_load) == -1 && tree_id == "tree_view_r"){
+			
+			TreeView.get_child_item_exe(data,parent_id,folder_id,tree_id);
+			
+			g_data_r_parent_has_load.push(tree_id + folder_id);
+		
+		}
+		// Add start - miyazaki U_SYS - 2014/11/27
+		else if($.inArray(tree_id+folder_id,g_data_c_parent_has_load) == -1 && tree_id == "tree_view_c"){
+			
+			TreeView.get_child_item_exe(data,parent_id,folder_id,tree_id);
+			
+			g_data_c_parent_has_load.push(tree_id + folder_id);
+		
+		}
+		// Add end - miyazaki U_SYS - 2014/11/27
+	}
+	
+};
+
+TreeView.get_child_item_exe = function (data,parent_id,folder_id,tree_id) {
+	var li = $( "#"+folder_id );
+	var par_li = $("<ul class='categories'>");
+	var data_fill = [];
+	for (i = 0; i < data.length; i ++) {
+		obj = data[i];
+		
+		if (obj.parent_id == parent_id  /*&& obj.is_folder == false*/ ) {
+			data_fill.push(obj);
+			var li_child = TreeView.push_item(obj,parent_id,tree_id);
+			par_li.append(li_child);
+		}
+	}
+	if(par_li.children().length > 0){
+		li.append(par_li);
+	}
+	
+	
+	// 品番埋め込む
+	for (var i in data_fill) {
+		var obj = data_fill[i];
+		$(".top li#" + obj.id).find("a").each(function () {
+			$(this).attr("item_no", obj.item_no);
+			$(this).attr("series_tag", obj.series_id);
+		});
+	}
+};
+
+TreeView.override_on_click_open = function (str_search,str_replace) {
+	$(document).on('click', '.img_open', function() {
+		// ID変更
+		TreeView.replace_id(str_search, str_replace);
+		
+	});
+	
+};
+
+//Add Start NBKD-493 Minh Vnit 2015/01/20
+TreeView.open_category_by_id = function (cat_id) {
+	id = $("#"+cat_id+" .img_open").attr("id");
+	if(id != undefined){
+		$("#"+id).click();
+	}
+};
+//Add End NBKD-493 Minh Vnit 2015/01/20
+
+TreeView.expand_tree_by_item_id = function (tree_view_id,id,id_replace) {
+	id = id.replace(id_replace+"_","");
+	var obj_parent = TreeView.get_all_parent(g_tree_data,id);
+	var id_top = $("#"+tree_view_id+" .top").children("li").attr("id");
+	
+	//Add Start NBKD-835 Minh Vnit 2015/01/15
+	//obj_parent.sort();
+	obj_parent.sort(function(a,b) {
+	  if (isNaN(a) || isNaN(b)) {
+	    return a > b ? 1 : -1;
+	  }
+	  return a - b;
+	});
+	//Add Start NBKD-835 Minh Vnit 2015/01/15
+	for (i = 0; i < obj_parent.length; i ++) {
+		var id_parent = obj_parent[i];
+		if (id_replace+"_"+id_parent != id_top) {
+			id_parent = $("#"+id_replace+"_"+id_parent+" .img_open").attr("id");
+			$("#"+id_parent).click();
+			TreeView.tree_view_replace_id_all(tree_view_id);
+		}
+	}
+	
+	$("#"+id_replace+"_"+id).focus();
+	$("#"+id_replace+"_"+id).blur();
+	$("#"+id_replace+"_"+id+" a").addClass("category_selected");
+	$("#"+id_replace+"_"+id+" a").click();
+};
+
+TreeView.get_all_parent = function (data,item_id) {
+	var obj_parent_id = [];
+	for (i = 0; i < data.length; i ++) {
+		obj = data[i];
+		if (obj.id == item_id) {
+			obj_parent_id = TreeView.get_parent_id (obj_parent_id,data,obj);
+			break;
+		}
+	}
+	return obj_parent_id;
+};
+TreeView.get_parent_id = function (obj_parent_id,data,item_data) {
+	for (i = 0; i < data.length; i ++) {
+		obj = data[i];
+		if (obj.id == item_data.parent_id) {
+			obj_parent_id.push(obj.id );
+			obj_parent_id = TreeView.get_parent_id (obj_parent_id,data,obj);
+			break;
+		}
+	}
+	return obj_parent_id;
+	
+};
+//Add End NBKD-494 load tree empty - Minh Vnit 2014/09/04
+// add start NBKD-1074 Phong VNIT 2015/03/24
+TreeView.check_syuyaku_kyoyu = function(object_id){
+	var flag='';
+	if(typeof(g_tree_data) != "undefined" && g_tree_data !== null)
+	{
+		$.each(g_tree_data, function (key, data) {
+			//console.log(data['id']);
+	    	if(object_id == data['id']){
+	            if(data['syuyaku_flg']=='1')
+	            {
+	            	flag = 'syuyaku';
+	            }
+	            if(data['kyoyu_flg']=='1')
+	            {
+	            	flag = 'kyoyu';
+	            }
+	        }
+	    });
+	}
+    return flag;
+};
+// add end NBKD-1074 Phong VNIT 2015/03/24
+$(function() {
+	// イベント設定
+	$(document).on('click', '.img_close', function() {
+		$(this).parent().parent().children("ul").hide();
+		$(this).hide();
+		$(this).parent().find(".img_open").show();
+	});
+	$(document).on('click', '.img_open', function() {
+		$(this).parent().parent().children("ul").show();
+		$(this).hide();
+		$(this).parent().find(".img_close").show();
+		//Add Start NBKD-494 load tree empty - Minh Vnit 2014/09/04
+		var folder_id = $(this).parent().parent().attr("id");
+		var tree_id = "";
+		var id = $(this).attr("id");
+		var tree_data = g_tree_data_r;
+		if(id.indexOf("tree_view_img_open_") != -1){
+			tree_id = "tree_view";
+			tree_data = g_tree_data;
+		}
+		else if(id.indexOf("tree_view_r_img_open_") != -1){
+			tree_id = "tree_view_r";
+			tree_data = g_tree_data_r;
+		}
+		// Add start - miyazaki U_SYS - 2014/11/27
+		else if(id.indexOf("tree_view_c_img_open_") != -1){
+			tree_id = "tree_view_c";
+			tree_data = g_tree_data_c;
+		}
+		else if(id.indexOf("tree_view_c_syu_img_open_") != -1){ // add NBKD-927 Phong VNIT 20150213
+			tree_id = "tree_view_c_syu";
+			tree_data = g_tree_data_c;
+		}
+		// Add end - miyazaki U_SYS - 2014/11/27
+		else if(id.indexOf("tree_view_r_relation_img_open_") != -1){
+			tree_id = "tree_view_r_relation";
+		}
+		else if(id.indexOf("tree_view_r_info_img_open_") != -1){
+			tree_id = "tree_view_r_info";
+		}
+		else if(id.indexOf("tree_view_r_syuyaku_img_open_") != -1){
+			tree_id = "tree_view_r_syuyaku";
+		}
+		else if(id.indexOf("tree_view_r_syu_img_open_") != -1){ // add NBKD-927 Phong VNIT 20150213
+			tree_id = "tree_view_r_syu";
+		}
+		else if(id.indexOf("tree_view_r_kyoyu_img_open_") != -1){
+			tree_id = "tree_view_r_kyoyu";
+		}
+		
+		var folder_name = $("#"+folder_id).children().children("a").text();
+		id = id.replace("tree_view_img_open_","");
+		id = id.replace("tree_view_r_img_open_","");
+		id = id.replace("tree_view_c_img_open_","");	// Add - miyazaki U_SYS - 2014/11/27
+		id = id.replace("tree_view_c_syu_img_open_",""); // add NBKD-927 Phong VNIT 20150213
+		id = id.replace("tree_view_r_relation_img_open_","");
+		id = id.replace("tree_view_r_info_img_open_","");
+		id = id.replace("tree_view_r_syuyaku_img_open_","");
+		id = id.replace("tree_view_r_syu_img_open_",""); // add NBKD-927 Phong VNIT 20150213
+		id = id.replace("tree_view_r_kyoyu_img_open_","");
+		id = id.replace("_img_open_","");
+		
+		if(folder_name != "TOP" && folder_name != "TOP(0)"){//not is TOP
+			TreeView.get_child_item(tree_data,id,folder_id,tree_id);
+		}
+		TreeView.tree_view_replace_id_all(tree_id);
+		//Add End NBKD-494 load tree empty - Minh Vnit 2014/09/04
+	});
+});
+</script>

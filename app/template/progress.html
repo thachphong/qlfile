@@ -1,0 +1,357 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/base.dwt" codeOutsideHTMLIsLocked="false" --><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>進行管理</title>
+		<%include 'include/head.html'%>
+		<link href="<%$smarty.const.ACW_BASE_URL%>shared/css/baitai.css" rel="stylesheet" type="text/css" />
+		<link href="<%$smarty.const.ACW_BASE_URL%>shared/css/baitai2.css" rel="stylesheet" type="text/css" />
+</head>
+<body class="column_1"><!--  ■■■■■　通常はcolumn_2で、比較表示の時はcolumn_3へ　■■■■■  -->
+<div class="bg">
+<div class="container">
+		<%include 'include/menu.html'%>
+<div class="contents_wrap"> 
+<!-- InstanceBeginEditable name="top_contents" -->
+	<div class="search_wrap">
+		<form id="search_form" action="<%$smarty.const.ACW_BASE_URL%>progress/list/<%$info.t_media_head_id%>" method="POST">
+		<table class="kensaku">
+			<colgroup><col width="85px" /><col width="150px" /><col width="150px" /><col width="150px" /><col width="" /></colgroup>
+			<tr><th>条件検索</th><td class="first">カテゴリ表示名 <input type="text" size="20" name="search_category_name" id="search_category_name" /></td><td>シリーズ<!-- //Edit - NBKD-66 - Hungtn VNIT - 2015/01/09  --> <input type="text" size="15" name="search_series_name" id="search_series_name" /></td><td>品番 <input type="text" size="15" name="search_item_no" id="search_item_no"/></td><td class="al_l"><button type="button" id="search_button">検索</button> <button type="button" id="clear_button">クリア</button></td></tr>
+		</table>
+		</form>
+	</div>
+	<ul class="topic_path">
+		<li><h2>進行管理</h2></li>
+		<li><h2><%$info.media_name%></h2></li>
+	</ul>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="side_contents" -->
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="main_contents" -->
+<div class="main_contents">
+<div class="main_innner height2">
+	<div class="baitai_wrap">
+		<p class="clear_fix"><input type="button" id="section_check_button" value="項目入力チェック" />　<!-- input type="button" id="section_add_button" value="チェック項目追加" /></p -->
+		<!--Add Start NBKD-926 Tin VNIT  - 2015/01/23-->
+		<input type="button" value="媒体管理に戻る" onclick="location.href = '<%$smarty.const.ACW_BASE_URL%>media';" /> </p>
+		<!--Add End NBKD-926 Tin VNIT  - 2015/01/23-->
+		<table id="series_list">
+			<colgroup><col width="40px" /><col width="40px" /><col width="60px" /><col width="100px" /><col width="150px" /><col width="50px" /><col width="50px" /><col width="50px" /><col width="50px" /><%foreach $medsec as $msec%><col width="50px" /><%/foreach%><col width="80px" /></colgroup>
+			<thead>
+			<tr><th>登録</th><th>承認</th><th>出力版</th><th>カテゴリ</th><th>シリーズ・技術ページ</th><th>最新版</th><th>PM承認・MK確認ステータス</th><th>ページ</th><th>サイズ</th><%foreach $medsec as $msec%><th><%$msec.section_name%></th><%/foreach%><th>メモ</th></tr>
+			</thead>
+			<tbody>
+			<%foreach $list as $srs%>
+			<tr><td class="al_c"><input type="button" value="登録" class="regist_button" id="regist_<%$srs.t_media_series_id%>"><input type="hidden" class="chk_ms_id" value="<%$srs.t_media_series_id%>"></td>
+				<td class="al_c"><input type="checkbox" class="approval_check" id="check_<%$srs.t_media_series_id%>" value="1" <%if $srs.approval_flg == 1%>checked="checked"<%/if%>></td>
+				<td><input type="button" value="..." class="select_ver_button" id="selbtn_<%$srs.t_media_series_id%>" ><%if $srs.new_ver_id != $srs.med_ver_id%>v<%*違うVerの場合のみ表示*%><%$srs.med_major_ver%>.<%$srs.med_minor_ver%><%/if%></td>
+				<td><%$srs.ctg_name%></td>
+				<td><a class="series_link" href="javascript:void(0);" id="series_<%$srs.t_series_mei_id%>"><%$srs.series_name%></a></td>
+				<td class="al_c">v<%$srs.new_major_ver%>.<%$srs.new_minor_ver%></td>
+				<td class="al_c"><%$srs.kbn_name%></td>
+				<td class="al_c"><input type="text" id="page_<%$srs.t_media_series_id%>" size="4" value="<%$srs.page%>" style="text-align: right;"></td>
+				<td class="al_c"><input type="text" size="4" id="size_<%$srs.t_media_series_id%>" value="<%$srs.size%>" style="text-align: right;"></td>
+				<%foreach $srs.section_result as $secr%><td class="al_c"><%if $secr.val == '-'%><%* ｶﾃｺﾞﾘにより無効な場合 *%>-<%else%><input type="checkbox" class="secchkc_<%$srs.t_media_series_id%>" id="secchk_<%$srs.t_media_series_id%>_<%$secr.id%>" <%if $secr.val == 1%>checked="checked"<%/if%> value="<%$secr.id%>=1" /><%/if%></td><%/foreach%>
+				<td><input type="text" size="30" id="memo_<%$srs.t_media_series_id%>" value="<%$srs.memo%>"></td></tr>
+			<%/foreach%>
+			</tbody>
+		</table>
+	</div><!-- / .top_wrap -->
+</div><!-- / .main_innner -->
+</div><!-- / .main_contents -->
+<!-- InstanceEndEditable -->
+<%include 'include/footer.html'%>
+</div><!-- / .contents_wrap -->
+</div><!-- / .container -->
+</div><!-- / .bg -->
+<div id="new_dialog"></div>
+<%include 'include/argo_ajax.html'%>
+<%include 'include/table_shima.html'%>
+<%include 'include/link_item.html'%>
+<script type='text/javascript'>
+$(function() {
+	var check_media_series = null;	// チェックする版ID
+        var msid = null;//Add - Trung VNIT - 2014/08/21
+
+	// サイズ変更スクリプト
+	$(window).on("load resize", function(){
+		var wh = $(window).height();
+		$(".height2").height(wh - 206);	// 設定画面
+	});
+
+	var html_ajax = new Argo_ajax('html');
+	html_ajax.done_func = function(data) {
+		$('#new_dialog').empty();
+		$('#new_dialog').prepend(data);
+		$('#new_dialog').dialog({
+			modal:true,
+			draggable:false,
+			title:"版選択",
+			height:'auto',
+			width:'auto',
+			buttons:{
+				'閉じる': function() {
+					$(this).dialog('close');
+				}
+			}
+		});
+	};
+	
+	var json_ajax = new Argo_ajax('json');
+	json_ajax.done_func = function(data) {
+		// 更新
+		if (data.error) {
+			if (data.error.length > 0) {
+				Argo_ajax.message_box_error("", data.error[0]['info']); //Edit NBKD-1071 TinVNIT 02/27/2015
+			}
+		} else {
+			Argo_ajax.message_box(' ', '更新しました。');//Edit - Trung VNTIT - 2014/08/04
+		}
+	};
+
+	var json_r_ajax = new Argo_ajax('json');
+	json_r_ajax.done_func = function(data) {
+		// 更新
+		if (data.error) {
+			if (data.error.length > 0) {
+				Argo_ajax.message_box_error("", data.error[0]['info']); //Edit NBKD-1071 TinVNIT 02/27/2015
+			}
+		} else {
+			$('#new_dialog').dialog('close');
+			Argo_ajax.message_box(' ', '更新しました。', function () {//Edit - Trung VNTIT - 2014/08/04
+				$('#search_form').submit();
+			});
+		}
+	};
+
+	// 承認
+	$('.approval_check').change(function() {
+		var chk;
+		var msg;
+		var chk_id = $(this).attr('id');
+		if ($(this).is(':checked')) {
+			// チェックしました
+			chk = 1;
+			msg = '承認します。';
+		} else {
+			// チェック消しました
+			chk = 0;
+			msg = '承認を取り消します。';
+		}
+
+		Argo_ajax.ok_cancel_box(' ', msg + 'よろしいですか？', function () {//Edit - Trung VNIT - 2014/08/04
+				// OK
+				var ids = chk_id.split('_');
+				json_ajax.connect('POST', 'progress/approval', {
+					series_id: ids[1]
+					,approval: chk
+				});
+			},
+			function () {
+				// キャンセル
+				if (chk) {
+					// チェックしました 消す
+					$('#' + chk_id).prop("checked", false);
+				} else {
+					// チェック消しました 付ける
+					$('#' + chk_id).prop("checked", true);
+				}
+			}
+		);
+	});
+        
+        //Add Start - Trung VNIT - 2014/08/21
+        var regist_ajax = new Argo_ajax('json');
+        regist_ajax.done_func = function(data) {
+            if (data.error) {
+                if (data.error.length > 0) {
+                    Argo_ajax.message_box_error('', data.error[0]['info']);
+                }else{
+                    // パラメタ作成
+                    var param = [
+                            {
+                                    name:'series_id'
+                                    ,value:msid
+                            }
+                            ,{
+                                    name:'page'
+                                    ,value:$('#page_' + msid).val()
+                            }
+                            ,{
+                                    name:'size'
+                                    ,value:$('#size_' + msid).val()
+                            }
+                            ,{
+                                    name:'memo'
+                                    ,value:$('#memo_' + msid).val()
+                            }
+                    ];
+
+                    // チェック分
+                    $('.secchkc_' + msid + ':checked').each(function() {
+                            param.push({name:'secchk[]', value:$(this).val()});
+                    });
+
+                    json_ajax.connect('POST', 'progress/updatemseries', param);
+                }
+            }
+        };
+        
+	// 登録
+	$('.regist_button').click(function() {
+            msid = Argo_ajax.get_split_id($(this).attr('id'));
+            // パラメタ作成
+            var param = [
+                    {
+                            name:'series_id'
+                            ,value:msid
+                    }
+                    ,{
+                            name:'page'
+                            ,value:$('#page_' + msid).val()
+                    }
+                    ,{
+                            name:'size'
+                            ,value:$('#size_' + msid).val()
+                    }
+                    ,{
+                            name:'memo'
+                            ,value:$('#memo_' + msid).val()
+                    }
+            ];
+            regist_ajax.connect('POST', 'progress/checkmaxlenght', param);
+	});
+        //Add End - Trung VNIT - 2014/08/21
+        
+	$('#search_category_name').val('<%$search_category_name%>');
+	$('#search_series_name').val('<%$search_series_name%>');
+	$('#search_item_no').val('<%$search_item_no%>');
+	
+        //Add Start - Trung VNIT - 2014/08/21
+        var json_submit_ajax = new Argo_ajax('json');
+        json_submit_ajax.done_func = function(data) {
+            if (data.error) {
+                if (data.error.length > 0) {
+                    $('#series_list tbody').empty();
+                   Argo_ajax.message_box_error('', data.error[0]['info']);
+                }else{
+                    $('#search_form').submit();
+                }
+            }
+        };
+                
+	// 検索ボタン
+	$('#search_button').click(function(){
+            $arr = $('#search_form').serializeArray();
+            json_submit_ajax.connect('POST', 'progress/checkmaxlenght', $arr);
+	});
+        //Add End - Trung VNIT - 2014/08/21
+        
+        //Add Start - Trung VNIT - 2014/08/27
+        $("#search_category_name").enterKey(function () {
+            $('#search_button').click();
+        });
+
+        $("#search_series_name").enterKey(function () {
+            $('#search_button').click();
+        });
+        
+        $("#search_item_no").enterKey(function () {
+            $('#search_button').click();
+        });
+        //Add End - Trung VNIT - 2014/08/27
+        
+	// クリアボタン
+	$('#clear_button').click(function(){
+		// フォームリセット
+		$('#search_form').get(0).reset();
+		//$('#search_form').submit();Remove - Trung VNIT - 2014/08/29
+	});
+
+	// 版変更
+	$('.select_ver_button').click(function () {
+		var btn_id = $(this).attr('id');
+		var ids = btn_id.split('_');
+		html_ajax.connect('POST', 'progress/verlist', {media_series_id:ids[1]});
+	});
+
+	// 版選択
+	$(document).on('click', '.selcomver_button', function () {
+		var id = Argo_ajax.get_split_id($(this).attr('id'));
+		json_r_ajax.connect('POST', 'progress/updatever', {
+			media_series_id: $('#selcom_media_series_id').val()
+			,ver_id: id
+		});
+	});
+
+	// チェック項目追加
+	$('#section_add_button').click(function () {
+		html_ajax.connect('POST', 'progress/sectionlist', {head_id:'<%$head_id%>'});
+	});
+
+	// テーブルに縞模様
+	table_shimashima('#series_list');
+
+	// 商品名・シリーズクリックジャンプ
+	$(document).off("click", ".series_link");
+	$(document).on("click", ".series_link", function () {
+		LinkItem.jump(Argo_ajax.get_split_id($(this).attr('id')));
+	});
+
+	// チェック用
+	var json_chk_ajax = new Argo_ajax('json');
+	json_chk_ajax.done_func = function(data) {
+		var i;
+		var chkname;
+		// 更新
+		if (data.error) {
+			if (data.error.length > 0) {
+				Argo_ajax.message_box_error("", data.error[0]['info']); //Edit NBKD-1071 TinVNIT 02/27/2015
+			}
+		} else {
+			if (data.check) {
+				// チェック結果が返って来た
+				for (i = 0; i < data.check.length; i ++) {
+					chkname = '#secchk_' + data.ms_id + '_' + data.check[i].id;
+					if (data.check[i].data == 1) {
+						$(chkname).prop('checked', true);
+					} else {
+						$(chkname).prop('checked', false);
+					}
+				}
+			}
+			
+			// 正常終了
+			if (check_media_series.length > 0) {
+				//　続き
+				check_media();
+			} else {
+				// ダイアログ閉じて終わり
+			}
+		}
+	};
+
+	// チェックする
+	var check_media = function () {
+		var id = check_media_series.shift();
+		json_chk_ajax.connect('POST', 'progress/checkmedia', {
+			ms_id: id
+		});
+	};
+
+	// 項目チェックボタン
+	$('#section_check_button').click(function() {
+		check_media_series = [];
+		// IDを集める
+		$('.chk_ms_id').each(function () {
+			check_media_series.push($(this).val());
+		});
+
+		if (check_media_series.length > 0) {
+			check_media();
+		}
+	});
+});
+</script>
+</body>
+<!-- InstanceEnd --></html>

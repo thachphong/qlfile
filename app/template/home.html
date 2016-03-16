@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title><%if isset($yoyaku_flg) == true%>予約<%/if%>承認一覧</title>
+		<%include 'include/head.html'%>
+		<link href="<%$smarty.const.ACW_BASE_URL%>shared/css/approval.css" rel="stylesheet" type="text/css" />
+		<link href="<%$smarty.const.ACW_BASE_URL%>shared/css/search_advance.css" rel="stylesheet" type="text/css" />
+		<%if isset($yoyaku_flg) == true%>
+		<link href="<%$smarty.const.ACW_BASE_URL%>shared/css/yoyaku.css" rel="stylesheet" type="text/css" />
+		<%/if%>
+		
+</head>
+<body class="column_2">
+<div class="bg">
+<div class="container">
+<%include 'include/menu.html'%>
+<div class="contents_wrap"> 
+<!-- InstanceBeginEditable name="top_contents" -->
+	<div class="search_wrap">
+		<form id="search_form">
+		<table class="kensaku">
+			
+		</table>
+		</form>
+	</div>
+	<ul class="topic_path" id="t_path">
+	</ul>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="side_contents" -->
+<div class="side_contents">        
+        <ul class="path_wrap" style="text-align: right">
+            <input type='button' value='<%$smarty.const.UNFOLD_TEXT%>' class='tree_fold' />
+        </ul>       
+	<div class="tree_wrap height1" id="tree_view" >
+	</div><!-- / .tree_wrap -->
+</div><!-- / .side_contents heightLine -->
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="main_contents" -->
+<div class="main_contents">
+<div class="main_innner height2" id="list_contents_html">
+</div><!-- / .main_innner -->
+</div><!-- / .main_contents -->
+<!-- InstanceEndEditable -->
+<%include 'include/footer.html'%>
+</div><!-- / .contents_wrap -->
+</div><!-- / .container -->
+</div><!-- / .bg -->
+<div id="search_advance_dialog"></div>
+</body>
+<%include 'include/argo_ajax.html'%>
+<%include 'include/tree_view.html'%>
+<%include 'include/table_shima.html'%>
+<%include 'include/link_item.html'%>
+<script type='text/javascript'>
+
+$(function() {
+	
+});
+</script>
+</html>
