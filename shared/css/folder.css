@@ -1,0 +1,20 @@
+@charset "utf-8";
+
+ul .f_top
+{
+}
+ul li{
+	margin-left: 20px;
+	border-left-style: solid;
+    border-left-width: 2px;
+}
+ul li span{
+    background: #ffffcc;
+    width: 200px;
+    display: block;
+    margin-bottom: 5px;
+}
+ul li span img{
+    
+}
+

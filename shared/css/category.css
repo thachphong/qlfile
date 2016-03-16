@@ -1,0 +1,56 @@
+@charset "utf-8";
+/*======================　カテゴリ　======================*/
+.series_wrap .info_wrap .category_1 {
+	width: 98%;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	margin-left: 10px;
+}
+.series_wrap .info_wrap .category_1 tr th,
+.series_wrap .info_wrap .category_1 tr td{
+	background: #EEEEEE;
+	border: 1px solid #CCC;
+}
+.series_wrap .info_wrap .category_2{
+	margin-top: 10px;
+	margin-bottom: 10px;
+	margin-left: 10px;
+}
+
+.series_wrap .info_wrap .category_2 tr th{
+	background: #EEEEEE;
+	border: 1px solid #CCC;
+	text-align: center;
+}
+.series_wrap .info_wrap .category_2 tr td{
+	border: 1px solid #CCC;
+}
+/* Add Start NBKD-41 hungtn VNIT 2015/01/06 */
+.memo_wrap .btn_wrap{
+	margin-top: 20px;
+	margin-bottom: 20px;
+	margin-right: 43px;
+	text-align: right;
+}
+/* Add End NBKD-41 hungtn VNIT 2015/01/06 */
+
+/*Add Start NBKD-54 Minh Vnit 2015/02/05 */
+.series_wrap .info_wrap .lang-list{
+	margin-bottom: 10px;
+	margin-left: 10px;
+}
+
+.series_wrap .info_wrap .lang-list tr th{
+	background: #EEEEEE;
+	border: 1px solid #CCC;
+	text-align: center;
+}
+.series_wrap .info_wrap .lang-list tr td{
+	border: 1px solid #CCC;
+	text-align: center;
+}
+.btn_close .btn_save  {
+line-height: 20px;
+width: 6em;
+}
+/*Add End NBKD-54 Minh Vnit 2015/02/05 */

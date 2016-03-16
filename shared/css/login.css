@@ -1,0 +1,93 @@
+@charset "utf-8";
+.main_contents {
+	background: #FEB6B4;
+	/* IE10 Consumer Preview */ 
+	background-image: -ms-linear-gradient(left, #3366ff 0%, #1d5da8 100%);
+	/* Mozilla Firefox */ 
+	background-image: -moz-linear-gradient(left, #3366ff 0%, #1d5da8 100%);
+	/* Opera */ 
+	background-image: -o-linear-gradient(left, #3366ff 0%, #1d5da8 100%);
+	/* Webkit (Safari/Chrome 10) */ 
+	background-image: -webkit-gradient(linear, left top, right top, color-stop(0, #3366ff), color-stop(1, #1d5da8));
+	/* Webkit (Chrome 11+) */ 
+	background-image: -webkit-linear-gradient(left, #3366ff 0%, #1d5da8 100%);
+	/* W3C Markup, IE10 Release Preview */ 
+	background-image: linear-gradient(to right, #3366ff 0%, #1d5da8 100%);
+	height: 360px;
+	width: 700px;
+	margin-top: 100px;
+	margin-right: auto;
+	margin-left: auto;
+	padding-top: 20px;
+	padding-bottom: 20px;
+}
+.main_contents .login_wrap {
+	height: 360px;
+	width: 660px;
+	margin-right: auto;
+	margin-left: auto;
+	position: relative;
+	background: #fff url(../img/login.jpg) no-repeat center left;
+	border: 1px solid #FFF;
+}
+.main_contents .login_wrap table {
+	margin-left: 70px;
+	margin-top: 80px;
+	/*width: 320px;*/
+}
+.main_contents .login_wrap table tr th,
+.main_contents .login_wrap table tr td {
+	font-size: 15px;
+	color: #8e8a88;
+	font-weight: bold;
+	/* [disabled]white-space: nowrap; */
+	vertical-align: middle;
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+.main_contents .login_wrap table tr td h1 {
+	font-size: 26px;
+	font-weight: bold;
+	text-align: right;
+	line-height: 1;
+}
+.main_contents .login_wrap table tr td b {
+	font-size: 24px;
+	text-align: right;
+	display: block;
+}
+.main_contents .login_wrap table tr td .btn {
+	font-size: 14px;
+	line-height: 35px;
+	font-weight: bold;
+	color: #FFF;
+	text-decoration: none;
+	background: url(../img/login_btn.jpg) no-repeat 0px 0px;
+	text-align: center;
+	display: block;
+	width: 150px;
+	margin-right: 10px;
+	float: left;
+}
+.main_contents .login_wrap table tr th {
+	width: 10em;
+}
+.main_contents .login_wrap table tr td span {
+	font-size: 13px;
+	white-space: nowrap;
+	font-weight: bold;
+}
+.main_contents .login_wrap p {
+	font-size: 11px;
+	color: #FFF;
+	text-align: center;
+	width: 660px;
+	position: absolute;
+	left: 0px;
+	bottom: 5px;
+}
+/*Add Start - Minh VNIT - 2014/08/04*/
+.edit_require {
+	color: #f00;
+}
+/*Add End - Minh VNIT - 2014/08/04*/
