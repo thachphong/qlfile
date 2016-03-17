@@ -37,6 +37,7 @@ class Login_model extends ACWModel
 			$user_info = $login->check_login($param);
 			if (is_null($user_info) == false) {
 				ACWSession::set('user_info', $user_info);
+                ACWSession::set('file_download', array());
                 if($user_info['upload'] > 0 || $user_info['kiemtra'] > 0 || $user_info['duyet'] > 0 || $user_info['trungtam_quanly'] > 0){
                     return ACWView::redirect(ACW_BASE_URL . 'don');
                 }else if($user_info['print'] > 0){

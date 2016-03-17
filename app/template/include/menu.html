@@ -17,6 +17,9 @@
             <ul class="sub">
                 <li><a href="<%$smarty.const.ACW_BASE_URL%>don/history" >Lịch sử yêu cầu XD</a></li>
                 <li><a href="<%$smarty.const.ACW_BASE_URL%>file/mtblank" >Lịch sử mượn trả file</a></li>
+                <%if $user_info.trungtam_quanly=="1"%>
+                <li><a href="<%$smarty.const.ACW_BASE_URL%>file/cublank" >Lịch sử file cũ</a></li>
+                <%/if%>
             </ul>
         </li>  
         <li><a href="<%$smarty.const.ACW_BASE_URL%>don/muonblank" id="menu_muon" class="gnav_1">Mượn bản vẽ</a></li>
@@ -30,7 +33,7 @@
                 <li><a href="<%$smarty.const.ACW_BASE_URL%>folderfile/history" >Lịch sử phân bổ file</a></li>
                 <%/if%>
                 <li><a href="<%$smarty.const.ACW_BASE_URL%>may" >Danh sách máy</a></li>
-                <li><a href="<%$smarty.const.ACW_BASE_URL%>folderfile/history" >Đưa Bản vẽ vào máy</a></li>
+                <li><a href="<%$smarty.const.ACW_BASE_URL%>mayfile" >Đưa Bản vẽ vào máy</a></li>
             </ul>
         </li>
         <%/if%>
@@ -62,7 +65,7 @@
                 <li><a href="<%$smarty.const.ACW_BASE_URL%>category">Folder</a></li>
 				<li><a href="<%$smarty.const.ACW_BASE_URL%>foldernhom">Phân quyền</a></li>						
 				<li><a href="<%$smarty.const.ACW_BASE_URL%>download">Lịch sử download</a></li>								
-				<li><a href="<%$smarty.const.ACW_BASE_URL%>don/delete">Xóa Đơn</a></li>							
+				<li><a href="<%$smarty.const.ACW_BASE_URL%>don/xoadon">Xóa Đơn</a></li>							
 			</ul>
         </li>
 		<%/if%>

@@ -41,7 +41,7 @@ class May_model extends ACWModel
 		if (isset($params['may_id'])) {
 			$may_id = $params['may_id'];
 		}
-		$model = new Donvi_model();
+		$model = new May_model();
 		$data_row = array();
 		if ($may_id == null) {			
 			$data_row['may_id'] = null;

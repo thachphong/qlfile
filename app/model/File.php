@@ -35,18 +35,46 @@ class File_model extends ACWModel
 	{	 
 		return ACWView::template('file.html',array(
                                     'data_rows' =>array()
-                                    ,'search_file_name'=>''));
+                                    ,'search_file_name'=>''
+                                    ,'flg_old'=>'0'
+                                    )
+                                    );
+	}
+    public static function action_cublank()
+	{	 
+		return ACWView::template('oldfile.html',array(
+                                    'data_rows' =>array()
+                                    ,'search_file_name'=>''
+                                    ,'flg_old'=>'1'
+                                    ));
 	}
 	public static function action_index()
 	{	
         $param = self::get_param(array(
-			'search_file_name'
+			'search_file_name',
+            'flg_old'
 		));
         $db= new File_model();
         $data = $db->get_file_rows($param);
 		return ACWView::template('file.html',array(
                                     'data_rows' =>$data
-                                    ,'search_file_name'=>$param['search_file_name']));
+                                    ,'search_file_name'=>$param['search_file_name']
+                                    ,'flg_old'=>$param['flg_old']
+                                    ));
+	}
+    public static function action_oldfile()
+	{	
+        $param = self::get_param(array(
+			'search_file_name',
+            'flg_old'
+		));
+        $db= new File_model();
+        $data = $db->get_oldfile_rows($param);
+		return ACWView::template('oldfile.html',array(
+                                    'data_rows' =>$data
+                                    ,'search_file_name'=>$param['search_file_name']
+                                    ,'flg_old'=>$param['flg_old']
+                                    ));
 	}
     public static function action_mtblank()
 	{	
@@ -176,8 +204,12 @@ class File_model extends ACWModel
             for($i=0 ;$i< count($file_list);$i++)
             {
                 $file_name = $folder_tmp.'/'.$file_list[$i];
+                if($file->GetExtensionName($file_name)=='pdf'){
+                    ACWError::add('file_name', 'File: "'.$file_list[$i].'" là file pdf, không thể upload !'); 
+                	$flg_copy = FALSE;
+                }
                 if($file->FileExists($file_name)){
-					ACWError::add('file_name', 'File: "'.$file_list[$i].'" bị trùng, không thể upload1 !');                                    
+					ACWError::add('file_name', 'File: "'.$file_list[$i].'" bị trùng, không thể upload !');                                    
                 	$flg_copy = FALSE;	
 				}
             }
@@ -191,7 +223,7 @@ class File_model extends ACWModel
                     //ACWLog::debug_var('----upload-----','$file_tmp: '.$file_tmp);
                     //ACWLog::debug_var('----upload-----','$file_name: '.$file_name);
 	                if($file->MoveFile($file_tmp,$file_name)==FALSE){
-	                	ACWError::add('file_name', 'File: "'.$file_list[$i].'" bị trùng, không thể upload2 !');                                    
+	                	ACWError::add('file_name', 'File: "'.$file_list[$i].'" bị trùng, không thể upload !');                                    
 	                    $flg_copy = FALSE;
 	                }else{
 						$arr_cop[] = $file_list[$i];
@@ -401,14 +433,61 @@ class File_model extends ACWModel
           DATE_FORMAT(t.add_datetime,'%d/%m/%Y %H:%i:%s') add_datetime     
                
 			FROM	file t
-				inner join (select a.file_name,max(a.file_id) file_id from file a where del_flg=0 group by a.file_name) mx
-									on mx.file_id = t.file_id
+				 inner join (select a.file_name,max(a.file_id) file_id from file a where del_flg=0 group by a.file_name) mx
+									on mx.file_id = t.file_id 
 				inner join don d on d.don_id = t.don_id
 				inner join don_folder df on df.don_id = t.don_id
 				inner JOIN (SELECT DISTINCT * from temp_folder) tmp on tmp.folder_id = df.folder_id
                 left join m_user u on t.add_user_id = u.user_id
             where /*t.`status`=3
                 and*/ t.file_type ='pdf'
+                and t.del_flg = 0
+		";
+		
+		if (isset($param['search_file_name']) && !empty($param['search_file_name'])) {
+			$sql_param = array(
+					'file_name' =>  '%' . SQL_lib::escape_like($param['search_file_name']) . '%'
+				);
+			$sql .= " and lower(t.file_name) like lower(:file_name) ";
+        }else if (isset($param['search_tieude']) && !empty($param['search_tieude'])) {
+			$sql_param = array(
+					':tieude' =>  '%' . SQL_lib::escape_like($param['search_file_name']) . '%'
+				);
+			$sql .= " and lower(d.tieude) like lower(:tieude) ";
+		} else {
+			$sql_param = array();
+		}
+		
+		$sql .= "
+			ORDER BY
+				t.file_id
+		";		
+        //var_dump($sql);die;
+		return $this->query($sql, $sql_param);
+	}
+    public function get_oldfile_rows($param)
+	{
+        $login_info = ACWSession::get('user_info');
+        //lay tat ca folder ma user co quyen,co quyen o folder cha thi co quyen o tat ca folder con
+        //$this->query("select f_get_allfolder_child(:user_id) ",array('user_id'=>$login_info['user_id']));
+		$sql = "SELECT	DISTINCT			 
+				t.file_id ,
+            	t.file_name,
+            	t.file_type,
+                t.don_id,
+                t.`status` trangthai,
+                u.user_name,
+							d.tieude,d.don_no,
+							(case 
+				  when d.loaidon = 0 then 'Tạo mới'
+				  when d.loaidon = 1 then 'Cập nhật'
+				  end)  loaidon,
+          DATE_FORMAT(t.add_datetime,'%d/%m/%Y %H:%i:%s') add_datetime     
+               
+			FROM	file t				 
+				inner join don d on d.don_id = t.don_id
+        left join m_user u on t.add_user_id = u.user_id
+            where  t.file_type ='pdf'
                 and t.del_flg = 0
 		";
 		
@@ -486,7 +565,7 @@ class File_model extends ACWModel
 	public function get_file_don($don_id,$type_file='',$status='',$new_flg = '',$del_flg = 0)
 	{
 		$sql = "
-			SELECT	t.*,(@rownum := @rownum + 1) AS stt
+			SELECT	t.*,(@rownum := @rownum + 1) AS stt,'' dl_flg
 			FROM	file t     ,(SELECT @rownum := 0) r        
             where del_flg = :del_flg
             and don_id=:don_id 
@@ -494,8 +573,12 @@ class File_model extends ACWModel
         $param_sql['don_id']= $don_id;
         $param_sql['del_flg']= $del_flg;
 		if(strlen($type_file)>0){
-            $sql .=" and file_type= :file_type";
-            $param_sql['file_type']= $type_file;
+            if($type_file =='pdf' || $type_file =='dwg'){
+                $sql .=" and file_type = :file_type";
+                $param_sql['file_type']= $type_file;
+            }else{
+                $sql .=" and file_type <> 'pdf'";
+            }
         }
         if(strlen($status)>0){
             $sql .=" and status= :status";
@@ -506,8 +589,8 @@ class File_model extends ACWModel
            // $param_sql['new_flg']= $new_flg;
         }
         $sql .=" ORDER BY t.file_id";
-        ACWLog::debug_var('---sql----',$sql);
-        ACWLog::debug_var('---sql----',$param_sql);
+        //ACWLog::debug_var('---sql----',$sql);
+        //ACWLog::debug_var('---sql----',$param_sql);
 		return $this->query($sql, $param_sql);
 	}	
 	public function update($params)
@@ -705,13 +788,25 @@ class File_model extends ACWModel
         if(count($url_param)==3){
             $don = new Don_model();            
             $fmodel = new File_model();
-            $res = $fmodel->get_file_row($url_param[2]);
+            $res = $fmodel->get_file_row($url_param[2]);            
             //$ver_id = $res['ver_id'];
             $folder_name = $don->get_folder_data_name($url_param[0]);
             if($url_param[1]==DON_STATUS_TTQL || $url_param[1]==DON_STATUS_XIN_CN || $url_param[1]==DON_STATUS_XIN_CN){
                 $folder_name=$don->get_folder_data_name($url_param[0],FALSE);
             }
             $full_path = $folder_name.'/'.$res['file_name'];
+            //add section
+            $list_dl = ACWSession::get('file_download');
+            if(count($list_dl) > 0){
+               if(in_array($url_param[2],$list_dl) === FALSE){
+                    $list_dl[]= $url_param[2];
+               } 
+            }else{
+                $list_dl[]= $url_param[2];
+            }
+            
+            ACWSession::set('file_download', $list_dl);
+            
             return ACWView::download_file($res['file_name'], $full_path);
         }
     }

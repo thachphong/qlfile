@@ -118,7 +118,7 @@
                     <%foreach $filelist as $file%>
                     <tr>
                         <td style="height: 25px"><%$file.stt%></td>
-                        <td id="view_file_name_<%$file.file_id%>"><%if $file.file_type=="pdf"%>
+                        <td id="view_file_name_<%$file.file_id%>" class="<%if $file.dl_flg=='1'%>hover_view<%/if%>"><%if $file.file_type=="pdf"%>
                             <a href="<%$smarty.const.ACW_BASE_URL%>file/view/<%$file.don_id%>/<%$file.ver_id%>/<%$data_row.trangthai%>/<%$file.file_id%>">
                         <%/if%>
                         <%$file.file_name%>
@@ -150,7 +150,7 @@
                 </div>
 		        <input type="button" class="button_blue" <%if ($mode!= "new" && $mode!= "upload")||$flg_muon=='1'||$flg_capnhat=='1'%>disabled<%/if%> id="chonfile" value="Chọn file"  style="margin: 6px 10px;" >
                 
-                <input style="display: none" name="file_upload[]" type="file" multiple="multiple" accept=".DWG"  id="file_upload" />           
+                <input style="display: none" name="file_upload[]" type="file" multiple="multiple" accept=".DWG,.doc,.docx,.xls,.xlsx,.rar"  id="file_upload" />           
                 <input type="hidden" name="folder_tmp"  id="folder_tmp" value="<%$data_row.folder_tmp%>" />
             </div>          
 			<input type="button" class="button_blue" style="margin-left:15px;" value="Save" id="btn_save" <%if $mode!= "new" && $mode!= "upload" && $mode!= "kiemtra" && $mode!= "duyet" && $mode!= "ttql"%>disabled<%/if%> >
@@ -462,8 +462,9 @@ var _countFile = 0;
 $(function() {
     var quyen_tao_moi ='<%$quyen_tao_moi%>';
     if(quyen_tao_moi=='0'){
-        Argo_ajax.message_box('','Bạn không có quyền tạo yêu cầu mới !');
-        location.href = '<%$smarty.const.ACW_BASE_URL%>' ;
+        Argo_ajax.message_box('','Bạn không có quyền tạo yêu cầu mới !',function(){
+            location.href = '<%$smarty.const.ACW_BASE_URL%>' ;
+        });
     }
         /*var search_user_ajax = new Argo_ajax('json');
         search_user_ajax.done_func = function(data) {

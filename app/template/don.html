@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/base.dwt" codeOutsideHTMLIsLocked="false" --><head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Quản lý Đơn vị</title>
+<title>Lịch sử xét duyệt</title>
 		<%include 'include/head.html'%>
 		<link href="<%$smarty.const.ACW_BASE_URL%>shared/css/baitai.css" rel="stylesheet" type="text/css" />
         <link href="<%$smarty.const.ACW_BASE_URL%>shared/css/jquery.datetimepicker.css" rel="stylesheet" type="text/css" />
@@ -16,6 +16,7 @@
     <%if $mode != "main"%>
 	<div class="search_wrap">
 		<form id="search_form" action="<%$smarty.const.ACW_BASE_URL%>don/history" method="POST">
+        <input type="hidden" name="default_flg" value="<%$search_data.default_flg%>"/>
 		<table class="kensaku">
 			<colgroup>
 				<col width="85px" />

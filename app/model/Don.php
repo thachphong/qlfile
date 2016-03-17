@@ -54,11 +54,46 @@ class Don_model extends ACWModel
             'maso_duyet',
             'trangthai',
             'don_no',
-            'file_name'
+            'file_name',
+            'default_flg'
 		));
 		$model = new Don_model();
-		$rows = $model->get_don_rows($param);		
+        if(!isset($param['default_flg']) || $param['default_flg']!='1'){
+            $date = new DateTime();
+            $date->add(date_interval_create_from_date_string('-5 days'));
+            $param['tu_ngay']=$date->format('d/m/Y');
+            $param['default_flg'] = 1;
+        }
+		$rows = $model->get_don_rows($param);	
+        	
 		return ACWView::template('don.html', array(
+			'data_rows' => $rows,			
+			'search_data'=>$param,
+            'mode'=>'history',
+            'menu'=>'#menu_lsyc'
+		));
+	}
+    public static function action_xoadon()
+	{
+		$param = self::get_param(array(
+			'loaidon',
+            'tu_ngay',
+            'den_ngay',
+            'maso_duyet',
+            'trangthai',
+            'don_no',
+            'file_name',
+            'default_flg'
+		));
+		$model = new Don_model();
+        if(!isset($param['default_flg']) || $param['default_flg']!='1'){
+            $date = new DateTime();
+            $date->add(date_interval_create_from_date_string('-5 days'));
+            $param['tu_ngay']=$date->format('d/m/Y');
+            $param['default_flg'] = 1;
+        }
+		$rows = $model->get_don_rows($param);		
+		return ACWView::template('xoadon.html', array(
 			'data_rows' => $rows,			
 			'search_data'=>$param,
             'mode'=>'history',
@@ -136,9 +171,9 @@ class Don_model extends ACWModel
                 $usr_kt=$data_old['user_kt'];;
                 $usr_duyet=$data_old['user_duyet'];;
                 $usr_ttql=$data_old['user_ttql'];;
-                $filelist = $file->get_file_don($data_old['don_id'],'dwg',DON_STATUS_DUYET_CN);// lấy những file được cho phép cập nhật
+                $filelist = $file->get_file_don($data_old['don_id'],'notpdf',DON_STATUS_DUYET_CN);// lấy những file được cho phép cập nhật
                 if(count($filelist)== 0){
-                    $filelist=$file->get_file_don($data_old['don_id'],'dwg');
+                    $filelist=$file->get_file_don($data_old['don_id'],'notpdf');
                     $flg_muon='0';
                 }else{
                     $flg_muon='1';
@@ -222,7 +257,9 @@ class Don_model extends ACWModel
                 $file_status = DON_STATUS_XIN_CN;
             }	
            
-            $filelist =$file->get_file_don($don_id,'dwg',$file_status,$new_flg);
+            $filelist =$file->get_file_don($don_id,'notdwg',$file_status,$new_flg);
+            $list_dl = ACWSession::get('file_download');
+            $model->join_dl_file($filelist,$list_dl);
 		}
         
 		return ACWView::template('upload.html', array(
@@ -238,8 +275,19 @@ class Don_model extends ACWModel
             ,'quyen_tao_moi'=>$quyen_tao_moi
         ));
 	}
-	
-	private static function _validate_update(&$param)
+	private function join_dl_file(&$filelist, $dl_list){
+        if(count($dl_list)==0){
+            return ;
+        }
+        foreach($filelist as &$item){            
+            foreach($dl_list as $row){
+                if($item['file_id']==$row){
+                    $item['dl_flg']='1';
+                }
+            }
+        }
+    }
+	public static function _validate_update(&$param)
 	{
 	    /**
 	     * 
@@ -338,7 +386,11 @@ class Don_model extends ACWModel
                     
                     $src_path = ACW_TMP_DIR_IMG.'/'.$params['folder_tmp'];
                     $desti_path =self::get_folder_data_name($don_id);
-                    $file->MoveFolder($src_path,$desti_path);                 
+                    //ACWLog::debug_var('----file----','src: '.$src_path);
+                    //ACWLog::debug_var('----file----','desti: '.$desti_path);
+                    
+                    $file->MoveFolder($src_path,$desti_path);   
+                                  
                     //$model->send_mail($don_id,0);
     			}
             }else{
@@ -404,7 +456,7 @@ class Don_model extends ACWModel
 		}
 
 		return ACWView::json($result);
-	}
+	}    
     public static function action_muonbanve()
 	{
 		$params = self::get_param(array(	
@@ -956,7 +1008,7 @@ class Don_model extends ACWModel
         }else if($pa_file['status'] == DON_STATUS_TTQL){
             $pa_file['status_old'] = DON_STATUS_DUYET;
         }
-        ACWLog::debug_var('-----upd-----','trang thai:'.$params['trangthai']);
+       // ACWLog::debug_var('-----upd-----','trang thai:'.$params['trangthai']);
         if(!(isset($params['trangthai']) && strlen($params['trangthai'])>0)){
             $flg_update_file = FALSE;
         }
@@ -1039,16 +1091,16 @@ class Don_model extends ACWModel
         $f = new File_lib();
         if($new){
             $folder_name = DATA_TMP_PATH.'/'.'D'.str_pad($don_id, 7, "0", STR_PAD_LEFT);
-            if(!$f->FolderExists($folder_name)){
+            /*if(!$f->FolderExists($folder_name)){
                 $f->CreateFolder($folder_name);
-            }
+            }*/
             //$folder_name .= '/'.'V'.str_pad($ver_id, 7, "0", STR_PAD_LEFT);
         }            
         else{
             $folder_name = DATA_MAIN_PATH.'/'.'D'.str_pad($don_id, 7, "0", STR_PAD_LEFT);
-            if(!$f->FolderExists($folder_name)){
+            /*if(!$f->FolderExists($folder_name)){
                 $f->CreateFolder($folder_name);
-            }
+            }*/
             //$folder_name .= '/'.'V'.str_pad($ver_id, 7, "0", STR_PAD_LEFT);
         }            
         return $folder_name;
@@ -1062,6 +1114,7 @@ class Don_model extends ACWModel
         $file = new File_lib();
         $tmp = self::get_folder_data_name($don_id);
         $main = self::get_folder_data_name($don_id,FALSE);
+       
         $info = $this->get_don_row($don_id);
         if(isset($info['don_cn']) && !empty($info['don_cn'])){
             $old_folder = self::get_folder_data_name($info['don_cn'],FALSE);
@@ -1157,7 +1210,7 @@ class Don_model extends ACWModel
             $flg_muon=FALSE;
             if($don_info['trangthai']== DON_STATUS_XIN_CN){
                 
-                $filemuon =$file->get_file_don($don_id,'dwg',DON_STATUS_XIN_CN,'');
+                $filemuon =$file->get_file_don($don_id,'notpdf',DON_STATUS_XIN_CN,'');
                 if(count($filemuon) > 0){
                     $flg_muon = TRUE;
                     $body_tmp.="<p>Lý do mượn: " . $don_info['lydo_muon']."</p>";
@@ -1179,7 +1232,7 @@ class Don_model extends ACWModel
                 {
                     $del_flg =1;
                 }
-                $filelist =$file->get_file_don($don_id,'dwg',$status,'1,2',$del_flg); // chi lay nhung file moi
+                $filelist =$file->get_file_don($don_id,'notdwg',$status,'1,2',$del_flg); // chi lay nhung file moi
                 foreach($filelist as $item){
                     $body_tmp .='<p>'.$item['file_name'].'</p>';
                 }
