@@ -286,4 +286,6 @@ a.disabled {
 .button_yellow{
     background-color: #eb9316; /* blue */
 }
-
+.hover_view{
+    color: #0000ff !important;
+}
