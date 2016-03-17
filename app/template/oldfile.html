@@ -1,0 +1,153 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/base.dwt" codeOutsideHTMLIsLocked="false" --><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>In file</title>
+		<%include 'include/head.html'%>
+		<link href="<%$smarty.const.ACW_BASE_URL%>shared/css/baitai.css" rel="stylesheet" type="text/css" />
+        
+</head>
+<body class="column_1">
+<div class="bg">
+<div class="container">
+		<%include 'include/menu.html'%>
+<div class="contents_wrap"> 
+<!-- InstanceBeginEditable name="top_contents" -->
+	<div class="search_wrap">
+		<form id="search_form" action="<%$smarty.const.ACW_BASE_URL%>file/oldfile" method="POST">
+		<table class="kensaku">
+			<colgroup>
+				<col width="85px" />
+				<col width="200px" />
+				<col width="" />
+			</colgroup>
+			<tr>
+				<th>Điều kiện tìm</th>
+				<td class="first">Tên file  <input type="text" maxlength="50" size="30" name="search_file_name" id="search_file_name" value="<%$search_file_name%>" /></td>
+                                <td class="al_l"><button type="button" id="btn_search">Tìm</button> <button type="button" id="btn_clear">Xóa</button></td></tr>
+		</table>
+		</form>
+	</div>
+	<ul class="topic_path">
+		<li><h2>Danh sách file đã duyệt</h2></li>
+	</ul>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="side_contents" -->
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="main_contents" -->
+<div class="main_contents">
+<div class="main_innner height2">
+	<div class="baitai_wrap">
+		<!--<p class="clear_fix" style="text-align: right;"><input type="button" value="Thêm mới" id="btn_new" /></p>-->
+		<table id="data_list">
+			<thead>
+			<tr>
+				<th style="width: 100px;">Tên file</th>
+                <th style="width: 100px;text-align: center;">Ngày cập nhật</th>
+                <th style="width: 100px;text-align: center;">tiêu đề</th>
+                <th style="width: 100px;text-align: center;">Loại bản vẽ</th>
+			</tr>
+			</thead>
+			<tbody>
+<%foreach $data_rows as $row%>
+			<tr>				
+				<td>
+					<input type="hidden" class="m_user_id" value="<%$row.file_id%>" />
+					<a id="<%$row.don_id%>_<%$row.trangthai%>_<%$row.file_id%>" href="javascript:void(0)" class="view_file"><%$row.file_name%></a>
+				</td>
+				<td style="text-align: center;">
+					<%$row.add_datetime%>
+				</td>
+                <td style="text-align: center;">
+					<%$row.tieude%>
+				</td>
+                <td style="text-align: center;">
+					<%$row.loaidon%>
+				</td>
+			</tr>
+<%/foreach%>
+			</tbody>
+		</table>
+	</div><!-- / .top_wrap -->
+</div><!-- / .main_innner -->
+</div><!-- / .main_contents -->
+<!-- InstanceEndEditable -->
+<%include 'include/footer.html'%>
+</div><!-- / .contents_wrap -->
+</div><!-- / .container -->
+</div><!-- / .bg -->
+<%include 'include/argo_ajax.html'%>
+<%include 'include/table_shima.html'%>
+<script type='text/javascript'>
+$(function() {
+
+	$('#menu_in').addClass('selected');
+	$("#edit_dialog").dialog({
+		autoOpen: false,
+		width: 1000,
+		/*height: $(window).height() - 100,*/
+		modal: true,
+		title: 'Thông đơn vị'
+	});
+	
+        //Add Start - Trung VNIT - 2014/08/21
+        var search_user_ajax = new Argo_ajax('json');
+        search_user_ajax.done_func = function(data) {
+            if (data.error) {
+                if (data.error.length > 0) {
+                    $('#data_list tbody').empty();
+                   Argo_ajax.message_box_error('', data.error[0]['info']);
+                }else{
+                    $('#search_form').submit();
+                }
+            }
+        };	
+        
+	// 検索ボタン
+	$('#btn_search').click(function(){        
+            $arr = $('#search_form').serializeArray();
+            search_user_ajax.connect('POST', 'donvi/checkmaxlenght', $arr);
+          
+	});
+            
+    $("#search_donvi_name").keydown(function (e) {
+        if (e.keyCode == 13) {
+                $('#btn_search').click();
+        }
+    });
+ 
+	
+	$('#btn_clear').click(function(){
+		$('#search_form').find("textarea, :text, select").val("");
+	});	
+	
+    $(document).off("click", ".view_file");
+	$(document).on("click", ".view_file", function () {		
+        var id = $(this).attr('id');
+        var info =  id.split("_");
+		var json_ajax = new Argo_ajax("json");
+    	json_ajax.done_func = function(data) {
+    		if(data.status=='OK'){                
+                var url = '<%$smarty.const.ACW_BASE_URL%>file/view/'+ info[0]+'/'+info[1]+'/'+info[2];
+                window.open(url, '_blank');
+            }else{
+                Argo_ajax.message_box('','File này đang cập nhật !')
+            }
+    	};
+    	json_ajax.connect("POST", "file/checkview", {
+    		"file_id": info[2]
+    	});
+	});
+	table_shimashima('#data_list');
+	
+	$(window).on("load resize", function(){
+		var wh = $(window).height();
+		$(".height2").height(wh - 206);	
+	});
+});
+
+</script>
+<div id="edit_dialog">
+	
+</div>
+</body>
+<!-- InstanceEnd --></html>
