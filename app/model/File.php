@@ -76,6 +76,19 @@ class File_model extends ACWModel
                                     ,'flg_old'=>$param['flg_old']
                                     ));
 	}
+    public static function action_existfile()
+	{	
+        $param = self::get_param(array(
+			'search_file_name',
+            'flg_old'
+		));
+        $db= new File_model();
+        $data = $db->get_existfile_rows($param);
+		return ACWView::template('existfile.html',array(
+                                    'data_rows' =>$data
+                                    ,'search_file_name'=>$param['search_file_name']
+                                    ));
+	}
     public static function action_mtblank()
 	{	
         $param = self::get_param(array(
@@ -162,6 +175,38 @@ class File_model extends ACWModel
 		}
 		return ACWView::json($result);
     }
+    public function get_existfile_rows($param)
+	{
+		$sql = "select t.file_id ,
+            	t.file_name,
+            	t.file_type,
+                t.don_id,
+                t.`status`,
+            --    u.user_name,
+							d.tieude,d.don_no,
+							(case 
+				  when d.loaidon = 0 then 'Tạo mới'
+				  when d.loaidon = 1 then 'Cập nhật'
+				  end)  loaidon,
+                  DATE_FORMAT(t.add_datetime,'%d/%m/%Y %H:%i:%s') add_datetime  
+                from file t
+                inner join don d on d.don_id = t.don_id and d.del_flg=0
+                where t.del_flg = 0
+                and t.file_exist = 0
+                and t.file_type='dwg' ";
+        if (isset($param['search_file_name']) && !empty($param['search_file_name'])) {
+			$sql_param = array(
+					'file_name' =>  '%' . SQL_lib::escape_like($param['search_file_name']) . '%'
+				);
+			$sql .= " and lower(file_name) like lower(:file_name) ";
+        }else{
+            $sql_param = array();
+        }
+        $sql .= "
+            ORDER BY t.file_id
+		";
+		return $this->query($sql, $sql_param);
+	}
     public function get_capphat_rows($file_id)
 	{
 		$sql = "
@@ -547,7 +592,7 @@ class File_model extends ACWModel
 			$sql_param['file_name'] = '%' . SQL_lib::escape_like($param['search_file_name']) . '%';
             $sql .= " and lower(t.file_name) like lower(:file_name) ";
         }
-        if (isset($param['s_trangthai_tra']) && !empty($param['s_trangthai_tra'])) {
+        if (isset($param['s_trangthai_tra']) && strlen($param['s_trangthai_tra'])>0) {
             if($param['s_trangthai_tra']=='0'){
                 $sql .= " and t.`status` <> 3";
             }else{
@@ -820,10 +865,10 @@ class File_model extends ACWModel
             $don_id = $url_param[0];
             //$ver_id = $url_param[1];
             $folder_name = "data/tmp/";
-            if($url_param[1]==DON_STATUS_TTQL || $url_param[1]==DON_STATUS_XIN_CN){
+            if($url_param[1]==DON_STATUS_TTQL || $url_param[1]==DON_STATUS_XIN_CN || $url_param[1]==DON_STATUS_DUYET_CN){
                 $folder_name= "data/main/";
             }
-            $folder_name .= 'D'.str_pad($don_id, 7, "0", STR_PAD_LEFT);
+            $folder_name .= 'D'.str_pad($don_id, 10, "0", STR_PAD_LEFT);
             //$folder_name .= '/V'.str_pad($ver_id, 7, "0", STR_PAD_LEFT);
             $fmodel = new File_model();
             $res = $fmodel->get_file_row($url_param[2]);
@@ -1043,5 +1088,19 @@ class File_model extends ACWModel
 		$this->commit();        
         return TRUE;
 	}
-	
+	public static function action_convertpdf(){
+        $params = self::get_param(array(			
+			'file_id', 
+            'don_id',
+            'file_name'           
+		));
+        $don_model = new Don_model();
+        $folder_name = $don_model->get_folder_data_name($params['don_id'],FALSE);
+        $list_file[] = $params;
+        $don_model->convert_dwg_to_pdf($folder_name,$list_file);
+        
+        $res['status']='OK';
+        
+        return ACWView::json($res);
+    }
 }

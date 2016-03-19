@@ -13,7 +13,7 @@
 <div class="contents_wrap"> 
 <!-- InstanceBeginEditable name="top_contents" -->
 	<div class="search_wrap">
-		<form id="search_form" action="<%$smarty.const.ACW_BASE_URL%>file/oldfile" method="POST">
+		<form id="search_form" action="<%$smarty.const.ACW_BASE_URL%>file/existfile" method="POST">
 		<table class="kensaku">
 			<colgroup>
 				<col width="85px" />
@@ -41,18 +41,21 @@
 		<table id="data_list">
 			<thead>
 			<tr>
-				<th style="width: 100px;">Tên file</th>
-                <th style="width: 100px;text-align: center;">Ngày cập nhật</th>
-                <th style="width: 100px;text-align: center;">tiêu đề</th>
-                <th style="width: 100px;text-align: center;">Loại bản vẽ</th>
+				<th style="width: 40%;">Tên file</th>
+                <th style="width: 10%;text-align: center;">Ngày cập nhật</th>
+                <th style="width: 30%;text-align: center;">tiêu đề</th>
+                <th style="width: 10%;text-align: center;">Loại bản vẽ</th>
+                <th style="width: 10%;text-align: center;">Convert Pdf</th>
 			</tr>
 			</thead>
 			<tbody>
 <%foreach $data_rows as $row%>
-			<tr>				
+			<tr id="tr_<%$row.file_id%>">				
 				<td>
 					<input type="hidden" class="m_user_id" value="<%$row.file_id%>" />
-					<a id="<%$row.don_id%>_<%$row.trangthai%>_<%$row.file_id%>" href="javascript:void(0)" class="view_file"><%$row.file_name%></a>
+					<!--<a id="<%$row.don_id%>_<%$row.status%>_<%$row.file_id%>" href="javascript:void(0)" class="view_file">-->
+                    <%$row.file_name%>
+                    <!--</a>-->
 				</td>
 				<td style="text-align: center;">
 					<%$row.add_datetime%>
@@ -62,6 +65,11 @@
 				</td>
                 <td style="text-align: center;">
 					<%$row.loaidon%>
+				</td>
+                <td style="text-align: center;">
+                    <input type="hidden" id="don_<%$row.file_id%>" value="<%$row.don_id%>" />
+                    <input type="hidden" id="file_name_<%$row.file_id%>" value="<%$row.file_name%>" />
+					<input type="button" value="Convert" id="file_<%$row.file_id%>" class="convert">
 				</td>
 			</tr>
 <%/foreach%>
@@ -120,24 +128,30 @@ $(function() {
 		$('#search_form').find("textarea, :text, select").val("");
 	});	
 	
-    $(document).off("click", ".view_file");
-	$(document).on("click", ".view_file", function () {		
+    $(document).off("click", ".convert");
+	$(document).on("click", ".convert", function () {		
         var id = $(this).attr('id');
-        var info =  id.split("_");
-        var url = '<%$smarty.const.ACW_BASE_URL%>file/view/'+ info[0]+'/'+info[1]+'/'+info[2];
-        window.open(url, '_blank');
-		/*var json_ajax = new Argo_ajax("json");
+        var file_id =  id.replace("file_","");
+        //var url = '<%$smarty.const.ACW_BASE_URL%>file/view/'+ info[0]+'/'+info[1]+'/'+info[2];
+        //window.open(url, '_blank');
+		var json_ajax = new Argo_ajax("json");
     	json_ajax.done_func = function(data) {
     		if(data.status=='OK'){                
-                var url = '<%$smarty.const.ACW_BASE_URL%>file/view/'+ info[0]+'/'+info[1]+'/'+info[2];
-                window.open(url, '_blank');
+                //var url = '<%$smarty.const.ACW_BASE_URL%>file/view/'+ info[0]+'/'+info[1]+'/'+info[2];
+                //window.open(url, '_blank');
+                //console.log('sss');
+                //console.log($(this));
+                Argo_ajax.message_box('','File đang được convert.. !')
+                $("#tr_"+file_id).hide();
             }else{
-                Argo_ajax.message_box('','File này đang cập nhật !')
+                //Argo_ajax.message_box('','File này đang cập nhật !')
             }
     	};
-    	json_ajax.connect("POST", "file/checkview", {
-    		"file_id": info[2]
-    	});*/
+    	json_ajax.connect("POST", "file/convertpdf", {
+    		"file_id": file_id,
+            'don_id':$('#don_'+file_id).val(),
+            'file_name':$('#file_name_'+file_id).val()
+    	});
 	});
 	table_shimashima('#data_list');
 	

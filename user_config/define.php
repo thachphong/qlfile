@@ -19,16 +19,16 @@ define('DATA_MAIN_PATH', AKAGANE_STRAGE_PATH . '/main');
 define('IMG_CON_DAU_WIDTH', 30);
 define('IMG_CON_DAU_HEIGHT', 30);
 
-define('DON_STATUS_NEW', 0); // TAO MOI CHUA KIEM TRA
-define('DON_STATUS_KT', 1); // DA KIEM TRA
-define('DON_STATUS_DUYET', 2); // DA DUYET
-define('DON_STATUS_TTQL', 3); // TRUNG TAM QUAN LY DA DUYET
-define('DON_STATUS_TRA_KT', 4); // TRA KIEM TRA
-define('DON_STATUS_TRA_DUYET', 5); // TRA DUYET
-define('DON_STATUS_TRA_TTQL', 6); // TRUNG TAM QUAN LY TRA DUYET
-define('DON_STATUS_XIN_CN', 7); // xin cập nhật
-define('DON_STATUS_TRA_CN', 8); //TRA xin cập nhật
-define('DON_STATUS_DUYET_CN', 9); //ttql da chap nhan cho cap nhat
+define('DON_STATUS_NEW', '0'); // TAO MOI CHUA KIEM TRA
+define('DON_STATUS_KT', '1'); // DA KIEM TRA
+define('DON_STATUS_DUYET', '2'); // DA DUYET
+define('DON_STATUS_TTQL', '3'); // TRUNG TAM QUAN LY DA DUYET
+define('DON_STATUS_TRA_KT', '4'); // TRA KIEM TRA
+define('DON_STATUS_TRA_DUYET', '5'); // TRA DUYET
+define('DON_STATUS_TRA_TTQL', '6'); // TRUNG TAM QUAN LY TRA DUYET
+define('DON_STATUS_XIN_CN', '7'); // xin cập nhật
+define('DON_STATUS_TRA_CN', '8'); //TRA xin cập nhật
+define('DON_STATUS_DUYET_CN', '9'); //ttql da chap nhan cho cap nhat
 
 
 define('AKAGANE_TOP_COMMENT_MAX', 50);	// 

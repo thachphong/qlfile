@@ -1090,14 +1090,14 @@ class Don_model extends ACWModel
         $folder_name = "";
         $f = new File_lib();
         if($new){
-            $folder_name = DATA_TMP_PATH.'/'.'D'.str_pad($don_id, 7, "0", STR_PAD_LEFT);
+            $folder_name = DATA_TMP_PATH.'/'.'D'.str_pad($don_id, 10, "0", STR_PAD_LEFT);
             /*if(!$f->FolderExists($folder_name)){
                 $f->CreateFolder($folder_name);
             }*/
             //$folder_name .= '/'.'V'.str_pad($ver_id, 7, "0", STR_PAD_LEFT);
         }            
         else{
-            $folder_name = DATA_MAIN_PATH.'/'.'D'.str_pad($don_id, 7, "0", STR_PAD_LEFT);
+            $folder_name = DATA_MAIN_PATH.'/'.'D'.str_pad($don_id, 10, "0", STR_PAD_LEFT);
             /*if(!$f->FolderExists($folder_name)){
                 $f->CreateFolder($folder_name);
             }*/

@@ -52,7 +52,28 @@ class BatchAddImg_model extends ACWModel {
     	$argv =$_SERVER["argv"];
         $cvt = new ImgToPdf_lib();
         $condau_path =  ACW_ROOT_DIR.'/shared/img/condau.jpg';
+        $pdf_file = $argv[1];
+        $file = new File_lib();
+        //$pattern ='/\\[D\d]{11}\\/';
+        $info = explode("\\",$pdf_file);
+        if(count($info) >=8){
+            $don_id =str_replace("D","", str_replace("\\","",$info[6]));
+            $file_name =$file->GetBaseName($info[7]).'%';
+        }
+        if(!$file->FileExists($pdf_file)){
+            $this->update_exist($don_id,$file_name,0);
+        }else{
+            $this->update_exist($don_id,$file_name,1);
+        }
+        
         $cvt->addimg($condau_path,$argv[1]);
+    }
+    public function update_exist($don_id,$file_name,$flg_exist)
+    {
+        $sql ="update file set file_exist = :file_exist
+                where don_id = :don_id 
+                and file_name like :file_name";
+        $this->execute($sql,array('don_id'=>$don_id,'file_name'=>$file_name,'file_exist'=>$flg_exist));
     }
 }
 

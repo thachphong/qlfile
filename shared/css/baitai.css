@@ -334,3 +334,6 @@ table.table_search tr td{
 .img_new{
     height: 25px;
 }
+#data_list tr:hover{
+    background-color:#FFD4FF !important;
+}
