@@ -11,6 +11,22 @@
 	<div class="bg">
 		<div class="container">
 			<%include 'include/menu.html'%>
+            <div class="search_wrap">
+        		<form id="search_form" action="" method="POST">
+        		<table class="kensaku">
+        			<colgroup>
+        				<col width="85px" />
+        				<col width="200px" />
+        				<col width="" />
+        			</colgroup>
+        			<tr>
+        				<th>Điều kiện tìm</th>
+        				<td class="first">Mã bản vẽ  <input type="text" maxlength="8" size="15" name="s_banve_no" id="s_banve_no" value="" /></td>
+                        <td>Tên bản vẽ  <input type="text" maxlength="255" size="30" name="s_banve_name" id="s_banve_name" value="" /></td>
+                                        <td class="al_l"><button type="button" id="btn_search">Tìm</button> <button type="button" id="btn_clear">Xóa</button></td></tr>
+        		</table>
+        		</form>
+        	</div>
 			<div class="contents_wrap">
 				<!-- InstanceBeginEditable name="top_contents" -->
 				<ul class="topic_path" id="t_path">
@@ -259,8 +275,10 @@ $(function() {
 	// 保存
 	$(document).on('click', '#category_save', function() {		
 		//Argo_ajax.ok_cancel_box(' ', 'Bạn chắc ',function(){
+        if(check_before_save()){
 			$arr = $('#category_form').serializeArray();			
 			json_ajax.connect('POST', 'banve/update', $arr);
+        }
 		//});
 	});
 
@@ -284,7 +302,7 @@ $(function() {
 	$(window).on("load resize", function(){
 		var wh = $(window).height();
 		$(".height1").height(wh - 218);	// ツリー
-		$(".height3").height(wh - 156);	// 設定画面
+		$(".height3").height(wh - 200);	// 設定画面
 	});
 
 	// カテゴリ選択削除
@@ -355,7 +373,19 @@ $(function() {
 			change_sort_mode();
 		}
 	};
-	tree_ajax.connect('GET', 'banve/tree');
+	//tree_ajax.connect('GET', 'banve/tree');
+    $arr_s = $('#search_form').serializeArray();
+    tree_ajax.connect('POST', 'banve/tree',$arr_s);
+    var check_before_save = function () {
+		if($('#parent_level').val()=='0' && $('#banve_no').val().trim()==''){
+            Argo_ajax.message_box_error('','Bạn chưa nhập Mã bản vẽ !');
+            return false;
+        }else if($('#banve_name').val().trim()==''){
+            Argo_ajax.message_box_error('','Bạn chưa nhập Tên bản vẽ !');
+            return false;
+        }
+        return true;
+	};
 		
 });
         

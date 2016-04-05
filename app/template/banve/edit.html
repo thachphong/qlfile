@@ -1,6 +1,6 @@
 	<div class="series_wrap">
 		<div class="title_wrap clear_fix">
-			<h2><img src="<%$smarty.const.ACW_BASE_URL%>shared/img/icon_file2.gif" />Thông tin thư mục</h2>
+			<h2><img src="<%$smarty.const.ACW_BASE_URL%>shared/img/icon_file2.gif" />Thông tin bản vẽ</h2>
 		</div>
 		<form id="category_form">
 		<input id="update_child" name="update_child" type="hidden" value="0"/>
@@ -16,10 +16,10 @@
 			<table class="category_1">
 				<colgroup><col width="120px" /><col width="20px" /></colgroup>
 				<tr><th colspan="2">Mã bản vẽ<%if $parent_level=='0'%><span class="edit_require">*</span><%/if%></th>
-				<td><input name="banve_no" <%if $parent_level!='0'%>readonly="true"<%/if%> name="banve_no" type="text" size="30" value="<%$banve_no%>"/></td>
+				<td><input maxlength="8" id="banve_no" <%if $parent_level!='0'%>readonly="true"<%/if%> name="banve_no" type="text" size="30" value="<%$banve_no%>"/></td>
 				</tr>
 				<tr><th colspan="2">Tên bản vẽ<span class="edit_require">*</span></th>
-				<td><input name="banve_name" type="text" size="30" value="<%$banve_name%>"/></td>
+				<td><input name="banve_name" id="banve_name" type="text" size="30" value="<%$banve_name%>"/></td>
 				</tr>
 				
 			</table>
@@ -48,6 +48,6 @@
 		</div>		
 			<input type="hidden" name="parent_id" value="<%$parent_id%>">
 			<input type="hidden" name="my_id" value="<%$my_id%>">
-			<input type="hidden" name="parent" value="<%$parent_level%>">			
+			<input type="hidden" name="parent_level" id="parent_level" value="<%$parent_level%>">			
 		</form>
 	</div><!-- / .series_wrap -->
