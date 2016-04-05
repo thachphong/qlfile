@@ -1,0 +1,53 @@
+	<div class="series_wrap">
+		<div class="title_wrap clear_fix">
+			<h2><img src="<%$smarty.const.ACW_BASE_URL%>shared/img/icon_file2.gif" />Thông tin thư mục</h2>
+		</div>
+		<form id="category_form">
+		<input id="update_child" name="update_child" type="hidden" value="0"/>
+		<div class="info_wrap">
+			<div class="hl_wrap">
+				<h3>Thông Tin cơ bản</h3>
+				<ul class="btn_wrap">
+					<li><input type="button" id="category_close" value="Đóng" /></li>
+					<li><input type="button" id="category_delete" value="Xóa" /></li>
+					<li><input type="button" id="category_save" value="Cập nhật" /></li>
+				</ul>
+			</div>
+			<table class="category_1">
+				<colgroup><col width="120px" /><col width="20px" /></colgroup>
+				<tr><th colspan="2">Mã bản vẽ<%if $parent_level=='0'%><span class="edit_require">*</span><%/if%></th>
+				<td><input name="banve_no" <%if $parent_level!='0'%>readonly="true"<%/if%> name="banve_no" type="text" size="30" value="<%$banve_no%>"/></td>
+				</tr>
+				<tr><th colspan="2">Tên bản vẽ<span class="edit_require">*</span></th>
+				<td><input name="banve_name" type="text" size="30" value="<%$banve_name%>"/></td>
+				</tr>
+				
+			</table>
+		</div>
+		<div class="info_wrap">
+			<div class="hl_wrap">
+				<h3>Danh sách bản vẽ cấp con</h3>
+				<ul class="btn_wrap">
+					<li><input type="button" value="Thêm bản vẽ con" id="section_add" />						
+					</li>
+				</ul>
+			</div>
+			<table class="category_2" id="folder_list">				
+				<thead>
+					<tr>
+						<th style="width: 170px;">Mã bản vẽ</th>
+		                <th style="width: 250px;text-align: center;">Tên bản vẽ</th>		                
+					</tr>
+				</thead>
+				<%foreach $banve_child as $row%>
+				<tr> <td><%$row.banve_no%></td>
+					 <td><%$row.banve_name%></td>
+				</tr>
+				<%/foreach%>
+			</table>
+		</div>		
+			<input type="hidden" name="parent_id" value="<%$parent_id%>">
+			<input type="hidden" name="my_id" value="<%$my_id%>">
+			<input type="hidden" name="parent" value="<%$parent_level%>">			
+		</form>
+	</div><!-- / .series_wrap -->

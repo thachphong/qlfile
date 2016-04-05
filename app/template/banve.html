@@ -1,0 +1,369 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/base.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>Danh mục bản vẽ</title>
+	<%include 'include/head.html'%>
+	<link href="<%$smarty.const.ACW_BASE_URL%>shared/css/category.css" rel="stylesheet" type="text/css" />
+	<script type="text/javascript" src="<%$smarty.const.ACW_BASE_URL%>js/jquery.upload-1.0.2.js"></script>
+</head>
+<body class="column_2">
+	<div class="bg">
+		<div class="container">
+			<%include 'include/menu.html'%>
+			<div class="contents_wrap">
+				<!-- InstanceBeginEditable name="top_contents" -->
+				<ul class="topic_path" id="t_path">
+				</ul>
+				<!-- InstanceEndEditable -->
+				<!-- InstanceBeginEditable name="side_contents" -->
+				<div class="side_contents">
+					<ul class="btn_wrap">
+						<!--<li><input type="button" id="btn_sort" value="" /></li>-->
+						<li><input type="button" id="btn_new" value="Thêm mới" /></li>                                                
+                                                <li>
+                                                <input type='button' value='<%$smarty.const.UNFOLD_TEXT%>' class='tree_fold' />
+                                                </li>                                                
+					</ul>
+					<div class="tree_wrap height1" id="tree_view">
+					</div><!-- / .tree_wrap -->
+				</div><!-- / .side_contents heightLine -->
+				<!-- InstanceEndEditable -->
+				<!-- InstanceBeginEditable name="main_contents" -->
+				<div class="main_contents">
+					<div class="main_innner height3" id="edit_contents_html">
+
+					</div><!-- / .main_innner -->
+				</div><!-- / .main_contents -->
+				<!-- InstanceEndEditable -->
+				<%include 'include/footer.html'%>
+			</div><!-- / .contents_wrap -->
+		</div><!-- / .container -->
+	</div><!-- / .bg -->
+<div id="lang_select_dialog"></div>
+<%include 'include/argo_ajax.html'%>
+<%include 'include/tree_view.html'%>
+<script type='text/javascript'>
+$(function() {
+    $('#menu_admin').addClass('selected');
+	var selected_category_id = null;
+	var add_section_no;
+	var sort_mode = false;	// ソートモード
+	var section_data = [];
+        var _is_edit_category = false;
+    var _has_ctg_child = false; 
+    TreeView.override_on_click_open("#tree_view li", 'ltree');    
+
+	var html_ajax = new Argo_ajax('html');
+	html_ajax.done_func = function(data) {
+		if (data === '') {
+			// エラー
+			Argo_ajax.message_box_error("", 'Không có dữ liệu');
+			// ツリー再描画
+			tree_ajax.connect('GET', 'banve/tree');
+			return;
+		}
+		// HTML追加
+		add_section_no = 0;
+		$('#edit_contents_html').prepend(data);
+	};
+	var json_ajax = new Argo_ajax('json');
+	json_ajax.done_func = function(data) {
+		// 更新
+		if (data.error) {
+			if (data.error.length > 0) {
+				Argo_ajax.message_box_error('', data.error[0]['info']);
+			}
+		} else {
+            Argo_ajax.message_box(' ', 'Cập nhật thành công !');
+			$('#edit_contents_html').empty();
+			// ツリー更新
+			tree_ajax.connect('GET', 'banve/tree');
+		}
+	};
+
+	var sort_ajax = new Argo_ajax('json');
+	sort_ajax.done_func = function(data) {
+		// 更新
+		if (data.error) {
+			if (data.error.length > 0) {
+				Argo_ajax.message_box_error("", data.error[0]['info']); //Edit NBKD-1071 TinVNIT 02/27/2015
+			}
+		} else {
+			tree_ajax.connect('GET', 'banve/tree');
+		}
+	};
+
+	$('#btn_new').click(function() {
+		$('#edit_contents_html').empty();
+                _is_edit_category = false;//Add - trung VNIT - 2014/09/15
+		html_ajax.connect('GET', 'banve/new/' + selected_category_id.replace("ltree_",""));
+	});
+
+	// 追加項目状態を変更
+	var change_section_status = function (com_sp_id, cval) {
+		if (section_data['kbn' + cval].checkbox == 1) {
+			// 共通仕様チェックボックスを表示に
+			$('#common_spec_select_' + com_sp_id).show();
+		} else {
+			$('#common_spec_select_' + com_sp_id).hide();
+		}
+
+		// 複数登録禁止
+		if (
+			cval == '<%$smarty.const.AKAGANE_SECTION_KBN_TEXT%>'
+			|| cval == '<%$smarty.const.AKAGANE_SECTION_KBN_MIX%>'
+			|| cval == '<%$smarty.const.AKAGANE_SECTION_KBN_CHECKBOX%>'
+			) {
+			$('#asinm_' + com_sp_id).prop('disabled', true);
+			$('#asinm_' + com_sp_id).attr("checked", false);
+		} else {
+			$('#asinm_' + com_sp_id).prop('disabled', false);
+		}
+
+		// 関連情報
+		if (cval == '<%$smarty.const.AKAGANE_SECTION_KBN_IMAGE%>') {
+			$('#asrel_' + com_sp_id).prop('disabled', false);
+		} else {
+			$('#asrel_' + com_sp_id).prop('disabled', true);
+			$('#asrel_' + com_sp_id).attr("checked", false);
+		}
+	};
+	$(document).on('click', '#section_add', function() {			        
+		$('#folder_list').append('<tr> <td><input readonly="true" size="20" ></td><td><input size="30" name="add_child[]"></td></tr>');
+
+	});			
+	
+	$(document).on('change', '.add_section_select', function() {
+		var com_sp_id = Argo_ajax.get_split_id($(this).attr('id'));
+		var cval = $(this).val();
+		change_section_status(com_sp_id, cval);
+	});	
+
+	var update_category = function () {
+		$( "input[type='checkbox']" ).attr("disabled",false);
+		$arr = $('#category_form').serializeArray();
+		json_ajax.connect('POST', 'banve/update', $arr);
+	};
+		
+	$(document).on('click', '.btn_select', function() {		
+        var select_ajax = new Argo_ajax('html');
+        select_ajax.done_func = function (html) {
+            $('#lang_select_dialog').html(html);
+            $('#lang_select_dialog').dialog({
+                modal: true,
+                width: 600,
+                title: section_name,
+                height: 260, 
+                closeOnEscape: true
+            });
+            $('#lang_select_dialog').dialog('open'); 
+        };
+		
+		var id = this.id;    	
+    	var flg_add = id.substr(0,3) ;
+    	if(flg_add=='add'){
+    		id = id.replace("add_btn_select_","");
+    		var section_name_en =$('input[name="add_section_trans_en_'+id+'"]').val();
+			var section_name_ch =$('input[name="add_section_trans_ch_'+id+'"]').val();
+			var section_name_jp	=$('input[name="add_section_name_'+id+'"]').val();
+			select_ajax.connect('POST', 'banve/langselectdialog', {'update_flg':1,'select_id':id,
+	        	'section_trans_en':section_name_en,'section_trans_ch':section_name_ch,
+	        	'section_trans_jp':section_name_jp,'add':1});
+	        var section_name=section_name_ch;
+    	}else{
+    		id = id.replace("btn_select_","");
+    		var section_name= $("#sec_name_id_"+id).val();
+			var section_name_en =$('#section_trans_en_id_'+id).val();
+			var section_name_ch =$('#section_trans_ch_id_'+id).val();
+			var section_changed = $('#ctg_changed_id_'+id).val();			
+        if (section_changed =='1') {      
+        	select_ajax.connect('POST', 'banve/langselectdialog', {'update_flg':1,'select_id':id,
+        	'section_trans_en':section_name_en,'section_trans_ch':section_name_ch});
+        }else{
+        	select_ajax.connect('POST', 'banve/langselectdialog', {'update_flg':1,'select_id':id});
+	        }
+    	}        
+    });
+    $(document).on('click', '.btn_close', function() {
+    	$('#lang_select_dialog').dialog('close');
+    });
+
+    var limit_ajax = new Argo_ajax("json");
+    limit_ajax.done_func = function(data) {
+        if (data.error) {
+            if (data.error.length > 0) {
+                    Argo_ajax.message_box_error('', data.error[0]['info']);
+            }else {           
+                var add_flag=$('#add_flag').val();
+                var id = $('#dialog_section_id').val();
+                if( add_flag == '1' )
+                {
+                    //if(check_section()){
+                    var name_jpn= $('#section_name_jp').val();
+                    nam_jpn = name_jpn.trim();
+                    if(nam_jpn.length > 0 ){
+                        if(id >0 ){
+                            add_section_no=id;
+                        }else{
+                            add_section_no++;
+                            $('#section_table').append(Mustache.render($('#section_add_template').html(), {
+                                    section_list:section_list
+                                    ,section_no: add_section_no
+                                    }));
+                            var cval = $('#assel_' + add_section_no).val();
+                            change_section_status(add_section_no, cval);
+                        }                       
+                        $('#lang_select_dialog').dialog('close');
+                        $('input[name="add_section_name_'+add_section_no+'"]').focus();	
+                    }else{				
+                        Argo_ajax.message_box("", '日本語が入力されていません');
+                    }		
+                }else{
+                    $("#ctg_changed_id_"+id).val(1);
+                    var name = $("#ctg_changed_id_"+id).attr("name");
+                    $('#lang_select_dialog').dialog('close');
+                }                
+            }
+        }
+    };    
+    
+    $(document).on('click', '.btn_save', function() {        
+        var lang_select = $('#lang_select').serializeArray();
+        limit_ajax.connect('POST', 'banve/limit', lang_select);    
+    });
+    
+    $(document).on('click', '.btn_lang_select', function() {
+    	var id = this.id;
+    	id = id.replace("btn_lang_select_","");    	
+    
+    	var name_jp =$("#section_name_jp").val();
+    	name_jp=name_jp.trim();
+    	var name_en =$("#section_name_en").val();
+    	name_en=name_en.trim();
+    	var name_ch =$("#section_name_ch").val();
+    	name_ch=name_ch.trim();
+    	if(name_jp.length >0 ){
+	    	$('#btnlang_1').prop( "disabled", false );
+	    }
+    	if(name_en.length >0 ){
+    		$('#btnlang_2').prop( "disabled", false );
+    	}
+    	if(name_ch.length >0 ){
+    		$('#btnlang_3').prop( "disabled", false );
+    	}
+        
+    });
+    
+
+	// 保存
+	$(document).on('click', '#category_save', function() {		
+		//Argo_ajax.ok_cancel_box(' ', 'Bạn chắc ',function(){
+			$arr = $('#category_form').serializeArray();			
+			json_ajax.connect('POST', 'banve/update', $arr);
+		//});
+	});
+
+	// 削除
+	$(document).on('click', '#category_delete', function() {
+		Argo_ajax.ok_cancel_box(' ', 'Bạn chắc chắn muốn xóa thư mục này？', function () {			
+			var my_id = $('#category_form').find('input[name="my_id"]').val();
+			$('#edit_contents_html').empty();
+			json_ajax.connect('GET', 'banve/delete/' + my_id);
+		});
+	});
+
+	// 閉じる
+	$(document).on('click', '#category_close', function() {
+		Argo_ajax.ok_cancel_box(' ', '編集画面を閉じます。よろしいですか？', function () {
+			$('#edit_contents_html').empty();
+		});
+	});
+
+	// サイズ変更スクリプト
+	$(window).on("load resize", function(){
+		var wh = $(window).height();
+		$(".height1").height(wh - 218);	// ツリー
+		$(".height3").height(wh - 156);	// 設定画面
+	});
+
+	// カテゴリ選択削除
+	var remove_selected = function () {
+		if (selected_category_id) {
+			// 前回の選択を消す
+			$('#' + selected_category_id).find('.category_selected').removeClass('category_selected');
+		}
+		selected_category_id = null;
+	};
+
+	// カテゴリツリービュー設定
+	var category_select = function (elm) {
+		if (sort_mode) {
+			return; // ソートモード
+		}
+		TreeView.set_topic_path(elm);
+		remove_selected();
+		// カテゴリセレクト
+		$(elm).addClass("category_selected");
+		selected_category_id = $(elm).parent().parent().attr("id");
+
+		$('#btn_new').show();
+		$('#edit_contents_html').empty();
+		if ($(elm).parent().parent().parent().hasClass('top') === false) {
+			// TOPではない			
+            _is_edit_category = true;
+			html_ajax.connect('GET', 'banve/edit/' + selected_category_id.replace("ltree_",""));
+		}
+		
+		TreeView.open_folder_by_id(selected_category_id);
+		var clickID = $(elm).parent().parent().attr("id");
+        var ull = $("li[id="+clickID+"]").find('ul');
+        if(ull.length > 0){
+            _has_ctg_child = true;
+        }
+        else{
+        	_has_ctg_child = false;
+        }        
+	};
+
+	TreeView.set_topic_path();
+
+	// ツリーを今記憶しているデータで再描画
+	var tree_json_data = null;
+	var tree_reload = function () {
+                var cat_id = selected_category_id;
+		selected_category_id = null;
+		$('#btn_new').hide();
+		$('#tree_view').empty();
+		$('#tree_view').append('<ul class="categories top"></ul>');
+		// ツリービューplugin設定
+		g_has_click = [];
+		TreeView.set(".top", tree_json_data, category_select);                
+                if(_is_edit_category == true){
+                    l_fold = TreeView.fold('tree_view', false, $(".tree_fold"));
+                    $('#tree_view').find("li[id='"+cat_id+"'] > div > a").click();
+                    l_fold = TreeView.fold('tree_view', true,$(".tree_fold"));
+                }               
+	};
+	
+	var tree_ajax = new Argo_ajax('json');
+	tree_ajax.done_func = function(tree_data) {
+		tree_json_data = tree_data;
+		tree_reload();
+		if (sort_mode) {
+			// ソートモード継続
+			change_sort_mode();
+		}
+	};
+	tree_ajax.connect('GET', 'banve/tree');
+		
+});
+        
+        var l_fold = false;
+        $( ".tree_fold" ).click(function() {
+            l_fold = TreeView.fold('tree_view', l_fold,$(".tree_fold"));
+        });
+
+</script>
+</body>
+<!-- InstanceEnd --></html>
