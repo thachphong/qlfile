@@ -604,16 +604,37 @@ class Banve_model extends ACWModel
 				,1 AS upd_sec
 			FROM		banve chd
 			WHERE	 chd.del_flg = 0
-			and banve_id > 1
+			and chd.banve_id > 1
 		";
-        $param_sql =array();
+        $param_sql =array();        
+        $flg_check = FALSE;
+        $where ="";
         if(isset($param['s_banve_no']) && strlen(trim($param['s_banve_no']))>0){
-            $sql .=" and chd.banve_no = :banve_no";
-            $param_sql['banve_no']=$param['s_banve_no'];
+            $where .="and banve_no = :s_banve_no";
+            $param_sql['s_banve_no']=$param['s_banve_no'];
+            $flg_check = TRUE;
         }
         if(isset($param['s_banve_name']) && strlen(trim($param['s_banve_name']))>0){
-            $sql .=" and chd.banve_no = :s_banve_name";
-            $param_sql['s_banve_name']=$param['s_banve_name'];
+            $where .="and LOWER(banve_name) like LOWER(:s_banve_name)";
+            $param_sql['s_banve_name']='%'.$param['s_banve_name'].'%';
+            $flg_check = TRUE;
+        }
+        if($flg_check){
+            $sql .= "and chd.banve_id in (select banve_id 
+                    from banve
+                    where del_flg = 0
+                    ".$where."
+                    union
+                    select  banve_id
+                    from    banve,
+                    			(select @pv := (select group_concat(banve_id separator ',') 
+                    			 from banve
+                    			 where del_flg = 0
+                    			".$where." )
+                    			) initialisation
+                    where   find_in_set(parent_id, @pv) > 0
+                    and     @pv := concat(@pv, ',', banve_id))
+                    ";
         }
 		return $this->query($sql,$param_sql);
 	}

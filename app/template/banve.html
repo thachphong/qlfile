@@ -12,7 +12,7 @@
 		<div class="container">
 			<%include 'include/menu.html'%>
             <div class="search_wrap">
-        		<form id="search_form" action="" method="POST">
+        		<form id="search_form" action="<%$smarty.const.ACW_BASE_URL%>banve" method="POST">
         		<table class="kensaku">
         			<colgroup>
         				<col width="85px" />
@@ -386,7 +386,21 @@ $(function() {
         }
         return true;
 	};
-		
+	$('#btn_search').click(function(){ 
+        $arr_s = $('#search_form').serializeArray();
+        tree_ajax.connect('POST', 'banve/tree',$arr_s);      
+        //$('#search_form').submit();
+	});
+            
+    $("#s_banve_name").keydown(function (e) {
+        if (e.keyCode == 13) {
+            $('#btn_search').click();
+        }
+    });
+	$('#btn_clear').click(function(){
+		$('#search_form').find("textarea, :text, select").val("");
+	});
+    
 });
         
         var l_fold = false;
