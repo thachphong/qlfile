@@ -469,21 +469,23 @@ class File_model extends ACWModel
             	t.file_type,
                 t.don_id,
                 t.`status` trangthai,
-                u.user_name,
+                u.user_name_disp user_name,
+								utt.user_name_disp ttql,
 							d.tieude,d.don_no,
 							(case 
 				  when d.loaidon = 0 then 'Tạo mới'
 				  when d.loaidon = 1 then 'Cập nhật'
 				  end)  loaidon,
-          DATE_FORMAT(t.add_datetime,'%d/%m/%Y %H:%i:%s') add_datetime     
-               
+          DATE_FORMAT(t.add_datetime,'%d/%m/%Y %H:%i:%s') add_datetime,     
+          DATE_FORMAT(d.ngay_ttql,'%d/%m/%Y %H:%i:%s') ngay_ttql
 			FROM	file t
 				 inner join (select a.file_name,max(a.file_id) file_id from file a where del_flg=0 group by a.file_name) mx
 									on mx.file_id = t.file_id 
-				inner join don d on d.don_id = t.don_id
+				inner join don d on d.don_id = t.don_id and d.del_flg = 0
 				inner join don_folder df on df.don_id = t.don_id
 				inner JOIN (SELECT DISTINCT * from temp_folder) tmp on tmp.folder_id = df.folder_id
-                left join m_user u on t.add_user_id = u.user_id
+        left join m_user u on t.add_user_id = u.user_id
+				left join m_user utt on d.user_ttql = utt.user_id
             where /*t.`status`=3
                 and*/ t.file_type ='pdf'
                 and t.del_flg = 0
@@ -530,7 +532,7 @@ class File_model extends ACWModel
           DATE_FORMAT(t.add_datetime,'%d/%m/%Y %H:%i:%s') add_datetime     
                
 			FROM	file t				 
-				inner join don d on d.don_id = t.don_id
+				inner join don d on d.don_id = t.don_id and d.del_flg = 0
         left join m_user u on t.add_user_id = u.user_id
             where  t.file_type ='pdf'
                 and t.del_flg = 0
@@ -581,7 +583,7 @@ class File_model extends ACWModel
 			FROM	file t
 				inner join (select a.file_name,max(a.file_id) file_id from file a where del_flg=0 group by a.file_name) mx
 									on mx.file_id = t.file_id
-				inner join don d on d.don_id = t.don_id
+				inner join don d on d.don_id = t.don_id and d.del_flg = 0
 				inner join don_folder df on df.don_id = t.don_id
         left join m_user u on t.add_user_id = u.user_id
             where t.file_type ='dwg'

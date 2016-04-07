@@ -37,7 +37,7 @@ require_once ACW_APP_DIR . '/lib/FileWindows.php';
 require_once ACW_APP_DIR . '/lib/File.php';
 require_once ACW_APP_DIR . '/lib/Image.php';
 require_once ACW_APP_DIR . '/lib/ImgToPdf.php';
-
+require_once ACW_APP_DIR . '/model/Don.php';
 
 set_time_limit(0);
 
@@ -51,7 +51,7 @@ class BatchAddImg_model extends ACWModel {
     {       
     	$argv =$_SERVER["argv"];
         $cvt = new ImgToPdf_lib();
-        $condau_path =  ACW_ROOT_DIR.'/shared/img/condau.jpg';
+        $condau_path =  ACW_ROOT_DIR.'/condau/';
         $pdf_file = $argv[1];
         $file = new File_lib();
         //$pattern ='/\\[D\d]{11}\\/';
@@ -60,13 +60,17 @@ class BatchAddImg_model extends ACWModel {
             $don_id =str_replace("D","", str_replace("\\","",$info[6]));
             $file_name =$file->GetBaseName($info[7]).'%';
         }
-        if(!$file->FileExists($pdf_file)){
+        if(!$file->FileExists($pdf_file)){// khong ton tai
             $this->update_exist($don_id,$file_name,0);
-        }else{
+        }else{ // da ton tai
+            $db = new Don_model();            
+            $data = $db->get_user_name_don($don_id);
+            if(isset($data['usr_kt'])){
+                $condau_path .=$data['usr_kt']."_".$data['usr_duyet'].".png";
+            }
             $this->update_exist($don_id,$file_name,1);
+            $cvt->addimg($condau_path,$argv[1]);
         }
-        
-        $cvt->addimg($condau_path,$argv[1]);
     }
     public function update_exist($don_id,$file_name,$flg_exist)
     {

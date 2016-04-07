@@ -61,7 +61,7 @@
 <%include 'include/tree_view.html'%>
 <script type='text/javascript'>
 $(function() {
-    $('#menu_admin').addClass('selected');
+    $('#menu_banve').addClass('selected');
 	var selected_category_id = null;
 	var add_section_no;
 	var sort_mode = false;	// ソートモード
@@ -76,7 +76,8 @@ $(function() {
 			// エラー
 			Argo_ajax.message_box_error("", 'Không có dữ liệu');
 			// ツリー再描画
-			tree_ajax.connect('GET', 'banve/tree');
+			$arr_s = $('#search_form').serializeArray();
+			tree_ajax.connect('POST', 'banve/tree',$arr_s);
 			return;
 		}
 		// HTML追加
@@ -94,7 +95,8 @@ $(function() {
             Argo_ajax.message_box(' ', 'Cập nhật thành công !');
 			$('#edit_contents_html').empty();
 			// ツリー更新
-			tree_ajax.connect('GET', 'banve/tree');
+            $arr_s = $('#search_form').serializeArray();
+			tree_ajax.connect('POST', 'banve/tree',$arr_s);
 		}
 	};
 
@@ -106,7 +108,8 @@ $(function() {
 				Argo_ajax.message_box_error("", data.error[0]['info']); //Edit NBKD-1071 TinVNIT 02/27/2015
 			}
 		} else {
-			tree_ajax.connect('GET', 'banve/tree');
+            $arr_s = $('#search_form').serializeArray();
+			tree_ajax.connect('POST', 'banve/tree',$arr_s);
 		}
 	};
 

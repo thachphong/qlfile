@@ -41,10 +41,13 @@
 		<table id="data_list">
 			<thead>
 			<tr>
-				<th style="width: 100px;">Tên file</th>
-                <th style="width: 100px;text-align: center;">Ngày cập nhật</th>
-                <th style="width: 100px;text-align: center;">tiêu đề</th>
+				<th style="">Tên file</th>                
+                <th style="text-align: center;">tiêu đề</th>
                 <th style="width: 100px;text-align: center;">Loại bản vẽ</th>
+                <th style="width: 120px;text-align: center;">Người cập nhật</th>
+                <th style="width: 120px;text-align: center;">Ngày cập nhật</th>
+                <th style="width: 120px;text-align: center;">Người duyệt</th>
+                <th style="width: 120px;text-align: center;">Ngày duyệt</th>
 			</tr>
 			</thead>
 			<tbody>
@@ -53,15 +56,24 @@
 				<td>
 					<input type="hidden" class="m_user_id" value="<%$row.file_id%>" />
 					<a id="<%$row.don_id%>_<%$row.trangthai%>_<%$row.file_id%>" href="javascript:void(0)" class="view_file"><%$row.file_name%></a>
-				</td>
-				<td style="text-align: center;">
-					<%$row.add_datetime%>
-				</td>
+				</td>				
                 <td style="text-align: center;">
 					<%$row.tieude%>
 				</td>
                 <td style="text-align: center;">
 					<%$row.loaidon%>
+				</td>
+                <td style="text-align: center;">
+					<%$row.user_name%>
+				</td>
+                <td style="text-align: center;">
+					<%$row.add_datetime%>
+				</td>
+                <td style="text-align: center;">
+					<%$row.ttql%>
+				</td>
+                <td style="text-align: center;">
+					<%$row.ngay_ttql%>
 				</td>
 			</tr>
 <%/foreach%>

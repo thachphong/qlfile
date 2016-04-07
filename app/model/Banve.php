@@ -150,105 +150,6 @@ class Banve_model extends ACWModel
 		return ACWView::json($result);
 	}
 
-	/**
-	* 並び替え
-	*/
-	public static function action_sort()
-	{
-		$result = array();
-		$param = self::get_param(array(
-			'my'
-			,'parent'
-			,'prev'
-			));
-		if (self::get_validate_result() == false) {
-			ACWError::add('acw_url', 'パラメタが不正です。');
-		}
-
-		// 並び替え
-		$db = new Category_model();
-		$db->sort_category($param);
-		if (ACWError::count() > 0) {
-			// エラー
-			$result['status'] = 'NG';
-			$result['error'] = ACWError::get_list();
-		} else {
-			// 正常
-			$result['status'] = 'OK';
-		}
-
-		return ACWView::json($result);
-	}
-	
-	public static function action_upload()
-	{
-		$param = self::get_param(array(
-			't_ctg_section_id'
-			,'upload_file'
-		));	
-		if (self::get_validate_result() == false) {
-			$result['status'] = 'NG';
-			$err = ACWError::get_list();
-			$result['error'] = $err[0]['info'];
-			return ACWView::json($result);
-		}
-		
-		// アップロード成功
-		$result['status'] = 'OK';
-		$file_lib = new File_lib();
-
-		// アップするファイル名 data/help/t_ctg_section_id/*******.***
-		$dir_lib = new Path_lib(AKAGANE_HELP_STRAGE_PATH);
-		if ($file_lib->FolderExists($dir_lib->get_full_path()) === false) {
-			$file_lib->CreateFolder($dir_lib->get_full_path());
-		}
-		
-		// フォルダの作成
-		$dir_lib->combine($param['t_ctg_section_id']);
-		if ($file_lib->FolderExists($dir_lib->get_full_path())) {
-			$file_lib->DeleteFolder($dir_lib->get_full_path());
-		}
-		$file_lib->CreateFolder($dir_lib->get_full_path());
-	
-		// ファイル名をパスに追加
-		$ext = $file_lib->GetExtensionName($param['upload_file']['name']);
-		$dir_lib->combine(uniqid() . '.' . $ext);
-		
-		// ファイルをコピーする
-		if ($file_lib->MoveFile($param['upload_file']['tmp_name'], $dir_lib->get_full_path()) === false) {
-			// ファイル移動失敗
-			$result['status'] = 'NG';
-			$result['error'] = 'アップロードに失敗しました。';			
-		}
-		
-		return ACWView::json($result);
-	}
-	
-	public static function action_uploaddel()
-	{
-		$param = self::get_param(array(
-			't_ctg_section_id'
-		));
-		if (self::get_validate_result() == false) {
-			$result['status'] = 'NG';
-			$err = ACWError::get_list();
-			$result['error'] = $err[0]['info'];
-			return ACWView::json($result);
-		}
-		
-		$result['status'] = 'OK';
-		$file_lib = new File_lib();
-		
-		// 削除するフォルダ名 data/help/t_ctg_section_id
-		$dir_lib = new Path_lib(AKAGANE_HELP_STRAGE_PATH);
-		$dir_lib->combine($param['t_ctg_section_id']);
-		if ($file_lib->FolderExists($dir_lib->get_full_path())) {
-			$file_lib->DeleteFolder($dir_lib->get_full_path());
-		}
-		
-		return ACWView::json($result);
-	}
-    
 	public static function validate($action, &$param)
 	{
 		switch ($action) {
@@ -363,11 +264,11 @@ class Banve_model extends ACWModel
 		if(isset($param['banve_no'])&& strlen($param['banve_no'])>0 ){
 			if(isset($param['my_id'])===FALSE){
 				$sel_param = ACWArray::filter($param, array('banve_no'));
-				$sql = "SELECT COUNT(*) cnt FROM banve WHERE banve_no = :banve_no ";
+				$sql = "SELECT COUNT(*) cnt FROM banve WHERE del_flg=0 and banve_no = :banve_no ";
 				
 				$result = $this->query($sql, $sel_param);				
 				if ($result[0]['cnt'] > 0) {
-					ACWError::add('banve_no', 'Mã bản vẽ "'.$sel_param['banve_name'].'" đã có, vui lòng nhập tên khác !');
+					ACWError::add('banve_no', 'Mã bản vẽ "'.$sel_param['banve_no'].'" đã có, vui lòng nhập tên khác !');
 					return false;
 				}	
 			}				
@@ -502,91 +403,14 @@ class Banve_model extends ACWModel
 
 		$this->commit();
 	}
-
-	public function sort_category($param)
+	public function get_all()
 	{
-		$login_info = ACWSession::get('user_info');
-		$param['user_id'] = $login_info['m_user_id'];
-
-		$this->begin_transaction();
-		/*
-		 * category 並び替え
-		 */
-		
-		$my_info = $this->query("
-			SELECT
-				oya_t_ctg_head_id
-				,disp_seq
-			FROM t_ctg_head
-			WHERE t_ctg_head_id = :my AND del_flg = 0 -- Add NBKD-40,52 Minh Vnit 2014/10/30
-			",
-							ACWArray::filter($param, array('my')));
-		if (count($my_info) != 1) {
-			ACWError::add('my', 'カテゴリが削除されています。');
-			return;
-		}
-		$my_i = $my_info[0];
-
-		$param['delete_seq'] = $my_i['disp_seq'];
-		$param['oya'] = $my_i['oya_t_ctg_head_id'];
-		// 元のカテゴリで自分以上のものは下げる
-		$this->execute("
-			UPDATE t_ctg_head SET
-				disp_seq = disp_seq - 1
-				,upd_user_id = :user_id
-				,upd_datetime = now()
-			WHERE oya_t_ctg_head_id = :oya AND disp_seq > :delete_seq
-			",
-				ACWArray::filter($param, array('delete_seq', 'oya', 'user_id')));
-
-		if (isset($param['prev']) == false) {
-			// 先頭
-			$param['my_seq'] = 1;
-		} else {
-			// 自分の前のカテゴリの番号
-			$prev_info = $this->query("
-				SELECT
-					disp_seq
-				FROM t_ctg_head
-				WHERE t_ctg_head_id = :prev AND del_flg = 0 -- Add NBKD-40,52 Minh Vnit 2014/10/30
-				",
-								ACWArray::filter($param, array('prev')));
-
-			if (count($prev_info) != 1) {
-				ACWError::add('prev', 'カテゴリが削除されています。');
-				return;
-			}
-			$param['my_seq'] = $prev_info[0]['disp_seq'] + 1;
-		}
-
-		// 今のカテゴリで自分以上のものを上げる
-		$this->execute("
-			UPDATE t_ctg_head SET
-				disp_seq = disp_seq + 1
-				,upd_user_id = :user_id
-				,upd_datetime = now()
-			WHERE oya_t_ctg_head_id = :parent AND disp_seq >= :my_seq AND t_ctg_head_id <> :my
-			",
-				ACWArray::filter($param, array('my', 'my_seq', 'parent', 'user_id')));
-
-		// 自分を更新
-		$this->execute("
-			UPDATE t_ctg_head SET
-				disp_seq = :my_seq
-				,oya_t_ctg_head_id = :parent
-				,upd_user_id = :user_id
-				,upd_datetime = now()
-			WHERE t_ctg_head_id = :my
-			",
-				ACWArray::filter($param, array('my', 'my_seq', 'parent', 'user_id')));
-		$this->commit();
-	}
-
-	/**
-	 * ツリーに表示するカテゴリ取得
-	 */
+        $sql ="select * from banve where del_flg=0 and banve_id <>1 order by banve_no";
+        return $this->query($sql);
+    }
 	public function get_banve_all($param)
 	{
+        $this->begin_transaction();
 		$sql = "SELECT
 				  chd.banve_id AS id
 				,chd.banve_no AS category_name
@@ -610,17 +434,23 @@ class Banve_model extends ACWModel
         $flg_check = FALSE;
         $where ="";
         if(isset($param['s_banve_no']) && strlen(trim($param['s_banve_no']))>0){
-            $where .="and banve_no = :s_banve_no";
-            $param_sql['s_banve_no']=$param['s_banve_no'];
+            //$where .="and banve_no = :s_banve_no";
+            $param_sql['banve_no']=$param['s_banve_no'];
             $flg_check = TRUE;
+        }else{
+            $param_sql['banve_no']= "%";
         }
         if(isset($param['s_banve_name']) && strlen(trim($param['s_banve_name']))>0){
-            $where .="and LOWER(banve_name) like LOWER(:s_banve_name)";
-            $param_sql['s_banve_name']='%'.$param['s_banve_name'].'%';
+            //$where .="and LOWER(banve_name) like LOWER(:s_banve_name)";
+            $param_sql['banve_name']='%'.$param['s_banve_name'].'%';
             $flg_check = TRUE;
+        }else{
+            $param_sql['banve_name']= "%";
         }
         if($flg_check){
-            $sql .= "and chd.banve_id in (select banve_id 
+            $this->query("select f_get_all_banve(:banve_no,:banve_name)",$param_sql);
+            $sql .="and chd.banve_id in (select distinct banve_id from temp_banve)";
+            /*$sql .= "and chd.banve_id in (select banve_id 
                     from banve
                     where del_flg = 0
                     ".$where."
@@ -634,9 +464,11 @@ class Banve_model extends ACWModel
                     			) initialisation
                     where   find_in_set(parent_id, @pv) > 0
                     and     @pv := concat(@pv, ',', banve_id))
-                    ";
+                    ";*/
         }
-		return $this->query($sql,$param_sql);
+		$res = $this->query($sql);
+        $this->commit();
+        return $res;
 	}
 	/**
 	 * カテゴリ情報獲得
@@ -670,13 +502,13 @@ class Banve_model extends ACWModel
             }else if($level=='3'){
                 return 100;
             }else if($level=='4'){
-                return 100;
+                return 1000;
             }else if($level=='5'){
                 return 5000;
             }
         }			
 	}
-	public function get_ctg_child($ctg_parent_id,&$all_ctg_child = NULL)
+	/*public function get_ctg_child($ctg_parent_id,&$all_ctg_child = NULL)
 	{
 		if($all_ctg_child == NULL){
 			$all_ctg_child = array();
@@ -699,7 +531,7 @@ class Banve_model extends ACWModel
 		}
 			
 		return $all_ctg_child;
-	}
+	}*/
 	
 	public function get_child_banve($folder_id)
 	{

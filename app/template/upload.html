@@ -79,11 +79,18 @@
                     <td style="font-weight: bold">Tiêu đề</td>
                     <td colspan="9">
                         <input type="text" maxlength="255" value="<%$data_row.tieude%>" size="100" name="tieude" id="tieude" <%if $mode!= "new" || $loaidon =='1'%>readonly="true"<%/if%> >
+                        
                     </td>
                 </tr>
                 <tr> <td style="font-weight: bold">Mã bản vẽ tổng</td>
                     <td colspan="9">
-                        <input type="text" maxlength="20" value="<%$data_row.don_no%>" size="30" name="don_no" id="don_no" <%if $mode!= "new" || $loaidon =='1'%>readonly="true"<%/if%> >
+                        <!--<input type="text" maxlength="8" value="<%$data_row.don_no%>" size="30" name="don_no" id="don_no" <%if $mode!= "new" || $loaidon =='1'%>readonly="true"<%/if%> >-->                      
+                        <select <%if $mode!= "new" || $loaidon =='1'%>disabled<%/if%> style="width:200px" name="don_no">
+                            <option></option>
+                            <%foreach $dm_banve as $bv%>
+                                <option <%if $data_row.don_no==$bv['banve_no']%>selected<%/if%> value="<%$bv['banve_no']%>"><%$bv['banve_no']%></option>
+                            <%/foreach%>
+                        </select>                       
                     </td>
                 </tr>
                 <tr>
@@ -177,7 +184,7 @@
                     <td  style="height:35px">Người kiểm tra</td>
                     <td  style="">
                         <select class="width2" name="usr_kiemtra"  id="usr_kiemtra" <%if $mode!= "new" || $loaidon =='1'%>disabled<%/if%>>
-                            <option></option>
+                            <!--<option></option>-->
                             <%foreach $kiemtra_list as $kt%>
                             <option value="<%$kt.user_id%>" <%if $data_row.user_kt==$kt.user_id%>selected<%/if%>><%$kt.user_name_disp%></option>
                             <%/foreach%>
@@ -211,7 +218,7 @@
                     <td  style="height:35px">Người Duyệt</td>
                     <td  style="">
                         <select class="width2" name="usr_duyet"  id="usr_duyet" <%if $mode!= "new" || $loaidon =='1'%>disabled<%/if%>>
-                            <option></option>
+                            <!--<option></option>-->
                             <%foreach $duyet_list as $duyet%>
                             	<option value="<%$duyet.user_id%>" <%if $data_row.user_duyet==$duyet.user_id%>selected<%/if%> ><%$duyet.user_name_disp%></option>
                             <%/foreach%>

@@ -261,7 +261,7 @@ class Don_model extends ACWModel
             $list_dl = ACWSession::get('file_download');
             $model->join_dl_file($filelist,$list_dl);
 		}
-        
+        $bv = new Banve_model();
 		return ACWView::template('upload.html', array(
 			'data_row' => $data_row	
 			,'kiemtra_list' =>$kiemtra_list
@@ -273,6 +273,7 @@ class Don_model extends ACWModel
             ,'flg_muon'=>$flg_muon
             ,'flg_capnhat'=>$flg_capnhat
             ,'quyen_tao_moi'=>$quyen_tao_moi
+            ,'dm_banve' =>$bv->get_all()
         ));
 	}
 	private function join_dl_file(&$filelist, $dl_list){
@@ -1069,7 +1070,18 @@ class Don_model extends ACWModel
 		
 		return $rows[0];
 	}
-	
+	public function get_user_name_don($don_id){
+        $sql="select us.user_name usr_kt, d.user_name usr_duyet
+               from don t										
+            LEFT JOIN m_user us on us.user_id = t.user_kt
+            LEFT JOIN m_user d on d.user_id = t.user_duyet
+            where don_id = :don_id ";
+        $res = $this->query($sql,array('don_id'=>$don_id));
+        if(count($res)> 0){
+            return $res[0];
+        }
+        return NULL;
+    }
 	private function get_donvi_name_count($param)
 	{
 		$sql = "
