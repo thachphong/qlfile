@@ -34,13 +34,16 @@
                 <%if $user_info.trungtam_quanly=="1"%>
                 <li><a href="<%$smarty.const.ACW_BASE_URL%>folderfile" >Phân bổ file</a></li>
                 <li><a href="<%$smarty.const.ACW_BASE_URL%>folderfile/history" >Lịch sử phân bổ file</a></li>
+                <%/if%>
+                <%if $user_info.admin =="1" %>
+        <li><a href="<%$smarty.const.ACW_BASE_URL%>banve" id="menu_banve" class="gnav_1">Danh mục bản vẽ</a></li>
                 <%/if%>               
                 <li><a href="<%$smarty.const.ACW_BASE_URL%>may" >Danh sách máy</a></li>
                 <li><a href="<%$smarty.const.ACW_BASE_URL%>mayfile" >Đưa Bản vẽ vào máy</a></li>
             </ul>
         </li>        
         <%/if%>
-        <%if $user_info.upload=="1" || $user_info.kiemtra=="1" %>
+        <%if ($user_info.upload=="1" || $user_info.kiemtra=="1")&& $user_info.admin !="1" %>
         <li><a href="<%$smarty.const.ACW_BASE_URL%>banve" id="menu_banve" class="gnav_1">Danh mục bản vẽ</a></li>
         <%/if%>
         <%if $user_info.print=="1"%>

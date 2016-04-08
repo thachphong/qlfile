@@ -492,7 +492,7 @@ class Banve_model extends ACWModel
          and SUBSTR(f.banve_no,1,4) = :parent_no
 			", array ('level' => $level,'parent_no'=>substr($parent_no,0,4)));
 		if(isset($r[0]['mx'])){
-            return $r[0]['mx'];
+            return ($r[0]['mx']+1);
         }			
 		else{
             if($level=='1')
