@@ -222,7 +222,7 @@ class Phongban_model extends ACWModel
 					, upd_user_id = :upd_user_id
 					, upd_datetime = NOW()
 				WHERE
-					donvi_id = :donvi_id
+					phongban_id = :phongban_id
 			";
 			$sql_params['donvi_id'] = $params['donvi_id'];
 			$sql_params['del_flg'] = $params['del_flg'];
