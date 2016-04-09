@@ -43,6 +43,7 @@ class Banve_model extends ACWModel
 		if(count($pa_info)>0){
 			$param['parent_level'] = $pa_info['level'];
 		}
+        $param['level'] = $param['parent_level'] +1 ;
 		return ACWView::template('banve/edit.html', $param);
 	}
 
@@ -57,6 +58,7 @@ class Banve_model extends ACWModel
 		}
 		$db = new Banve_model();
 		$result = $db->get_banve_info($param['my_id']);
+        $param['level'] = $result['level'];
 		$param['banve_no'] = $result['banve_no'];
         $param['banve_name'] = $result['banve_name'];
 		$param['parent_id'] = $result['parent_id'];		
@@ -77,9 +79,11 @@ class Banve_model extends ACWModel
 		$param = self::get_param(array(
 			'banve_name'
 			,'banve_no'
+            ,'level'
 			, 'my_id'	
 			, 'parent_id'
 			, 'add_child'
+            ,'add_level'
 			));
 		
 		$result = array('status' => 'OK');
@@ -93,18 +97,21 @@ class Banve_model extends ACWModel
 					$list_child[] = $row['banve_name'];
 				}           
 				$add_new = array();
+                $add_level = array();
 				if(isset($param['add_child'])){
 					$add_child = $param['add_child'];
-					foreach($add_child as $item){
+					foreach($add_child as $key => $item){
 						if(!in_array($item,$list_child))	
 						{
-							$add_new[] = $item ;							
+							$add_new[] = $item ;
+                            $add_level[]= $param['add_level'][$key]	;						
 						}
 						$list_child[]= $item;
 					}	
 					
 				}
 				$param['add_child'] = $add_new;
+                $param['add_level'] = $add_level;
 				$db->update_banve($param);
 			}
 		}
@@ -317,10 +324,10 @@ class Banve_model extends ACWModel
 		$param_new['user_id'] = $login_info['user_id'];        
 		if (isset($param['my_id']) == false) {  //add new 
 			$parent_info = $this->get_banve_info($param['parent_id']);
-			$param['level']=1;
+			/*$param['level']=1;
 			if(count($parent_info)>0){
 				$param['level']=$parent_info['level']+1;	
-			}			
+			}*/			
             if(isset($param['banve_no'])===FALSE || strlen($param['banve_no'])==0){
                 $maxno= $this->get_banve_maxno($param['level'],$parent_info['banve_no']);
                 $param['banve_no'] = substr( $parent_info['banve_no'],0,4). str_pad($maxno,4,'0',STR_PAD_LEFT) ;
@@ -356,15 +363,17 @@ class Banve_model extends ACWModel
 		}
 		//insert folder con
 		$parent_info = $this->get_banve_info($param_new['parent_id']);
-		$param_new['level']=1;
+		/*$param_new['level']=1;
 		if(count($parent_info)>0){
 			$param_new['level']=$parent_info['level']+1;	
-		}
+		}*/
 		if(isset($param['add_child'])){
-            $maxno = $this->get_banve_maxno($param_new['level'],$parent_info['banve_no']);
-			foreach($param['add_child'] as $row){
+            //$maxno = $this->get_banve_maxno($param_new['level'],$parent_info['banve_no']);
+			foreach($param['add_child'] as $key=>$row){
 				if(isset($row) && !empty($row)){                    
 					$param_new['banve_name'] = $row;
+                    $param_new['level'] = $param['add_level'][$key];
+                    $maxno = $this->get_banve_maxno($param_new['level'],$parent_info['banve_no']);
                     $param_new['banve_no']=substr( $parent_info['banve_no'],0,4). str_pad($maxno,4,'0',STR_PAD_LEFT) ;
                     if ($this->check_banve_id($param_new)){
     					$this->execute($sql,$param_new);
@@ -403,9 +412,13 @@ class Banve_model extends ACWModel
 
 		$this->commit();
 	}
-	public function get_all()
+	public function get_all($level = '')
 	{
-        $sql ="select * from banve where del_flg=0 and banve_id <>1 order by banve_no";
+        $sql ="select * from banve where del_flg=0 and banve_id <>1 ";
+        if($level !=''){
+            $sql .=" and level = ".$level;
+        }
+        $sql .=" order by banve_no";
         return $this->query($sql);
     }
 	public function get_banve_all($param)

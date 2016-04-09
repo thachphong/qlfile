@@ -110,7 +110,8 @@
                 <th style="width: 60px;">Mã bản vẻ</th>
                 <th style="width: 200px;">Tiêu đề</th>
                 <th style="width: 70px;">Ngày lập</th>
-                <th style="width: 100px;">Người duyệt</th>
+                <th style="width: 100px;">Người tạo</th>
+                <th style="width: 100px;">Người duyệt cuối</th>
                 <th style="width: 120px; text-align: center;">tình trạng</th>
                 <th style="width: 200px;">Nội dung</th>
 			</tr>
@@ -129,6 +130,7 @@
 					<a href="<%$smarty.const.ACW_BASE_URL%>don/edit/<%$row.don_id%>" class="btn_edit"><%$row.tieude%></a>
 				</td>
                 <td><%$row.add_datetime%> </td>
+                <td><%$row.add_user%></td>
                 <td><%$row.user_name_disp%></td>
                 <td>
                     <%$row.status_name%>

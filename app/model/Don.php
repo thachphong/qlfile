@@ -273,7 +273,7 @@ class Don_model extends ACWModel
             ,'flg_muon'=>$flg_muon
             ,'flg_capnhat'=>$flg_capnhat
             ,'quyen_tao_moi'=>$quyen_tao_moi
-            ,'dm_banve' =>$bv->get_all()
+            ,'dm_banve' =>$bv->get_all('1')
         ));
 	}
 	private function join_dl_file(&$filelist, $dl_list){
@@ -656,6 +656,7 @@ class Don_model extends ACWModel
               t.ngay_duyet_muon ngay_duyet_cn,
               t.add_user_id,
 							u.user_name_disp ,
+              ad.user_name_disp  add_user,
             	DATE_FORMAT(t.add_datetime,'%d/%m/%Y %H:%i:%s') add_datetime    ,
                 (case 
 				  when t.trangthai  = 0 or t.trangthai  = 1 or t.trangthai  = 2 then 'Đang chờ'
@@ -666,7 +667,8 @@ class Don_model extends ACWModel
                   when t.trangthai  = 9 then 'Đã duyệt xin mượn bản vẽ'
 				  end)  as status_name
                 from don t	
-								left join m_user u on u.user_id = t.upd_user_id
+				    left join m_user u on u.user_id = t.upd_user_id
+                    left join m_user ad on ad.user_id = t.add_user_id
 				LEFT JOIN file as f on f.don_id = t.don_id  and f.file_type='dwg'
                 where t.del_flg=0
                 and t.trangthai <> -1 ";
@@ -757,6 +759,7 @@ class Don_model extends ACWModel
               t.ngay_duyet_muon ngay_duyet_cn,
               t.add_user_id,
 							u.user_name_disp ,
+              ad.user_name_disp  add_user,
             	DATE_FORMAT(t.add_datetime,'%d/%m/%Y %H:%i:%s') add_datetime    ,
                 (case 
 				  when t.trangthai  = 0 or t.trangthai  = 1 or t.trangthai  = 2 then 'Đang chờ'
@@ -767,7 +770,8 @@ class Don_model extends ACWModel
                   when t.trangthai  = 9 then 'Đã duyệt xin mượn bản vẽ'
 				  end)  as status_name
                 from don t	
-								left join m_user u on u.user_id = t.upd_user_id
+					left join m_user u on u.user_id = t.upd_user_id
+                    left join m_user ad on ad.user_id = t.add_user_id
 				LEFT JOIN file as f on f.don_id = t.don_id  and f.file_type='dwg'
                 where t.del_flg=0
                 ";

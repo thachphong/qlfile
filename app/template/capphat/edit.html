@@ -167,13 +167,13 @@ $(document).ready(function () {
     
     var load_donvi= function(){
         var data =  $.parseJSON(donvi_list)
-        console.log(data);
+       // console.log(data);
         $.each( data, function( key, value ) {
             var name = data[key]["donvi_name"];
     		var val = data[key]["donvi_id"];	
             str_donvi += '<option value="'+val+'">'+name+'</option>';
         });
-        console.log(str_donvi);
+       // console.log(str_donvi);
     };
     load_donvi();
     load_phongban('');

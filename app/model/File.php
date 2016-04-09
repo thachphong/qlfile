@@ -209,6 +209,7 @@ class File_model extends ACWModel
 	}
     public function get_capphat_rows($file_id)
 	{
+        $user = ACWSession::get('user_info');
 		$sql = "
 			SELECT	t.capphat_id, t.soluong,
             d.donvi_name,p.phongban_name,n.tonhom_name
@@ -217,10 +218,11 @@ class File_model extends ACWModel
             INNER JOIN phong_ban p on p.phongban_id= t.phongban_id
             LEFT JOIN to_nhom n on n.tonhom_id = t.tonhom_id
             where file_id= :file_id
+            and t.add_user_id =:user_id
             ORDER BY capphat_id
 		";
 		
-		return $this->query($sql, array('file_id'=>$file_id));
+		return $this->query($sql, array('file_id'=>$file_id,'user_id'=>$user['user_id']));
 	}
 	/**
 	 * 

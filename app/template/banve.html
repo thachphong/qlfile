@@ -114,6 +114,11 @@ $(function() {
 	};
 
 	$('#btn_new').click(function() {
+        var level_no = $('#level_no').val();
+        if(level_no=='5'){
+             Argo_ajax.message_box(' ', 'Cấp "5" không thể tạo cấp con !');
+             return;
+        }
 		$('#edit_contents_html').empty();
                 _is_edit_category = false;//Add - trung VNIT - 2014/09/15
 		html_ajax.connect('GET', 'banve/new/' + selected_category_id.replace("ltree_",""));
@@ -148,8 +153,19 @@ $(function() {
 			$('#asrel_' + com_sp_id).attr("checked", false);
 		}
 	};
-	$(document).on('click', '#section_add', function() {			        
-		$('#folder_list').append('<tr> <td><input readonly="true" size="20" ></td><td><input size="30" name="add_child[]"></td></tr>');
+	$(document).on('click', '#section_add', function() {
+        var level_no = $('#level_no').val();
+        if(level_no=='5'){
+             Argo_ajax.message_box(' ', 'Cấp "5" không thể tạo cấp con !');
+             return;
+        }
+        var select_str='<td><select name="add_level[]">';
+        for(var i= (parseInt(level_no)+1); i<=5;i++){
+            select_str +='<option value="'+i+'">'+i+'</option>';
+        }			     
+        select_str +="</select></td>"; 
+        //console.log(select_str); 
+		$('#folder_list').append('<tr> <td><input readonly="true" size="20" ></td>'+select_str+'<td><input size="30" name="add_child[]"></td></tr>');
 
 	});			
 	
@@ -296,12 +312,11 @@ $(function() {
 
 	// 閉じる
 	$(document).on('click', '#category_close', function() {
-		Argo_ajax.ok_cancel_box(' ', '編集画面を閉じます。よろしいですか？', function () {
+		Argo_ajax.ok_cancel_box(' ', 'Bạn có chắc chắn muốn thoát？', function () {
 			$('#edit_contents_html').empty();
 		});
 	});
-
-	// サイズ変更スクリプト
+	
 	$(window).on("load resize", function(){
 		var wh = $(window).height();
 		$(".height1").height(wh - 218);	// ツリー

@@ -15,8 +15,18 @@
 			</div>
 			<table class="category_1">
 				<colgroup><col width="120px" /><col width="20px" /></colgroup>
-				<tr><th colspan="2">Mã bản vẽ<%if $parent_level=='0'%><span class="edit_require">*</span><%/if%></th>
+				<tr><th colspan="2">Mã bản vẽ<%if $parent_level=='0'%><span class="edit_require">*</span><%/if%></th>                
 				<td><input maxlength="8" id="banve_no" <%if $parent_level!='0'%>readonly="true"<%/if%> name="banve_no" type="text" size="30" value="<%$banve_no%>"/></td>
+				</tr>
+                <tr><th colspan="2">Cấp bản vẽ<%$level%></th>
+				<td><select id="level_no"  name="level" disabled>
+                        <option value="1" <%if $level == '1'%>selected<%/if%>>1</option>
+                        <option value="2" <%if $level == '2'%>selected<%/if%>>2</option>
+                        <option value="3" <%if $level == '3'%>selected<%/if%>>3</option>
+                        <option value="4" <%if $level == '4'%>selected<%/if%>>4</option>
+                        <option value="5" <%if $level == '5'%>selected<%/if%>>5</option>                      
+                    </select>
+                </td>
 				</tr>
 				<tr><th colspan="2">Tên bản vẽ<span class="edit_require">*</span></th>
 				<td><input name="banve_name" id="banve_name" type="text" size="30" value="<%$banve_name%>"/></td>
@@ -36,11 +46,13 @@
 				<thead>
 					<tr>
 						<th style="width: 170px;">Mã bản vẽ</th>
-		                <th style="width: 250px;text-align: center;">Tên bản vẽ</th>		                
+                        <th style="width: 250px;text-align: center;">Cấp bản vẽ</th>
+		                <th style="width: 250px;text-align: center;">Tên bản vẽ</th>
 					</tr>
 				</thead>
 				<%foreach $banve_child as $row%>
 				<tr> <td><%$row.banve_no%></td>
+                    <td><%$row.level%></td>
 					 <td><%$row.banve_name%></td>
 				</tr>
 				<%/foreach%>
