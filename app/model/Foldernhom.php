@@ -148,24 +148,28 @@ class Foldernhom_model extends ACWModel
         $olddata = $this->get_phanquyen_list($param['folder_id']);
         $addnew = array();
         $delrow = array();
-        foreach($nhomlist as $item){
-            $flg_exist = TRUE;
-            foreach($olddata as $row){
-                if($item== $row['old_id'] )
-                {
-                    $flg_exist = FALSE;
+        if(count($nhomlist)>0){
+            foreach($nhomlist as $item){
+                $flg_exist = TRUE;
+                foreach($olddata as $row){
+                    if($item== $row['old_id'] )
+                    {
+                        $flg_exist = FALSE;
+                    }
                 }
-            }
-            if($flg_exist){
-                $addnew[] = $item;
+                if($flg_exist){
+                    $addnew[] = $item;
+                }
             }
         }
         foreach($olddata as $row){
             $flg_del = TRUE;
-            foreach($nhomlist as $item){
-                if($item== $row['old_id'] )
-                {
-                    $flg_del = FALSE;
+            if(count($nhomlist)>0){
+                foreach($nhomlist as $item){
+                    if($item== $row['old_id'] )
+                    {
+                        $flg_del = FALSE;
+                    }
                 }
             }
             if($flg_del){
@@ -195,7 +199,7 @@ class Foldernhom_model extends ACWModel
             $param_del['phongban_id'] = $delinfo[0];
             $param_del['tonhom_id'] = 0;
             if(isset($delinfo[1])){
-                $param_new['tonhom_id'] =$delinfo[1];
+                $param_del['tonhom_id'] =$delinfo[1];
             }
             $this->execute($sql_del,$param_del);
         }

@@ -14,9 +14,9 @@ class ImgToPdf_lib
         $pagecount = $pdf->setSourceFile($pdf_file);
         $tppl = $pdf->importPage(1);
         $size2 = $pdf->useTemplate($tppl,NULL,NULL,0,0,TRUE); //TRUE set theo kich thuoc ban dau
-        $height = $pdf->GetPageHeight();
-        $width	= $pdf->GetPageWidth();
-        $pdf->Image($img_file,$width/2,$height/2,IMG_CON_DAU_WIDTH,IMG_CON_DAU_HEIGHT);//x,y,width,height
+        $height = $pdf->GetPageHeight()- (10+IMG_CON_DAU_HEIGHT);
+        $width	= $pdf->GetPageWidth()-(5+IMG_CON_DAU_WIDTH);
+        $pdf->Image($img_file,$width,$height,IMG_CON_DAU_WIDTH,IMG_CON_DAU_HEIGHT);//x,y,width,height
         $pdf->Output($pdf_file, 'F');
     }
 }

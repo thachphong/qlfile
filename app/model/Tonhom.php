@@ -173,15 +173,14 @@ class Tonhom_model extends ACWModel
             'donvi_id'=>$params['donvi_id'],
             'del_flg' => $params['del_flg'],
             'upd_user_id'=>$login_info['user_id']
-		);		
-		if ($params['tonhom_id'] == null) {		
-			
-			$res = $this->get_tonhom_name_count($params);
+		);	
+        $res = $this->get_tonhom_name_count($params);
 			if ($res['cnt'] > 0) {
-				ACWError::add('tonhom_name', 'Tên Tổ(nhóm) đã có, vui lòng sử dụng tên khác');
+				ACWError::add('tonhom_name', 'Tên Tổ(nhóm) "'.$params['tonhom_name'].'" đã có, vui lòng sử dụng tên khác');
 				return;
-			}
-		
+		}	
+		if ($params['tonhom_id'] == null) {
+		    
 			$sql = "
 				INSERT INTO
 					to_nhom
@@ -268,9 +267,13 @@ class Tonhom_model extends ACWModel
 			WHERE
 				tonhom_name = :tonhom_name
 		";
-		
-		$filter = ACWArray::filter($param, array('tonhom_name'));
-		$rows = $this->query($sql, $filter);
+        $param_sql['tonhom_name']= $param['tonhom_name'];
+		if(isset($param['tonhom_id'])){
+            $sql .= " and tonhom_id <> :tonhom_id";
+            $param_sql['tonhom_id']= $param['tonhom_id'];
+        }
+		//$filter = ACWArray::filter($param, array('tonhom_name'));
+		$rows = $this->query($sql, $param_sql);
 		return $rows[0];
 	}
 	

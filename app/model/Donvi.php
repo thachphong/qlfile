@@ -165,14 +165,13 @@ class Donvi_model extends ACWModel
 			'donvi_name' => $params['donvi_name'],            
             'del_flg' => $params['del_flg'],
             'upd_user_id'=>$login_info['user_id']
-		);		
-		if ($params['donvi_id'] == null) {		
-			
-			$res = $this->get_donvi_name_count($params);
-			if ($res['cnt'] > 0) {
-				ACWError::add('donvi_name', 'Tên đơn vị đã có, vui lòng sử dụng tên khác');
-				return;
-			}
+		);	
+        $res = $this->get_donvi_name_count($params);
+		if ($res['cnt'] > 0) {
+			ACWError::add('donvi_name', 'Tên đơn vị "'.$params['donvi_name'].'" đã có, vui lòng sử dụng tên khác');
+			return;
+		}	
+		if ($params['donvi_id'] == null) {	
 		
 			$sql = "
 				INSERT INTO
@@ -250,9 +249,13 @@ class Donvi_model extends ACWModel
 			WHERE
 				donvi_name = :donvi_name
 		";
-		
-		$filter = ACWArray::filter($param, array('donvi_name'));
-		$rows = $this->query($sql, $filter);
+        $param_sql['donvi_name'] = $param['donvi_name'];
+		if(isset($param['donvi_id'])){
+            $sql .= " and donvi_id <> :donvi_id";
+            $param_sql['donvi_id'] = $param['donvi_id'];
+        }
+		//$filter = ACWArray::filter($param, array('donvi_name'));
+		$rows = $this->query($sql, $param_sql);
 		return $rows[0];
 	}
 	

@@ -106,11 +106,11 @@ $(document).ready(function () {
 						</th>
 						<td>
 							<input type="hidden" name="phongban_id" value="<%$data_row.phongban_id%>"  style="width:250px;" />
-<%if $data_row.phongban_id == null%>
+<%*if $data_row.phongban_id == null*%>
 					    <input type="text" name="phongban_name" value="<%$data_row.phongban_name%>" maxlength="100"  style="width:250px;" />
-<%else%>
-					    <input type="text" name="phongban_name" value="<%$data_row.phongban_name%>" maxlength="100" readonly="readonly" style="background-color: #eee;width:250px;" />
-<%/if%>
+<%*else*%>
+					    <!--<input type="text" name="phongban_name" value="<%$data_row.phongban_name%>" maxlength="100" readonly="readonly" style="background-color: #eee;width:250px;" />-->
+<%*/if*%>
 						</td>
 					</tr>
 					<tr>

@@ -177,13 +177,12 @@ class Phongban_model extends ACWModel
           //  'del_flg' => $params['del_flg'],
             'upd_user_id'=>$login_info['user_id']
 		);		
-		if ($params['phongban_id'] == null) {		
-			
-			$res = $this->get_phongban_name_count($params);
-			if ($res['cnt'] > 0) {
-				ACWError::add('phongban_name', 'Tên phòng ban đã có, vui lòng sử dụng tên khác');
-				return;
-			}
+        $res = $this->get_phongban_name_count($params);
+		if ($res['cnt'] > 0) {
+			ACWError::add('phongban_name', 'Tên phòng ban "'.$params['phongban_name'].'" đã có, vui lòng sử dụng tên khác');
+			return;
+		}
+		if ($params['phongban_id'] == null) {	
 		
 			$sql = "
 				INSERT INTO
@@ -264,9 +263,13 @@ class Phongban_model extends ACWModel
 			WHERE
 				phongban_name = :phongban_name
 		";
-		
-		$filter = ACWArray::filter($param, array('phongban_name'));
-		$rows = $this->query($sql, $filter);
+		$param_sql['phongban_name'] = $param['phongban_name'];
+        if(isset($param['phongban_id'])){
+            $sql .= " and phongban_id <> :phongban_id";
+            $param_sql['phongban_id'] = $param['phongban_id'];
+        }
+		//$filter = ACWArray::filter($param, array('phongban_name'));
+		$rows = $this->query($sql, $param_sql);
 		return $rows[0];
 	}
 	
