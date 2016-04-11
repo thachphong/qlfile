@@ -32,7 +32,7 @@ class Banve_model extends ACWModel
         //$param = self::get_param(array('s_banve_no','s_banve_name'));
         $result = array('status' => 'OK');
         $bv = new Banve_model();
-        $list = $bv->get_all();
+        /*$list = $bv->get_all();
         $file_name = ACW_TMP_DIR.'/'.uniqid(TRUE).'.xls';
         foreach($list as $row){
         	$loai_bv ='';
@@ -48,10 +48,37 @@ class Banve_model extends ACWModel
 				$loai_bv ='Bản vẽ phôi';
 			}			
         	$str_ex = substr($row['banve_no'],0,1).','.substr($row['banve_no'],1,7).','.$loai_bv.','.$row['banve_name']."\r\n";
-			$bv->log_csv($file_name,$str_ex);
-		}
-		if(file_exists($file_name)){
-			return ACWView::download_file('Danhsach_banve.xls', $file_name);
+			$bv->log_csv($file_name,$str_ex);            
+		}*/
+        //$file_excel = ACW_TMP_DIR.'/'.uniqid(TRUE).'.xlsx';   
+        $file_excel = ACW_TMP_DIR.'/abc.xlsx';       
+        //$bv->export_exce($file_excel);
+		if(file_exists($file_excel)){
+			return ACWView::download_file('Danhsachbanve.xlsx', $file_excel);
+            //return ACWView::download('Danhsachbanve.xlsx', file_get_contents($file_excel));
+           /* header('Content-Description: File Transfer');
+		header('Content-type: application/octet-stream');
+		header('Content-Disposition: attachment; filename="' . 'abc.xlsx' . '"');
+		header('Content-Transfer-Encoding: binary');
+		header("Cache-Control: public");
+		header("Pragma: public");
+		echo file_get_contents($file_excel);*/
+        /*header("Content-Type: application/vnd.ms-excel");
+        header("Content-Disposition: attachment; filename=my_excel_filename.xlsx");
+        header("Pragma: no-cache");
+        header("Expires: 0");
+
+        flush();
+
+        //require_once 'PHPExcel.php';
+
+        $objPHPExcel = new PHPExcel();
+
+        // here fill data to your Excel sheet
+
+        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+
+        $objWriter->save('php://output');*/
 		}
 		        		
 		return ACWView::OK;
@@ -511,6 +538,7 @@ class Banve_model extends ACWModel
                     and     @pv := concat(@pv, ',', banve_id))
                     ";*/
         }
+        
 		$res = $this->query($sql);
         $this->commit();
         return $res;
@@ -571,6 +599,39 @@ class Banve_model extends ACWModel
 		$line_insert = mb_convert_encoding($line_insert, "UTF-8", "UTF-8");
 		file_put_contents($path_output, $line_insert, FILE_APPEND);		
 	}	
-    
+    public function export_exce($file_name)
+    {
+        $file = new FileWindows_lib();
+        $excel = new ImportExport_lib();
+        if ($file->FileExists($file_name) == FALSE) {
+            $file->CopyFile(ACW_ROOT_DIR.'/shared/Template.xlsx',$file_name);
+        }
+        $excel->load($file_name);
+        $excel->set_value_no(1,1,'Khổ giấy');
+        $excel->set_value_no(2,1,'Mã bản vẽ');
+        $excel->set_value_no(3,1,'Loại bản vẽ');
+        $excel->set_value_no(4,1,'Tên bản vẽ');
+        $list = $this->get_all();
+        foreach($list as $key=>$row){
+        	$loai_bv ='';
+        	if($row['level']=='1'){
+				$loai_bv ='Bản vẽ tổng thể';
+			}else if($row['level']=='2'){
+				$loai_bv ='Bản vẽ cụm lớn';
+			}else if($row['level']=='3'){
+				$loai_bv ='Bản vẽ cụm nhỏ';
+			}else if($row['level']=='4'){
+				$loai_bv ='Bản vẽ chi tiết';
+			}else if($row['level']=='5'){
+				$loai_bv ='Bản vẽ phôi';
+			}	
+            $excel->set_value_no(1,$key+2,substr($row['banve_no'],0,1));
+            $excel->set_value_no(2,$key+2,substr($row['banve_no'],1,7));	
+            $excel->set_value_no(3,$key+2,$loai_bv);	
+            $excel->set_value_no(4,$key+2,$row['banve_name']);	
+		}
+        $excel->save($file_name);
+        $excel->free();
+    }
 }
 /* ファイルの終わり */
