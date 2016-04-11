@@ -5,6 +5,8 @@
  * TODO:親カテゴリによる排他制御
  *
 */
+require_once ACW_VENDOR_DIR . '/phpexcel/PHPExcel.php';
+
 class Banve_model extends ACWModel
 {
 	/**
@@ -28,60 +30,16 @@ class Banve_model extends ACWModel
 		return ACWView::template('banve.html', $param);
 	}
 	public static function action_excel()
-	{
-        //$param = self::get_param(array('s_banve_no','s_banve_name'));
+	{        
         $result = array('status' => 'OK');
         $bv = new Banve_model();
-        /*$list = $bv->get_all();
-        $file_name = ACW_TMP_DIR.'/'.uniqid(TRUE).'.xls';
-        foreach($list as $row){
-        	$loai_bv ='';
-        	if($row['level']=='1'){
-				$loai_bv ='Bản vẽ tổng thể';
-			}else if($row['level']=='2'){
-				$loai_bv ='Bản vẽ cụm lớn';
-			}else if($row['level']=='3'){
-				$loai_bv ='Bản vẽ cụm nhỏ';
-			}else if($row['level']=='4'){
-				$loai_bv ='Bản vẽ chi tiết';
-			}else if($row['level']=='5'){
-				$loai_bv ='Bản vẽ phôi';
-			}			
-        	$str_ex = substr($row['banve_no'],0,1).','.substr($row['banve_no'],1,7).','.$loai_bv.','.$row['banve_name']."\r\n";
-			$bv->log_csv($file_name,$str_ex);            
-		}*/
-        //$file_excel = ACW_TMP_DIR.'/'.uniqid(TRUE).'.xlsx';   
-        $file_excel = ACW_TMP_DIR.'/abc.xlsx';       
-        //$bv->export_exce($file_excel);
+        
+        $file_excel = ACW_TMP_DIR.'/'.uniqid(TRUE).'.xlsx';  
+        
+        $bv->export_exce($file_excel);
 		if(file_exists($file_excel)){
-			return ACWView::download_file('Danhsachbanve.xlsx', $file_excel);
-            //return ACWView::download('Danhsachbanve.xlsx', file_get_contents($file_excel));
-           /* header('Content-Description: File Transfer');
-		header('Content-type: application/octet-stream');
-		header('Content-Disposition: attachment; filename="' . 'abc.xlsx' . '"');
-		header('Content-Transfer-Encoding: binary');
-		header("Cache-Control: public");
-		header("Pragma: public");
-		echo file_get_contents($file_excel);*/
-        /*header("Content-Type: application/vnd.ms-excel");
-        header("Content-Disposition: attachment; filename=my_excel_filename.xlsx");
-        header("Pragma: no-cache");
-        header("Expires: 0");
-
-        flush();
-
-        //require_once 'PHPExcel.php';
-
-        $objPHPExcel = new PHPExcel();
-
-        // here fill data to your Excel sheet
-
-        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
-
-        $objWriter->save('php://output');*/
+			return ACWView::download_file('Danhsach_banve.xlsx', $file_excel,TRUE);            
 		}
-		        		
-		return ACWView::OK;
 	}
 	
 	public static function action_new()
@@ -632,6 +590,7 @@ class Banve_model extends ACWModel
 		}
         $excel->save($file_name);
         $excel->free();
+       
     }
 }
 /* ファイルの終わり */

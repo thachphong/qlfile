@@ -125,10 +125,7 @@ $(function() {
 		html_ajax.connect('GET', 'banve/new/' + selected_category_id.replace("ltree_",""));
 	});
 	$('#btn_excel').click(function(){        	
-		var excel_ajax = new Argo_ajax('json');
-		excel_ajax.done_func = function(data){	
-		}
-		excel_ajax.connect('POST', 'banve/excel');
+		window.location.href ="<%$smarty.const.ACW_BASE_URL%>banve/excel";
 	});
 	
 	// 追加項目状態を変更
