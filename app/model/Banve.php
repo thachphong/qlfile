@@ -27,6 +27,35 @@ class Banve_model extends ACWModel
 			);*/
 		return ACWView::template('banve.html', $param);
 	}
+	public static function action_excel()
+	{
+        //$param = self::get_param(array('s_banve_no','s_banve_name'));
+        $result = array('status' => 'OK');
+        $bv = new Banve_model();
+        $list = $bv->get_all();
+        $file_name = ACW_TMP_DIR.'/'.uniqid(TRUE).'.xls';
+        foreach($list as $row){
+        	$loai_bv ='';
+        	if($row['level']=='1'){
+				$loai_bv ='Bản vẽ tổng thể';
+			}else if($row['level']=='2'){
+				$loai_bv ='Bản vẽ cụm lớn';
+			}else if($row['level']=='3'){
+				$loai_bv ='Bản vẽ cụm nhỏ';
+			}else if($row['level']=='4'){
+				$loai_bv ='Bản vẽ chi tiết';
+			}else if($row['level']=='5'){
+				$loai_bv ='Bản vẽ phôi';
+			}			
+        	$str_ex = substr($row['banve_no'],0,1).','.substr($row['banve_no'],1,7).','.$loai_bv.','.$row['banve_name']."\r\n";
+			$bv->log_csv($file_name,$str_ex);
+		}
+		if(file_exists($file_name)){
+			return ACWView::download_file('Danhsach_banve.xls', $file_name);
+		}
+		        		
+		return ACWView::OK;
+	}
 	
 	public static function action_new()
 	{
@@ -78,11 +107,12 @@ class Banve_model extends ACWModel
 		// 最初に決まっているもの
 		$param = self::get_param(array(
 			'banve_name'
+			,'kho_giay'
 			,'banve_no'
             ,'level'
-			, 'my_id'	
-			, 'parent_id'
-			, 'add_child'
+			,'my_id'	
+			,'parent_id'
+			,'add_child'
             ,'add_level'
 			));
 		
@@ -271,7 +301,7 @@ class Banve_model extends ACWModel
 		if(isset($param['banve_no'])&& strlen($param['banve_no'])>0 ){
 			if(isset($param['my_id'])===FALSE){
 				$sel_param = ACWArray::filter($param, array('banve_no'));
-				$sql = "SELECT COUNT(*) cnt FROM banve WHERE del_flg=0 and banve_no = :banve_no ";
+				$sql = "SELECT COUNT(*) cnt FROM banve WHERE del_flg=0 and SUBSTR(banve_no,2,7) = :banve_no ";
 				
 				$result = $this->query($sql, $sel_param);				
 				if ($result[0]['cnt'] > 0) {
@@ -331,7 +361,9 @@ class Banve_model extends ACWModel
             if(isset($param['banve_no'])===FALSE || strlen($param['banve_no'])==0){
                 $maxno= $this->get_banve_maxno($param['level'],$parent_info['banve_no']);
                 $param['banve_no'] = substr( $parent_info['banve_no'],0,4). str_pad($maxno,4,'0',STR_PAD_LEFT) ;
-            }
+            }else{
+				$param['banve_no']= $param['kho_giay'].$param['banve_no'];
+			}
 			$this->execute($sql, ACWArray::filter($param, array(
 					'parent_id'
 					,'banve_name'
@@ -521,30 +553,6 @@ class Banve_model extends ACWModel
             }
         }			
 	}
-	/*public function get_ctg_child($ctg_parent_id,&$all_ctg_child = NULL)
-	{
-		if($all_ctg_child == NULL){
-			$all_ctg_child = array();
-		}
-		$obj_select = $this->query("
-			SELECT
-				t_ctg_head_id,oya_t_ctg_head_id
-			FROM
-				t_ctg_head
-			WHERE
-				oya_t_ctg_head_id = :ctg_parent_id AND del_flg = 0
-			", array ('ctg_parent_id' => $ctg_parent_id));
-			
-		if(count($obj_select) > 0){
-			foreach($obj_select as $key => $value){
-				$all_ctg_child[] = $value;
-				$this->get_ctg_child($value["t_ctg_head_id"],$all_ctg_child);
-			}
-			
-		}
-			
-		return $all_ctg_child;
-	}*/
 	
 	public function get_child_banve($folder_id)
 	{
@@ -552,14 +560,17 @@ class Banve_model extends ACWModel
 		return $this->query($sql,array('banve_id'=>$folder_id));
 	}
 	
-    public function get_ctg_head_id($ctg_id){
-        $sql="select t_ctg_head_id from t_ctg_head where ctg_id =:ctg_id ";
-        $res = $this->query($sql,array("ctg_id"=>$ctg_id));
-        if(count($res)>0){
-            return $res[0]['t_ctg_head_id'];
-        }else{
-            return 0;
-        }
-    }
+    public function log_csv($path_output,$line_insert)
+	{
+		$file = new FileWindows_lib();
+		if ($file->FileExists($path_output) == FALSE) {
+			$csv_header = "Khổ giấy,Mã bản vẽ,Loại bản vẽ,Tên bản vẽ\r\n";
+			$csv_header = mb_convert_encoding($csv_header, "UTF-8", "UTF-8");
+			file_put_contents($path_output, $csv_header);
+		}
+		$line_insert = mb_convert_encoding($line_insert, "UTF-8", "UTF-8");
+		file_put_contents($path_output, $line_insert, FILE_APPEND);		
+	}	
+    
 }
 /* ファイルの終わり */

@@ -15,16 +15,21 @@
 			</div>
 			<table class="category_1">
 				<colgroup><col width="120px" /><col width="20px" /></colgroup>
-				<tr><th colspan="2">Mã bản vẽ<%if $parent_level=='0'%><span class="edit_require">*</span><%/if%></th>                
-				<td><input maxlength="8" id="banve_no" <%if $parent_level!='0'%>readonly="true"<%/if%> name="banve_no" type="text" size="30" value="<%$banve_no%>"/></td>
+				<tr>					
+					<th colspan="2">Khổ giấy<%if $parent_level=='0'%><span class="edit_require">*</span><%/if%></th>                
+					<td><input maxlength="1" id="kho_giay" <%if $parent_level!='0'%>readonly="true"<%/if%> name="kho_giay" type="text" size="10" value="<%substr($banve_no,0,1)%>"/></td>
 				</tr>
-                <tr><th colspan="2">Cấp bản vẽ<%$level%></th>
+				<tr>					
+					<th colspan="2">Mã bản vẽ<%if $parent_level=='0'%><span class="edit_require">*</span><%/if%></th>                
+					<td><input maxlength="7" id="banve_no" <%if $parent_level!='0'%>readonly="true"<%/if%> name="banve_no" type="text" size="30" value="<%substr($banve_no,1,7)%>"/></td>
+				</tr>
+                <tr><th colspan="2">Loại bản vẽ<%$level%></th>
 				<td><select id="level_no"  name="level" disabled>
-                        <option value="1" <%if $level == '1'%>selected<%/if%>>1</option>
-                        <option value="2" <%if $level == '2'%>selected<%/if%>>2</option>
-                        <option value="3" <%if $level == '3'%>selected<%/if%>>3</option>
-                        <option value="4" <%if $level == '4'%>selected<%/if%>>4</option>
-                        <option value="5" <%if $level == '5'%>selected<%/if%>>5</option>                      
+                        <option value="1" <%if $level == '1'%>selected<%/if%>>Bản vẽ tổng thể</option>
+                        <option value="2" <%if $level == '2'%>selected<%/if%>>Bản vẽ cụm lớn</option>
+                        <option value="3" <%if $level == '3'%>selected<%/if%>>bản vẽ cụm nhỏ</option>
+                        <option value="4" <%if $level == '4'%>selected<%/if%>>bản vẽ chi tiết</option>
+                        <option value="5" <%if $level == '5'%>selected<%/if%>>bản vẽ phôi</option>                      
                     </select>
                 </td>
 				</tr>
@@ -46,13 +51,18 @@
 				<thead>
 					<tr>
 						<th style="width: 170px;">Mã bản vẽ</th>
-                        <th style="width: 250px;text-align: center;">Cấp bản vẽ</th>
+                        <th style="width: 250px;text-align: center;">Loại bản vẽ</th>
 		                <th style="width: 250px;text-align: center;">Tên bản vẽ</th>
 					</tr>
 				</thead>
 				<%foreach $banve_child as $row%>
 				<tr> <td><%$row.banve_no%></td>
-                    <td><%$row.level%></td>
+                    <td><%if $row.level =='1'%>Bản vẽ tổng thể 
+                    	<%else if $row.level =='2'%>Bản vẽ cụm lớn
+                    	<%else if $row.level =='3'%>Bản vẽ cụm nhỏ
+                    	<%else if $row.level =='4'%>Bản vẽ chi tiết
+                    	<%else if $row.level =='5'%>Bản vẽ phôi<%/if%>
+                    </td>
 					 <td><%$row.banve_name%></td>
 				</tr>
 				<%/foreach%>
