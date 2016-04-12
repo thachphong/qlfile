@@ -50,9 +50,12 @@ class Banve_model extends ACWModel
 		}		
 		$db = new Banve_model();	
 		$param['banve_no'] = "";	
+        $param['kho_giay'] = "";
 		$param['banve_name'] = "";	
 		$param['banve_child'] = NULL;
 		$param['parent_level'] = 1;
+        $param['user_name'] ='';
+        $param['add_datetime'] ='';
 		$pa_info=$db->get_banve_info($param['parent_id']);
 		if(count($pa_info)>0){
 			$param['parent_level'] = $pa_info['level'];
@@ -74,10 +77,13 @@ class Banve_model extends ACWModel
 		$result = $db->get_banve_info($param['my_id']);
         $param['level'] = $result['level'];
 		$param['banve_no'] = $result['banve_no'];
+        $param['kho_giay'] = $result['kho_giay'];
         $param['banve_name'] = $result['banve_name'];
 		$param['parent_id'] = $result['parent_id'];		
 		$param['banve_child'] = $db->get_child_banve($param['my_id']);
         $param['parent_level'] = 1;
+        $param['user_name'] =$result['user_name'];
+        $param['add_datetime'] =$result['add_datetime'];
         if(count($result)>0){
 			$param['parent_level'] = $result['level']-1;
 		}
@@ -99,6 +105,7 @@ class Banve_model extends ACWModel
 			,'parent_id'
 			,'add_child'
             ,'add_level'
+            ,'add_khogiay'
 			));
 		
 		$result = array('status' => 'OK');
@@ -113,13 +120,15 @@ class Banve_model extends ACWModel
 				}           
 				$add_new = array();
                 $add_level = array();
+                $add_khogiay = array();
 				if(isset($param['add_child'])){
 					$add_child = $param['add_child'];
 					foreach($add_child as $key => $item){
 						if(!in_array($item,$list_child))	
 						{
 							$add_new[] = $item ;
-                            $add_level[]= $param['add_level'][$key]	;						
+                            $add_level[]= $param['add_level'][$key]	;	
+                            $add_khogiay[] =$param['add_khogiay'][$key]	;					
 						}
 						$list_child[]= $item;
 					}	
@@ -127,6 +136,7 @@ class Banve_model extends ACWModel
 				}
 				$param['add_child'] = $add_new;
                 $param['add_level'] = $add_level;
+                $param['add_khogiay'] = $add_khogiay;
 				$db->update_banve($param);
 			}
 		}
@@ -209,64 +219,14 @@ class Banve_model extends ACWModel
 				return false;
 			}
 			break;
-		case 'update':
-			return self::_validate_category($param);
+		/*case 'update':
+			return self::_validate_category($param);*/
 		case 'upload':
 			return self::_validate_upload($param);  
 		}
 		return true;
 	}
-    
-	/**
-	* カテゴリ入力チェック
-	*/
-	private static function _validate_category(&$param)
-	{
-		if ((isset($param['banve_name']) == false) || ($param['banve_name'] == '')) {
-			ACWError::add('banve_name', 'Vui lòng nhập tên thư mục !');
-			return false;
-		}
-		return true;
-	}
-
-	/**
-	 * アップロード時のチェック
-	 */
-	private static function _validate_upload(&$param)
-	{
-		ACWLog::debug_var('UPLOAD_APPEND', $param);
-		
-		if ((isset($param['t_ctg_section_id']) == false) || ($param['t_ctg_section_id'] == '')) {
-			ACWError::add('upload', '未登録の項目ではアップロードできません。');
-			return false;
-		}
-		
-		if (is_null($param['upload_file'])) {
-			// NULL →　ファイルの容量制限オーバー
-			ACWError::add('upload', 'アップロードに失敗しました。');
-			return false;
-		}
-		
-		if ($param['upload_file']['error'] != UPLOAD_ERR_OK) {
-			// ファイルアップロードエラーあり
-			if ($param['upload_file']['error'] == UPLOAD_ERR_NO_FILE) {
-				// ファイル未選択
-				ACWError::add('upload_file', 'アップロードするファイルが選択されていません。');
-			} else {
-				// その他
-				ACWError::add('upload_file', 'アップロードに失敗しました。');
-			}
-			return false;
-		}
-		
-		$exp = explode('/', $param['upload_file']['type']);
-		if (strcmp($exp[0], 'image') != 0) {
-			ACWError::add('upload_file', '画像ファイルを選択してください。');
-			return false;
-		}
-		
-		return true;
-	}		
+    		
 	//kiem tra trung ten trong chung folder cha
 	public function check_banve_id($param)
 	{
@@ -286,7 +246,7 @@ class Banve_model extends ACWModel
 		if(isset($param['banve_no'])&& strlen($param['banve_no'])>0 ){
 			if(isset($param['my_id'])===FALSE){
 				$sel_param = ACWArray::filter($param, array('banve_no'));
-				$sql = "SELECT COUNT(*) cnt FROM banve WHERE del_flg=0 and SUBSTR(banve_no,2,7) = :banve_no ";
+				$sql = "SELECT COUNT(*) cnt FROM banve WHERE del_flg=0 and banve_no = :banve_no ";
 				
 				$result = $this->query($sql, $sel_param);				
 				if ($result[0]['cnt'] > 0) {
@@ -312,6 +272,7 @@ class Banve_model extends ACWModel
 		$sql = "INSERT INTO banve
 					(
 					parent_id
+                    ,kho_giay
 					,banve_no
 					,banve_name
 					,level
@@ -324,6 +285,7 @@ class Banve_model extends ACWModel
 				VALUES
 					(
 					:parent_id
+                    ,:kho_giay
 					,:banve_no
 					,:banve_name
 					,:level
@@ -345,17 +307,15 @@ class Banve_model extends ACWModel
 			}*/			
             if(isset($param['banve_no'])===FALSE || strlen($param['banve_no'])==0){
                 $maxno= $this->get_banve_maxno($param['level'],$parent_info['banve_no']);
-                $param['banve_no'] = substr( $parent_info['banve_no'],0,4). str_pad($maxno,4,'0',STR_PAD_LEFT) ;
-            }else{
-				$param['banve_no']= $param['kho_giay'].$param['banve_no'];
-			}
+                $param['banve_no'] = substr( $parent_info['banve_no'],0,3). str_pad($maxno,4,'0',STR_PAD_LEFT) ;
+            }else
 			$this->execute($sql, ACWArray::filter($param, array(
 					'parent_id'
 					,'banve_name'
 					,'banve_no'
 					,'level'
 					,'user_id'
-					//,'user_id_2'
+					,'kho_giay'
 					)));            			
 			$result = $this->query("SELECT LAST_INSERT_ID() AS banve_id");			
 			$param_new['parent_id'] = $result[0]['banve_id'];			
@@ -366,6 +326,7 @@ class Banve_model extends ACWModel
 				UPDATE banve
 					SET
 					banve_name = :banve_name
+                    ,kho_giay = :kho_giay
 					,del_flg = :del_flg
 					,upd_user_id = :user_id
 					,upd_datetime = now()
@@ -376,6 +337,7 @@ class Banve_model extends ACWModel
 					,'banve_name'
 					,'user_id'
 					,'del_flg'
+                    ,'kho_giay'
 					)));			
 		}
 		//insert folder con
@@ -390,8 +352,9 @@ class Banve_model extends ACWModel
 				if(isset($row) && !empty($row)){                    
 					$param_new['banve_name'] = $row;
                     $param_new['level'] = $param['add_level'][$key];
+                    $param_new['kho_giay'] = $param['add_khogiay'][$key];
                     $maxno = $this->get_banve_maxno($param_new['level'],$parent_info['banve_no']);
-                    $param_new['banve_no']=substr( $parent_info['banve_no'],0,4). str_pad($maxno,4,'0',STR_PAD_LEFT) ;
+                    $param_new['banve_no']=substr( $parent_info['banve_no'],0,3). str_pad($maxno,4,'0',STR_PAD_LEFT) ;
                     if ($this->check_banve_id($param_new)){
     					$this->execute($sql,$param_new);
                         $maxno++;
@@ -431,7 +394,7 @@ class Banve_model extends ACWModel
 	}
 	public function get_all($level = '')
 	{
-        $sql ="select * from banve where del_flg=0 and banve_id <>1 ";
+        $sql ="select *,concat(kho_giay,banve_no) banve_tong from banve where del_flg=0 and banve_id <>1 ";
         if($level !=''){
             $sql .=" and level = ".$level;
         }
@@ -452,7 +415,7 @@ class Banve_model extends ACWModel
             union 
             SELECT
 				  chd.banve_id AS id
-				,concat(chd.banve_no,'-',chd.banve_name) AS category_name
+				,concat(kho_giay,chd.banve_no,'-',chd.banve_name) AS category_name
 				,chd.parent_id AS parent_id
 				,true AS is_folder
 				,1 AS upd_sec
@@ -506,9 +469,13 @@ class Banve_model extends ACWModel
 	 */
 	public function get_banve_info($banve_id)
 	{
-		$r = $this->query("SELECT *	FROM banve f
-				WHERE	 f.del_flg = 0
-				and	f.banve_id = :banve_id 
+		$r = $this->query("SELECT t.banve_id,t.banve_name,
+                        t.banve_no,t.kho_giay,t.level,t.parent_id ,u.user_name
+                        ,DATE_FORMAT(t.add_datetime,'%d/%m/%Y %H:%i:%s') add_datetime	
+                        FROM banve t
+                        LEFT JOIN m_user u on u.user_id = t.add_user_id
+                        				WHERE	 t.del_flg = 0
+                        				and	t.banve_id = :banve_id 
 			", array ('banve_id' => $banve_id));
 		if(count($r) >0)
 			return $r[0];
@@ -517,11 +484,11 @@ class Banve_model extends ACWModel
 	}
 	public function get_banve_maxno($level,$parent_no)
 	{
-		$r = $this->query("SELECT max(SUBSTR(f.banve_no,5,LENGTH(f.banve_no))) mx FROM banve f
+		$r = $this->query("SELECT max(SUBSTR(f.banve_no,4,LENGTH(f.banve_no))) mx FROM banve f
 				WHERE	 f.del_flg = 0
 				 and	f.level = :level
-         and SUBSTR(f.banve_no,1,4) = :parent_no
-			", array ('level' => $level,'parent_no'=>substr($parent_no,0,4)));
+         and SUBSTR(f.banve_no,1,3) = :parent_no
+			", array ('level' => $level,'parent_no'=>substr($parent_no,0,3)));
 		if(isset($r[0]['mx'])){
             return ($r[0]['mx']+1);
         }			
@@ -542,11 +509,17 @@ class Banve_model extends ACWModel
 	
 	public function get_child_banve($folder_id)
 	{
-		$sql="select * from banve where parent_id = :banve_id and del_flg=0 order by banve_id";
+		$sql="select t.banve_id,t.banve_name,
+            t.banve_no,t.kho_giay,t.level,t.parent_id ,u.user_name
+            ,DATE_FORMAT(t.add_datetime,'%d/%m/%Y %H:%i:%s') add_datetime 
+            from banve t
+            LEFT JOIN m_user u on u.user_id = t.add_user_id
+            where parent_id =:banve_id 
+            and t.del_flg=0 order by banve_id";
 		return $this->query($sql,array('banve_id'=>$folder_id));
 	}
 	
-    public function log_csv($path_output,$line_insert)
+   /* public function log_csv($path_output,$line_insert)
 	{
 		$file = new FileWindows_lib();
 		if ($file->FileExists($path_output) == FALSE) {
@@ -556,7 +529,7 @@ class Banve_model extends ACWModel
 		}
 		$line_insert = mb_convert_encoding($line_insert, "UTF-8", "UTF-8");
 		file_put_contents($path_output, $line_insert, FILE_APPEND);		
-	}	
+	}*/	
     public function export_exce($file_name)
     {
         $file = new FileWindows_lib();
@@ -583,8 +556,8 @@ class Banve_model extends ACWModel
 			}else if($row['level']=='5'){
 				$loai_bv ='Bản vẽ phôi';
 			}	
-            $excel->set_value_no(1,$key+2,substr($row['banve_no'],0,1));
-            $excel->set_value_no(2,$key+2,substr($row['banve_no'],1,7));	
+            $excel->set_value_no(1,$key+2,$row['banve_no']);
+            $excel->set_value_no(2,$key+2,$row['banve_no']);	
             $excel->set_value_no(3,$key+2,$loai_bv);	
             $excel->set_value_no(4,$key+2,$row['banve_name']);	
 		}

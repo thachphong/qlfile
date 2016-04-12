@@ -17,11 +17,11 @@
 				<colgroup><col width="120px" /><col width="20px" /></colgroup>
 				<tr>					
 					<th colspan="2">Khổ giấy<%if $parent_level=='0'%><span class="edit_require">*</span><%/if%></th>                
-					<td><input maxlength="1" id="kho_giay" <%if $parent_level!='0'%>readonly="true"<%/if%> name="kho_giay" type="text" size="10" value="<%substr($banve_no,0,1)%>"/></td>
+					<td><input maxlength="1" id="kho_giay" <%if $parent_level!='0'%>readonly="true"<%/if%> name="kho_giay" type="text" size="10" value="<%$kho_giay%>"/></td>
 				</tr>
 				<tr>					
 					<th colspan="2">Mã bản vẽ<%if $parent_level=='0'%><span class="edit_require">*</span><%/if%></th>                
-					<td><input maxlength="7" id="banve_no" <%if $parent_level!='0'%>readonly="true"<%/if%> name="banve_no" type="text" size="30" value="<%substr($banve_no,1,7)%>"/></td>
+					<td><input maxlength="7" id="banve_no" <%if $parent_level!='0'%>readonly="true"<%/if%> name="banve_no" type="text" size="30" value="<%$banve_no%>"/></td>
 				</tr>
                 <tr><th colspan="2">Loại bản vẽ<%$level%></th>
 				<td><select id="level_no"  name="level" disabled>
@@ -36,7 +36,14 @@
 				<tr><th colspan="2">Tên bản vẽ<span class="edit_require">*</span></th>
 				<td><input name="banve_name" id="banve_name" type="text" size="30" value="<%$banve_name%>"/></td>
 				</tr>
-				
+                <tr>
+                    <th colspan="2">Người tạo</th>
+				    <td><%$user_name%></td>
+				</tr>
+				<tr>
+                    <th colspan="2">Ngày tạo</th>
+				    <td><%$add_datetime%></td>
+				</tr>
 			</table>
 		</div>
 		<div class="info_wrap">
@@ -47,23 +54,30 @@
 					</li>
 				</ul>
 			</div>
-			<table class="category_2" id="folder_list">				
+			<table class="category_2" id="folder_list" style="width: 98%;">				
 				<thead>
 					<tr>
+                        <th style="width: 120px;">Khổ giấy</th>
 						<th style="width: 170px;">Mã bản vẽ</th>
                         <th style="width: 250px;text-align: center;">Loại bản vẽ</th>
 		                <th style="width: 250px;text-align: center;">Tên bản vẽ</th>
+                        <th style="width: 250px;text-align: center;">Người tạo</th>
+                        <th style="width: 250px;text-align: center;">Ngày tạo</th>
 					</tr>
 				</thead>
 				<%foreach $banve_child as $row%>
-				<tr> <td><%$row.banve_no%></td>
+				<tr> 
+                    <td><%$row.kho_giay%></td>
+                    <td><%$row.banve_no%></td>
                     <td><%if $row.level =='1'%>Bản vẽ tổng thể 
                     	<%else if $row.level =='2'%>Bản vẽ cụm lớn
                     	<%else if $row.level =='3'%>Bản vẽ cụm nhỏ
                     	<%else if $row.level =='4'%>Bản vẽ chi tiết
                     	<%else if $row.level =='5'%>Bản vẽ phôi<%/if%>
                     </td>
-					 <td><%$row.banve_name%></td>
+					<td><%$row.banve_name%></td>
+                    <td><%$row.user_name%></td>
+                    <td><%$row.add_datetime%></td>
 				</tr>
 				<%/foreach%>
 			</table>

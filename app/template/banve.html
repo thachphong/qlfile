@@ -163,7 +163,9 @@ $(function() {
              Argo_ajax.message_box(' ', 'Cấp "Bản vẽ phôi" không thể tạo cấp con !');
              return;
         }
-        var select_str='<td><select name="add_level[]">';
+        var select_str ='<tr> <td><input size="10" name="add_khogiay[]" ></td>';
+        select_str +='<td><input readonly="true" size="20" ></td>';
+        select_str +='<td><select name="add_level[]">';
         for(var i= (parseInt(level_no)+1); i<=5;i++){
         	var loai_bv ='';
         	if( i ==1 ){
@@ -180,8 +182,10 @@ $(function() {
             select_str +='<option value="'+i+'">'+loai_bv+'</option>';
         }			     
         select_str +="</select></td>"; 
+        select_str +='<td><input size="30" name="add_child[]"></td>';
+        select_str +='<td></td><td></td></tr>' 
         //console.log(select_str); 
-		$('#folder_list').append('<tr> <td><input readonly="true" size="20" ></td>'+select_str+'<td><input size="30" name="add_child[]"></td></tr>');
+		$('#folder_list').append(select_str);
 
 	});			
 	
@@ -311,8 +315,10 @@ $(function() {
 	$(document).on('click', '#category_save', function() {		
 		//Argo_ajax.ok_cancel_box(' ', 'Bạn chắc ',function(){
         if(check_before_save()){
+            $('#level_no').prop('disabled', false);
 			$arr = $('#category_form').serializeArray();			
 			json_ajax.connect('POST', 'banve/update', $arr);
+			$('#level_no').prop('disabled', true);
         }
 		//});
 	});
@@ -335,7 +341,7 @@ $(function() {
 	
 	$(window).on("load resize", function(){
 		var wh = $(window).height();
-		$(".height1").height(wh - 218);	// ツリー
+		$(".height1").height(wh - 265);	// ツリー
 		$(".height3").height(wh - 200);	// 設定画面
 	});
 

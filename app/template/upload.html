@@ -85,10 +85,10 @@
                 <tr> <td style="font-weight: bold">Mã bản vẽ tổng</td>
                     <td colspan="9">
                         <!--<input type="text" maxlength="8" value="<%$data_row.don_no%>" size="30" name="don_no" id="don_no" <%if $mode!= "new" || $loaidon =='1'%>readonly="true"<%/if%> >-->                      
-                        <select <%if $mode!= "new" || $loaidon =='1'%>disabled<%/if%> style="width:200px" name="don_no" onchange="this.nextElementSibling.value=this.value" >
+                        <select <%if $mode!= "new" || $loaidon =='1'%>disabled<%/if%> style="width:200px" name="don_no" >
                             <option></option>
                             <%foreach $dm_banve as $bv%>
-                                <option <%if $data_row.don_no==$bv['banve_no']%>selected<%/if%> value="<%$bv['banve_no']%>"><%$bv['banve_no']%></option>
+                                <option <%if $data_row.don_no==$bv['banve_tong']%>selected<%/if%> value="<%$bv['banve_no']%>"><%$bv['banve_tong']%></option>
                             <%/foreach%>
                         </select>
                     </td>
