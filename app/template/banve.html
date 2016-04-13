@@ -157,14 +157,17 @@ $(function() {
 			$('#asrel_' + com_sp_id).attr("checked", false);
 		}
 	};
+	var add_index =0;
 	$(document).on('click', '#section_add', function() {
         var level_no = $('#level_no').val();
         if(level_no=='5'){
              Argo_ajax.message_box(' ', 'Cấp "Bản vẽ phôi" không thể tạo cấp con !');
              return;
         }
+        add_index++;
         var select_str ='<tr> <td><input size="10" name="add_khogiay[]" ></td>';
-        select_str +='<td><input readonly="true" size="20" ></td>';
+        select_str +='<td><input readonly="true" size="20" name="add_banve_no[]" id="banve_no_'+add_index+'" ></td>';
+        select_str +='<td style="text-align: center;"><input type="checkbox" name="add_dungchung[]" class="add_dungchung" id="dungchung_'+add_index+'"></td>';
         select_str +='<td><select name="add_level[]">';
         for(var i= (parseInt(level_no)+1); i<=5;i++){
         	var loai_bv ='';
@@ -186,8 +189,16 @@ $(function() {
         select_str +='<td></td><td></td></tr>' 
         //console.log(select_str); 
 		$('#folder_list').append(select_str);
-
 	});			
+	$(document).off('click', '.add_dungchung');
+	$(document).on('click', '.add_dungchung', function(){
+		var id =$(this).attr('id').replace('dungchung_','');
+		if($(this).is(':checked')){
+			$('#banve_no_'+id).removeAttr('readonly');	
+		}else{
+			$('#banve_no_'+id).attr('readonly','true');
+		}
+	});
 	
 	$(document).on('change', '.add_section_select', function() {
 		var com_sp_id = Argo_ajax.get_split_id($(this).attr('id'));

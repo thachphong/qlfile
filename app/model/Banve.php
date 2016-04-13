@@ -54,6 +54,7 @@ class Banve_model extends ACWModel
 		$param['banve_name'] = "";	
 		$param['banve_child'] = NULL;
 		$param['parent_level'] = 1;
+		$param['dungchung'] = 0;
         $param['user_name'] ='';
         $param['add_datetime'] ='';
 		$pa_info=$db->get_banve_info($param['parent_id']);
@@ -82,6 +83,7 @@ class Banve_model extends ACWModel
 		$param['parent_id'] = $result['parent_id'];		
 		$param['banve_child'] = $db->get_child_banve($param['my_id']);
         $param['parent_level'] = 1;
+        $param['dungchung'] = $result['dungchung'];
         $param['user_name'] =$result['user_name'];
         $param['add_datetime'] =$result['add_datetime'];
         if(count($result)>0){
@@ -469,7 +471,7 @@ class Banve_model extends ACWModel
 	 */
 	public function get_banve_info($banve_id)
 	{
-		$r = $this->query("SELECT t.banve_id,t.banve_name,
+		$r = $this->query("SELECT t.banve_id,t.banve_name,t.dungchung,
                         t.banve_no,t.kho_giay,t.level,t.parent_id ,u.user_name
                         ,DATE_FORMAT(t.add_datetime,'%d/%m/%Y %H:%i:%s') add_datetime	
                         FROM banve t
@@ -509,7 +511,7 @@ class Banve_model extends ACWModel
 	
 	public function get_child_banve($folder_id)
 	{
-		$sql="select t.banve_id,t.banve_name,
+		$sql="select t.banve_id,t.banve_name,t.dungchung,
             t.banve_no,t.kho_giay,t.level,t.parent_id ,u.user_name
             ,DATE_FORMAT(t.add_datetime,'%d/%m/%Y %H:%i:%s') add_datetime 
             from banve t
