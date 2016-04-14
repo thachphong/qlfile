@@ -17,16 +17,16 @@
 				<colgroup><col width="120px" /><col width="20px" /></colgroup>
 				<tr>					
 					<th colspan="2">Khổ giấy<%if $parent_level=='0'%><span class="edit_require">*</span><%/if%></th>                
-					<td colspan="2"><input style="width: 100px" maxlength="1" id="kho_giay" <%if $parent_level!='0'%>readonly="true"<%/if%> name="kho_giay" type="text"  value="<%$kho_giay%>"/></td>
+					<td colspan="2"><input style="width: 100px" maxlength="1" id="kho_giay" name="kho_giay" type="text"  value="<%$kho_giay%>"/></td>
 				</tr>
 				<tr>					
 					<th colspan="2">Mã bản vẽ<%if $parent_level=='0'%><span class="edit_require">*</span><%/if%></th>                
-					<td><input maxlength="7" id="banve_no" <%if $parent_level!='0'%>readonly="true"<%/if%> name="banve_no" type="text" size="30" value="<%$banve_no%>"/></td>
-					<td>Dùng chung
-						<input type="checkbox" nam="dungchung" <%if $dungchung == '1'%>checked<%/if%>>						
+					<td><input maxlength="7" id="banve_no" <%if $parent_level!='0'%>readonly="true"<%/if%> name="banve_no" type="text" size="10" value="<%$banve_no%>"/></td>
+					<td><label>Dùng chung
+						<input type="checkbox" name="dungchung" id="dungchung"<%if $dungchung == '1'%>checked<%/if%> <%if strlen($banve_no)>0%>onclick="return false"<%/if%> value="<%$dungchung%>">						    </label>
 					</td>
 				</tr>
-                <tr><th colspan="2">Loại bản vẽ<%$level%></th>
+                <tr><th colspan="2">Loại bản vẽ</th>
 				<td colspan="2"><select id="level_no"  name="level" disabled>
                         <option value="1" <%if $level == '1'%>selected<%/if%>>Bản vẽ tổng thể</option>
                         <option value="2" <%if $level == '2'%>selected<%/if%>>Bản vẽ cụm lớn</option>

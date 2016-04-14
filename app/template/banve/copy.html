@@ -1,0 +1,6 @@
+<select style="width:200px" name="banve_id_to" id="states" >
+    <option></option>
+    <%foreach $dm_banve as $bv%>
+            <option <%if $data_row.don_no==$bv['banve_tong']%>selected<%/if%> value="<%$bv['banve_tong']%>"><%$bv['banve_tong']%></option>
+    <%/foreach%>
+</select>

@@ -91,7 +91,13 @@ class Banve_model extends ACWModel
 		}
 		return ACWView::template('banve/edit.html', $param);
 	}
-
+    public static function action_copy()
+	{
+		$param = self::get_param(array('banve_id'));
+        $db = new Banve_model();
+        $db->get_all();
+		return ACWView::template('banve/copy.html', $param);
+	}
 	/**
 	 * 更新
 	 */
@@ -103,11 +109,14 @@ class Banve_model extends ACWModel
 			,'kho_giay'
 			,'banve_no'
             ,'level'
-			,'my_id'	
+			,'my_id'
+            ,'dungchung'	
 			,'parent_id'
 			,'add_child'
             ,'add_level'
             ,'add_khogiay'
+            ,'add_dungchung'
+            ,'add_banve_no'
 			));
 		
 		$result = array('status' => 'OK');
@@ -123,14 +132,18 @@ class Banve_model extends ACWModel
 				$add_new = array();
                 $add_level = array();
                 $add_khogiay = array();
-				if(isset($param['add_child'])){
+                $add_banve_no = array();
+                $add_dungchung = array();
+				/*if(isset($param['add_child'])){
 					$add_child = $param['add_child'];
 					foreach($add_child as $key => $item){
 						if(!in_array($item,$list_child))	
 						{
 							$add_new[] = $item ;
                             $add_level[]= $param['add_level'][$key]	;	
-                            $add_khogiay[] =$param['add_khogiay'][$key]	;					
+                            $add_khogiay[] =$param['add_khogiay'][$key]	;	
+                            $add_dungchung[] = $param['add_dungchung'][$key]; 		
+                            $add_banve_no[] = $param['add_banve_no'][$key]	; 			
 						}
 						$list_child[]= $item;
 					}	
@@ -139,6 +152,9 @@ class Banve_model extends ACWModel
 				$param['add_child'] = $add_new;
                 $param['add_level'] = $add_level;
                 $param['add_khogiay'] = $add_khogiay;
+                $param['add_dungchung'] = $add_dungchung;
+                $param['add_banve_no'] = $add_banve_no;*/
+                
 				$db->update_banve($param);
 			}
 		}
@@ -230,12 +246,26 @@ class Banve_model extends ACWModel
 	}
     		
 	//kiem tra trung ten trong chung folder cha
-	public function check_banve_id($param)
+	public function check_banve_id(&$param)
 	{
 		//$this->begin_transaction();
+        if(isset($param['dungchung']) && $param['dungchung'] =='1'){
+            
+            $dc_data = $this->get_banve_byno($param['banve_no']);
+            if(isset($dc_data['banve_no']) && strlen($dc_data['banve_no'])>0){
+                $param['banve_no'] = $dc_data['banve_no'];
+                $param['banve_name'] = $dc_data['banve_name'];
+                $param['kho_giay'] = $dc_data['kho_giay'];
+                return TRUE;     
+            }else{
+                ACWError::add('banve_no', 'Mã bản vẽ "'.$param['banve_no'].'" chưa có, không thể tạo dùng chung, vui lòng tạo mới !');
+                return FALSE;
+            }
+        }
 
 		$sel_param = ACWArray::filter($param, array('banve_name'));
-		$sql = "SELECT COUNT(*) cnt FROM banve WHERE del_flg=0 and banve_name = :banve_name ";
+		$sql = "SELECT COUNT(*) cnt FROM banve WHERE del_flg=0 and dungchung=0
+                    and banve_name = :banve_name ";
 		if (isset($param['my_id'])) {
 			$sel_param['banve_id'] = $param['my_id'];
 			$sql .= ' AND banve_id <> :banve_id';	
@@ -283,6 +313,7 @@ class Banve_model extends ACWModel
 					,add_datetime
 					,upd_user_id
 					,upd_datetime
+                    ,dungchung
 					)
 				VALUES
 					(
@@ -296,6 +327,7 @@ class Banve_model extends ACWModel
 					,now()
 					,:user_id
 					,now()
+                    ,:dungchung
 					)
 				";
 		
@@ -311,6 +343,9 @@ class Banve_model extends ACWModel
                 $maxno= $this->get_banve_maxno($param['level'],$parent_info['banve_no']);
                 $param['banve_no'] = substr( $parent_info['banve_no'],0,3). str_pad($maxno,4,'0',STR_PAD_LEFT) ;
             }else
+            if($param['dungchung'] != '1'){
+                $param['dungchung'] ='0';
+            }
 			$this->execute($sql, ACWArray::filter($param, array(
 					'parent_id'
 					,'banve_name'
@@ -318,6 +353,7 @@ class Banve_model extends ACWModel
 					,'level'
 					,'user_id'
 					,'kho_giay'
+                    ,'dungchung'
 					)));            			
 			$result = $this->query("SELECT LAST_INSERT_ID() AS banve_id");			
 			$param_new['parent_id'] = $result[0]['banve_id'];			
@@ -348,18 +384,27 @@ class Banve_model extends ACWModel
 		if(count($parent_info)>0){
 			$param_new['level']=$parent_info['level']+1;	
 		}*/
-		if(isset($param['add_child'])){
+		if(isset($param['add_child']) || isset($param['add_banve_no'])){
             //$maxno = $this->get_banve_maxno($param_new['level'],$parent_info['banve_no']);
 			foreach($param['add_child'] as $key=>$row){
-				if(isset($row) && !empty($row)){                    
+				if((isset($row) && !empty($row)) || $param['add_dungchung'][$key] == '1'){                    
 					$param_new['banve_name'] = $row;
                     $param_new['level'] = $param['add_level'][$key];
                     $param_new['kho_giay'] = $param['add_khogiay'][$key];
-                    $maxno = $this->get_banve_maxno($param_new['level'],$parent_info['banve_no']);
-                    $param_new['banve_no']=substr( $parent_info['banve_no'],0,3). str_pad($maxno,4,'0',STR_PAD_LEFT) ;
+                    $param_new['banve_no'] = $param['add_banve_no'][$key];
+                    $param_new['dungchung'] = $param['add_dungchung'][$key];
+                    
+                    if(isset($param_new['banve_no'])== FALSE || strlen($param_new['banve_no'])==0)
+                    {
+                        $maxno = $this->get_banve_maxno($param_new['level'],$parent_info['banve_no']);
+                        $param_new['banve_no']=substr( $parent_info['banve_no'],0,3). str_pad($maxno,4,'0',STR_PAD_LEFT) ;
+                    }
+                    if($param_new['dungchung'] != '1'){
+                        $param_new['dungchung'] ='0';
+                    }
                     if ($this->check_banve_id($param_new)){
     					$this->execute($sql,$param_new);
-                        $maxno++;
+                        //$maxno++;
                     }	
 				}				
 			}
@@ -403,6 +448,15 @@ class Banve_model extends ACWModel
         $sql .=" order by banve_no";
         return $this->query($sql);
     }
+    public function get_banve_tong($level = '')
+	{
+        $sql ="select distinct concat(kho_giay,banve_no) banve_tong from banve where del_flg=0 and banve_id <>1 ";
+        if($level !=''){
+            $sql .=" and level = ".$level;
+        }
+        $sql .=" order by banve_no";
+        return $this->query($sql);
+    }
 	public function get_banve_all($param)
 	{
         $this->begin_transaction();
@@ -430,7 +484,7 @@ class Banve_model extends ACWModel
         $where ="";
         if(isset($param['s_banve_no']) && strlen(trim($param['s_banve_no']))>0){
             //$where .="and banve_no = :s_banve_no";
-            $param_sql['banve_no']=$param['s_banve_no'];
+            $param_sql['banve_no']=$param['s_banve_no'].'%';
             $flg_check = TRUE;
         }else{
             $param_sql['banve_no']= "%";
@@ -484,11 +538,25 @@ class Banve_model extends ACWModel
 		else
 			return null;
 	}
+    public function get_banve_byno($banve_no)
+	{
+		$r = $this->query("SELECT distinct t.banve_name,t.banve_no,t.kho_giay
+                            FROM banve t
+                            LEFT JOIN m_user u on u.user_id = t.add_user_id
+                            WHERE	 t.del_flg = 0
+                            		and	t.banve_no = :banve_no
+			", array ('banve_no' => $banve_no));
+		if(count($r) >0)
+			return $r[0];
+		else
+			return null;
+	}
 	public function get_banve_maxno($level,$parent_no)
 	{
 		$r = $this->query("SELECT max(SUBSTR(f.banve_no,4,LENGTH(f.banve_no))) mx FROM banve f
 				WHERE	 f.del_flg = 0
-				 and	f.level = :level
+                and dungchung =0
+				and	f.level = :level
          and SUBSTR(f.banve_no,1,3) = :parent_no
 			", array ('level' => $level,'parent_no'=>substr($parent_no,0,3)));
 		if(isset($r[0]['mx'])){

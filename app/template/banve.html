@@ -41,6 +41,7 @@
                                                 <input type='button' value='<%$smarty.const.UNFOLD_TEXT%>' class='tree_fold' />
                                                 </li>                                                
                         <li><input type="button" id="btn_excel" value="Xuất excel" /></li>
+                        <!--<li><input type="button" id="btn_copy" value="Copy" /></li>-->
 					</ul>
 					<div class="tree_wrap height1" id="tree_view">
 					</div><!-- / .tree_wrap -->
@@ -57,7 +58,7 @@
 			</div><!-- / .contents_wrap -->
 		</div><!-- / .container -->
 	</div><!-- / .bg -->
-<div id="lang_select_dialog"></div>
+<div id="copy_dialog"></div>
 <%include 'include/argo_ajax.html'%>
 <%include 'include/tree_view.html'%>
 <script type='text/javascript'>
@@ -165,9 +166,9 @@ $(function() {
              return;
         }
         add_index++;
-        var select_str ='<tr> <td><input size="10" name="add_khogiay[]" ></td>';
+        var select_str ='<tr> <td><input size="10" name="add_khogiay[]" id="add_khogiay_'+add_index+'"></td>';
         select_str +='<td><input readonly="true" size="20" name="add_banve_no[]" id="banve_no_'+add_index+'" ></td>';
-        select_str +='<td style="text-align: center;"><input type="checkbox" name="add_dungchung[]" class="add_dungchung" id="dungchung_'+add_index+'"></td>';
+        select_str +='<td style="text-align: center;"><input type="checkbox" class="add_dungchung" id="dungchung_ck_'+add_index+'"><input type="hidden" value="0" name="add_dungchung[]" id="dungchung_'+add_index+'"></td>';
         select_str +='<td><select name="add_level[]">';
         for(var i= (parseInt(level_no)+1); i<=5;i++){
         	var loai_bv ='';
@@ -185,21 +186,35 @@ $(function() {
             select_str +='<option value="'+i+'">'+loai_bv+'</option>';
         }			     
         select_str +="</select></td>"; 
-        select_str +='<td><input size="30" name="add_child[]"></td>';
+        select_str +='<td><input size="30" name="add_child[]" id="add_banve_name_'+add_index+'" class="add_banve_name"></td>';
         select_str +='<td></td><td></td></tr>' 
         //console.log(select_str); 
 		$('#folder_list').append(select_str);
 	});			
 	$(document).off('click', '.add_dungchung');
 	$(document).on('click', '.add_dungchung', function(){
-		var id =$(this).attr('id').replace('dungchung_','');
+		var id =$(this).attr('id').replace('dungchung_ck_','');
 		if($(this).is(':checked')){
 			$('#banve_no_'+id).removeAttr('readonly');	
+            $('#dungchung_'+id).val(1);
 		}else{
 			$('#banve_no_'+id).attr('readonly','true');
+            $('#dungchung_'+id).val(0);
 		}
 	});
-	
+    $(document).off('click', 'input[name="dungchung"]');
+    $(document).on('click', 'input[name="dungchung"]', function(){
+        if($(this).is(':checked')){	
+            $('#banve_no').removeAttr('readonly');			
+            $(this).val(1);
+		}else{		
+            $('#banve_no').attr('readonly','true');
+            $(this).val(0);
+            if($('#level_no').val() != '1'){
+                $('#banve_no').val();
+            }
+		}
+	});
 	$(document).on('change', '.add_section_select', function() {
 		var com_sp_id = Argo_ajax.get_split_id($(this).attr('id'));
 		var cval = $(this).val();
@@ -212,47 +227,23 @@ $(function() {
 		json_ajax.connect('POST', 'banve/update', $arr);
 	};
 		
-	$(document).on('click', '.btn_select', function() {		
+	$(document).on('click', '.btn_copy', function() {		
         var select_ajax = new Argo_ajax('html');
         select_ajax.done_func = function (html) {
-            $('#lang_select_dialog').html(html);
-            $('#lang_select_dialog').dialog({
+            $('#copy_dialog').html(html);
+            $('#copy_dialog').dialog({
                 modal: true,
                 width: 600,
                 title: section_name,
                 height: 260, 
                 closeOnEscape: true
             });
-            $('#lang_select_dialog').dialog('open'); 
+            $('#copy_dialog').dialog('open'); 
         };
-		
-		var id = this.id;    	
-    	var flg_add = id.substr(0,3) ;
-    	if(flg_add=='add'){
-    		id = id.replace("add_btn_select_","");
-    		var section_name_en =$('input[name="add_section_trans_en_'+id+'"]').val();
-			var section_name_ch =$('input[name="add_section_trans_ch_'+id+'"]').val();
-			var section_name_jp	=$('input[name="add_section_name_'+id+'"]').val();
-			select_ajax.connect('POST', 'banve/langselectdialog', {'update_flg':1,'select_id':id,
-	        	'section_trans_en':section_name_en,'section_trans_ch':section_name_ch,
-	        	'section_trans_jp':section_name_jp,'add':1});
-	        var section_name=section_name_ch;
-    	}else{
-    		id = id.replace("btn_select_","");
-    		var section_name= $("#sec_name_id_"+id).val();
-			var section_name_en =$('#section_trans_en_id_'+id).val();
-			var section_name_ch =$('#section_trans_ch_id_'+id).val();
-			var section_changed = $('#ctg_changed_id_'+id).val();			
-        if (section_changed =='1') {      
-        	select_ajax.connect('POST', 'banve/langselectdialog', {'update_flg':1,'select_id':id,
-        	'section_trans_en':section_name_en,'section_trans_ch':section_name_ch});
-        }else{
-        	select_ajax.connect('POST', 'banve/langselectdialog', {'update_flg':1,'select_id':id});
-	        }
-    	}        
+		select_ajax.connect('POST', 'banve/copy', {'banve_id':selected_category_id.replace("ltree_","")});
     });
     $(document).on('click', '.btn_close', function() {
-    	$('#lang_select_dialog').dialog('close');
+    	$('#copy_dialog').dialog('close');
     });
 
     var limit_ajax = new Argo_ajax("json");
@@ -428,18 +419,47 @@ $(function() {
     $arr_s = $('#search_form').serializeArray();
     tree_ajax.connect('POST', 'banve/tree',$arr_s);
     var check_before_save = function () {
-    	if($('#parent_level').val()=='0' && $('#kho_giay').val().trim()==''){
+        $chk_flg= true;
+        if($('#dungchung').val() !='1'){
+            if($('#kho_giay').val().trim()==''){
             Argo_ajax.message_box_error('','Bạn chưa nhập khổ giấy !');
             return false;
-        }
-		else if($('#parent_level').val()=='0' && $('#banve_no').val().trim()==''){
-            Argo_ajax.message_box_error('','Bạn chưa nhập Mã bản vẽ !');
-            return false;
-        }else if($('#banve_name').val().trim()==''){
-            Argo_ajax.message_box_error('','Bạn chưa nhập Tên bản vẽ !');
-            return false;
-        }
-        return true;
+            }else if($('#banve_name').val().trim()==''){
+                Argo_ajax.message_box_error('','Bạn chưa nhập Tên bản vẽ !');
+                return false;
+            }
+            if($('#parent_level').val()=='0' && $('#banve_no').val().trim()==''){
+                Argo_ajax.message_box_error('','Bạn chưa nhập Mã bản vẽ !');
+                return false;
+            }
+        }else{
+            if($('#banve_no').val().trim()==''){
+                Argo_ajax.message_box_error('','Bạn chưa nhập Mã bản vẽ !');
+                return false;
+            }
+        }    	
+        
+        $('.add_dungchung').each(function(key, elem){
+    		if($(elem).is(':checked')){
+                var id =$(elem).attr('id').replace('dungchung_ck_','');
+    			if($('#banve_no_'+id).val().length == 0){
+                    Argo_ajax.message_box_error('','Bạn phải nhập mã cho bản vẽ dùng chung !');
+                    $chk_flg = false;
+                    return false;
+                }
+    		}
+	    });
+        $('.add_banve_name').each(function(key, elem){
+    		if($(elem).val().trim() != ''){
+                var id =$(elem).attr('id').replace('add_banve_name_','');
+    			if($('#add_khogiay_'+id).val().trim().length == 0){
+                    Argo_ajax.message_box_error('','Bạn phải nhập khổ giấy cho bản vẽ con !');
+                    $chk_flg = false;
+                    return false;
+                }
+    		}
+	    });
+        return $chk_flg;
 	};
 	$('#btn_search').click(function(){ 
         $arr_s = $('#search_form').serializeArray();

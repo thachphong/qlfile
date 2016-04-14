@@ -9,7 +9,9 @@
         <!--<script type="text/javascript" src="<%$smarty.const.ACW_BASE_URL%>js/jquery.upload-1.0.2.js"></script>-->
         <!--<link href="<%$smarty.const.ACW_BASE_URL%>shared/css/jquery.modal.css" rel="stylesheet" type="text/css" />
         <script type="text/javascript" src="<%$smarty.const.ACW_BASE_URL%>shared/js/jquery.modal.js"></script>-->
+        <link href="<%$smarty.const.ACW_BASE_URL%>shared/css/select2.css" rel="stylesheet" type="text/css" />
 </head>
+        <script type="text/javascript" src="<%$smarty.const.ACW_BASE_URL%>shared/js/select2.js"></script>
 <body class="column_1">
 <div class="bg">
 <div class="container">
@@ -85,10 +87,10 @@
                 <tr> <td style="font-weight: bold">Mã bản vẽ tổng</td>
                     <td colspan="9">
                         <!--<input type="text" maxlength="8" value="<%$data_row.don_no%>" size="30" name="don_no" id="don_no" <%if $mode!= "new" || $loaidon =='1'%>readonly="true"<%/if%> >-->                      
-                        <select <%if $mode!= "new" || $loaidon =='1'%>disabled<%/if%> style="width:200px" name="don_no" >
+                        <select <%if $mode!= "new" || $loaidon =='1'%>disabled<%/if%> style="width:200px" name="don_no" id="states" >
                             <option></option>
                             <%foreach $dm_banve as $bv%>
-                                <option <%if $data_row.don_no==$bv['banve_tong']%>selected<%/if%> value="<%$bv['banve_no']%>"><%$bv['banve_tong']%></option>
+                                <option <%if $data_row.don_no==$bv['banve_tong']%>selected<%/if%> value="<%$bv['banve_tong']%>"><%$bv['banve_tong']%></option>
                             <%/foreach%>
                         </select>
                     </td>
@@ -467,6 +469,7 @@
 var _countFile = 0;
 //console.log("<%$mode%>");
 $(function() {
+    $("#states").select2();   
     var quyen_tao_moi ='<%$quyen_tao_moi%>';
     if(quyen_tao_moi=='0'){
         Argo_ajax.message_box('','Bạn không có quyền tạo yêu cầu mới !',function(){

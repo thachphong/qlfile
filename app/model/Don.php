@@ -273,7 +273,7 @@ class Don_model extends ACWModel
             ,'flg_muon'=>$flg_muon
             ,'flg_capnhat'=>$flg_capnhat
             ,'quyen_tao_moi'=>$quyen_tao_moi
-            ,'dm_banve' =>$bv->get_all('1')
+            ,'dm_banve' =>$bv->get_banve_tong('1')
         ));
 	}
 	private function join_dl_file(&$filelist, $dl_list){
