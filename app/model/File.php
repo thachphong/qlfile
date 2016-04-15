@@ -840,7 +840,7 @@ class File_model extends ACWModel
             $res = $fmodel->get_file_row($url_param[2]);            
             //$ver_id = $res['ver_id'];
             $folder_name = $don->get_folder_data_name($url_param[0]);
-            if($url_param[1]==DON_STATUS_TTQL || $url_param[1]==DON_STATUS_XIN_CN || $url_param[1]==DON_STATUS_XIN_CN){
+            if($url_param[1]==DON_STATUS_TTQL || $url_param[1]==DON_STATUS_XIN_CN || $url_param[1]==DON_STATUS_DUYET_CN){
                 $folder_name=$don->get_folder_data_name($url_param[0],FALSE);
             }
             $full_path = $folder_name.'/'.$res['file_name'];
