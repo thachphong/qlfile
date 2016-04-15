@@ -608,6 +608,7 @@ class Banve_model extends ACWModel
             $file->CopyFile(ACW_ROOT_DIR.'/shared/Template.xlsx',$file_name);
         }
         $excel->load($file_name);
+        $excel->set_value_no(0,1,'Dùng chung');
         $excel->set_value_no(1,1,'Khổ giấy');
         $excel->set_value_no(2,1,'Mã bản vẽ');
         $excel->set_value_no(3,1,'Loại bản vẽ');
@@ -625,8 +626,14 @@ class Banve_model extends ACWModel
 				$loai_bv ='Bản vẽ chi tiết';
 			}else if($row['level']=='5'){
 				$loai_bv ='Bản vẽ phôi';
-			}	
-            $excel->set_value_no(1,$key+2,$row['banve_no']);
+			}
+			if($row['dungchung']=='1'){
+				$dungchung = 'Có' ;		
+			}else{
+				$dungchung = 'Không' ;
+			}
+			$excel->set_value_no(0,$key+2,$dungchung);
+            $excel->set_value_no(1,$key+2,$row['kho_giay']);
             $excel->set_value_no(2,$key+2,$row['banve_no']);	
             $excel->set_value_no(3,$key+2,$loai_bv);	
             $excel->set_value_no(4,$key+2,$row['banve_name']);	
