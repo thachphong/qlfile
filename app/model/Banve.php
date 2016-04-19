@@ -95,12 +95,28 @@ class Banve_model extends ACWModel
 	{
 		$param = self::get_param(array('banve_id'));
         $db = new Banve_model();
-        $db->get_all();
-		return ACWView::template('banve/copy.html', $param);
+        $res['banve_id'] = $param['banve_id'];
+        $info = $db->get_banve_info($param['banve_id']);
+        $level = array();
+        for($i=1; $i<$info['level'];$i++){
+            $level[]=$i ; 
+        }
+        $ds_level ='0';
+        if(count($level)>0){
+            $ds_level = implode(',',$level);
+        }        
+        $res['ds_banve'] = $db->get_all($ds_level);
+		return ACWView::template('banve/copy.html', $res);
 	}
-	/**
-	 * 更新
-	 */
+	public static function action_copyexe()
+	{
+		$param = self::get_param(array('banve_form','banve_to'));
+        $res['error']='';
+        $db = new Banve_model();
+        $db->copy_exe($param);
+        
+		return ACWView::json($res);
+	}
 	public static function action_update()
 	{
 		// 最初に決まっているもの
@@ -443,7 +459,7 @@ class Banve_model extends ACWModel
 	{
         $sql ="select *,concat(kho_giay,banve_no) banve_tong from banve where del_flg=0 and banve_id <>1 ";
         if($level !=''){
-            $sql .=" and level = ".$level;
+            $sql .=" and level in ( ".$level ." )";
         }
         $sql .=" order by banve_no";
         return $this->query($sql);
@@ -641,6 +657,88 @@ class Banve_model extends ACWModel
         $excel->save($file_name);
         $excel->free();
        
+    }
+    public function get_all_child($banve_id){
+        $sql ="	select  banve_id,
+								banve_name,
+								parent_id ,kho_giay,banve_no,level
+		from banve where banve_id = :banve_id
+		union
+select  banve_id,
+								banve_name,
+								parent_id  ,kho_giay,banve_no,level
+		from    banve,
+								(select @pv := CONCAT( :banve_id,'')) initialisation
+		where   find_in_set(parent_id, @pv) > 0
+				and     @pv := concat(@pv, ',', banve_id)
+ORDER BY parent_id;";
+        $result = $this->query($sql,array('banve_id'=>$banve_id)); 
+        return $result;
+    }
+    public function copy_exe($param){
+        
+        $sql = "INSERT INTO banve
+					(
+					parent_id
+                    ,kho_giay
+					,banve_no
+					,banve_name
+					,level
+					,del_flg
+					,add_user_id
+					,add_datetime
+					,upd_user_id
+					,upd_datetime
+                    ,dungchung
+					)
+				VALUES
+					(
+					:parent_id
+                    ,:kho_giay
+					,:banve_no
+					,:banve_name
+					,:level
+					,0
+					,:user_id
+					,now()
+					,:user_id
+					,now()
+                    ,:dungchung
+					)
+				";
+        $all_child = $this->get_all_child($param['banve_form']);
+        $parent_id = 1;
+        $user_login = ACWSession::get('user_info');
+        $sql_pa['user_id'] = $user_login['user_id'];
+        $sql_pa['dungchung'] = 1;
+        if(strlen($param['banve_to']) > 0){
+            $parent_info = $this->get_banve_info($param['banve_to']);
+            $parent_id = $parent_info['banve_id'];
+        }
+        $this->begin_transaction();
+        foreach($all_child as $key => $row){
+            if($key === 0){
+                $sql_pa['parent_id'] = $parent_id;
+            }else{
+                $sql_pa['parent_id'] = $this->find_parent_new($all_child,$row['parent_id']);
+            }
+            $sql_pa['kho_giay'] =$row['kho_giay'];
+            $sql_pa['banve_no'] =$row['banve_no'];
+            $sql_pa['level'] =$row['level'];
+            $sql_pa['banve_name'] =$row['banve_name'];
+            $this->execute($sql, $sql_pa);
+            $result = $this->query("SELECT LAST_INSERT_ID() AS banve_new_id");            
+            $all_child[$key]['banve_new_id'] =  $result[0]['banve_new_id'];
+        }
+        $this->commit();
+    }
+    public function find_parent_new($list ,$banve_id){
+        foreach($list as $key =>$val){
+            if($val['banve_id'] == $banve_id){
+                return $val['banve_new_id'];
+            }
+        }
+        return false;
     }
 }
 /* ファイルの終わり */

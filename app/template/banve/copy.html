@@ -1,6 +1,19 @@
-<select style="width:200px" name="banve_id_to" id="states" >
+<div style="padding: 10px">
+<div style="padding-bottom: 5px">( Nếu copy loại bản vẽ tổng thể, không cần chọn cấp cha  )</div>
+<label>Mã bản vẽ: </label>
+<select style="width:400px" name="banve_id_to" id="states" >
     <option></option>
-    <%foreach $dm_banve as $bv%>
-            <option <%if $data_row.don_no==$bv['banve_tong']%>selected<%/if%> value="<%$bv['banve_tong']%>"><%$bv['banve_tong']%></option>
+    <%foreach $ds_banve as $bv%>
+            <option  value="<%$bv['banve_id']%>"><%$bv['banve_tong']%>-<%$bv['banve_name']%></option>
     <%/foreach%>
 </select>
+<div style="padding-top: 20px">
+    <button id="copy_exe" style="margin-left: 10px">OK</button>
+    <button id="copy_close" style="margin-left: 20px">Thoát</button>
+</div>
+</div>
+<script type='text/javascript'>
+$(function() {
+    $("#states").select2();  
+});
+</script>

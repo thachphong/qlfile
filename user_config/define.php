@@ -18,6 +18,8 @@ define('DATA_MAIN_PATH', AKAGANE_STRAGE_PATH . '/main');
 
 define('IMG_CON_DAU_WIDTH', 30);
 define('IMG_CON_DAU_HEIGHT', 30);
+define('IMG_CON_DAU_PADDING_BOTTOM', 10);
+define('IMG_CON_DAU_PADDING_RIGHT', 2);
 
 define('DON_STATUS_NEW', '0'); // TAO MOI CHUA KIEM TRA
 define('DON_STATUS_KT', '1'); // DA KIEM TRA
@@ -61,31 +63,13 @@ define('AKAGANE_WEB_PROCESSES_COUNT', 4);
 define('AKAGANE_SERIES_EDIT_TIME_LIMIT', 1800);
 
 
-/*define('AKAGANE_COMMENT_STRAGE_PATH', AKAGANE_STRAGE_PATH . '/comment');
-define('AKAGANE_COMMENT_TMP_PATH', ACW_TMP_DIR . '/comment');*/
-
-
 define('AKAGANE_HELP_STRAGE_PATH', AKAGANE_STRAGE_PATH . 'help');
-
-
-/*define('AKAGANE_SERIES_STOP_WORD', '製造中止');
-define('AKAGANE_ITEM_STOP_WORD', '製造中止');
-define('AKAGANE_ITEM_DEL_WORD', '削除');
-define('AKAGANE_ITEM_SPEC_STOP_DATE', 'spec0534');
-define('AKAGANE_ITEM_SPEC_CHANGE_ITEM', 'spec0535');
-define('AKAGANE_SECTION_BASE_TENKAI_START', 'ページタイトル');*/
 
 
 
 define('BATCH_TRY_AGAIN_IF_CONFLICT_TIME_OUT', 500); //Unit is Seconds
 
-/*define('ID_USER_BATCH', 'Batch'); 
-define('PATH_MEDIA_BATCH',str_replace('/','\\',ACW_ROOT_DIR) .  '\batch\windows\save_media.bat'); 
-define('COUNT_MEDIA_BATCH',str_replace('/','\\',ACW_ROOT_DIR) .  '\batch\php\countBatchMedia.txt'); 
-define('LIMIT_MEDIA_BATCH_EXE',5); 
-define('AKAGANE_YOYAKU_DOWNLOAD_INDD_PATH', 'yoyaku_download');*/
 
 
 error_reporting(E_ALL);
 
-/* 終わり */

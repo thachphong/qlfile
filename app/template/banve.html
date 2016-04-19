@@ -6,7 +6,10 @@
 	<%include 'include/head.html'%>
 	<link href="<%$smarty.const.ACW_BASE_URL%>shared/css/category.css" rel="stylesheet" type="text/css" />
 	<script type="text/javascript" src="<%$smarty.const.ACW_BASE_URL%>js/jquery.upload-1.0.2.js"></script>
+    <link href="<%$smarty.const.ACW_BASE_URL%>shared/css/select2.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="<%$smarty.const.ACW_BASE_URL%>shared/js/select2.js"></script>
 </head>
+    
 <body class="column_2">
 	<div class="bg">
 		<div class="container">
@@ -41,7 +44,7 @@
                                                 <input type='button' value='<%$smarty.const.UNFOLD_TEXT%>' class='tree_fold' />
                                                 </li>                                                
                         <li><input type="button" id="btn_excel" value="Xuất excel" /></li>
-                        <!--<li><input type="button" id="btn_copy" value="Copy" /></li>-->
+                        <li><input type="button" id="btn_copy" value="Copy" /></li>
 					</ul>
 					<div class="tree_wrap height1" id="tree_view">
 					</div><!-- / .tree_wrap -->
@@ -50,7 +53,7 @@
 				<!-- InstanceBeginEditable name="main_contents" -->
 				<div class="main_contents">
 					<div class="main_innner height3" id="edit_contents_html">
-
+                        
 					</div><!-- / .main_innner -->
 				</div><!-- / .main_contents -->
 				<!-- InstanceEndEditable -->
@@ -63,6 +66,7 @@
 <%include 'include/tree_view.html'%>
 <script type='text/javascript'>
 $(function() {
+    
     $('#menu_banve').addClass('selected');
 	var selected_category_id = null;
 	var add_section_no;
@@ -227,25 +231,42 @@ $(function() {
 		json_ajax.connect('POST', 'banve/update', $arr);
 	};
 		
-	$(document).on('click', '.btn_copy', function() {		
+	$(document).on('click', '#btn_copy', function() {		
         var select_ajax = new Argo_ajax('html');
         select_ajax.done_func = function (html) {
             $('#copy_dialog').html(html);
             $('#copy_dialog').dialog({
                 modal: true,
                 width: 600,
-                title: section_name,
-                height: 260, 
+                title: 'Chọn bản vẽ cấp cha',
+                height: 170, 
                 closeOnEscape: true
             });
             $('#copy_dialog').dialog('open'); 
         };
 		select_ajax.connect('POST', 'banve/copy', {'banve_id':selected_category_id.replace("ltree_","")});
     });
-    $(document).on('click', '.btn_close', function() {
+    $(document).on('click', '#copy_close', function(){
     	$('#copy_dialog').dialog('close');
     });
-
+    $(document).off('click', '#copy_exe');
+    $(document).on('click', '#copy_exe', function(){
+        /*copy_ajax.done_func = function (data) {
+            if (data.error.length > 0) {
+                    Argo_ajax.message_box_error('', data.error);
+            }else { 
+                $('#copy_dialog').dialog('close');
+            }
+        }*/
+        if($('#level_no').val()!='1'){
+            Argo_ajax.message_box("", 'Bạn chưa chọn mã bản vẽ  cấp cha !');
+            return ;
+        }
+        var banve_form = selected_category_id.replace("ltree_","");
+        var banve_to = $('#states').val();
+        json_ajax.connect('POST', 'banve/copyexe', {'banve_form':banve_form,'banve_to':banve_to});
+        $('#copy_dialog').dialog('close');
+    });
     var limit_ajax = new Argo_ajax("json");
     limit_ajax.done_func = function(data) {
         if (data.error) {
