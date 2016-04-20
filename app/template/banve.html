@@ -258,7 +258,7 @@ $(function() {
                 $('#copy_dialog').dialog('close');
             }
         }*/
-        if($('#level_no').val()!='1'){
+        if($('#level_no').val()!='1' && $('#states').val().length == 0 ){
             Argo_ajax.message_box("", 'Bạn chưa chọn mã bản vẽ  cấp cha !');
             return ;
         }
