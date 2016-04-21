@@ -457,7 +457,14 @@ class Banve_model extends ACWModel
 	}
 	public function get_all($level = '')
 	{
-        $sql ="select *,concat(kho_giay,banve_no) banve_tong from banve where del_flg=0 and banve_id <>1 ";
+        $sql ="select t.banve_id,t.banve_name,t.dungchung,
+                        t.banve_no,t.kho_giay,t.level,t.parent_id ,u.user_name
+												,DATE_FORMAT(t.add_datetime,'%d/%m/%Y %H:%i:%s') add_datetime	,
+												t.upd_datetime,t.upd_user_id,
+												concat(kho_giay,banve_no) banve_tong 
+                        FROM banve t
+                        LEFT JOIN m_user u on u.user_id = t.add_user_id
+				where t.del_flg=0 and t.banve_id <>1  ";
         if($level !=''){
             $sql .=" and level in ( ".$level ." )";
         }
@@ -629,6 +636,8 @@ class Banve_model extends ACWModel
         $excel->set_value_no(2,1,'Mã bản vẽ');
         $excel->set_value_no(3,1,'Loại bản vẽ');
         $excel->set_value_no(4,1,'Tên bản vẽ');
+        $excel->set_value_no(5,1,'Người tạo');
+        $excel->set_value_no(6,1,'Ngày tạo');        
         $list = $this->get_all();
         foreach($list as $key=>$row){
         	$loai_bv ='';
@@ -653,6 +662,8 @@ class Banve_model extends ACWModel
             $excel->set_value_no(2,$key+2,$row['banve_no']);	
             $excel->set_value_no(3,$key+2,$loai_bv);	
             $excel->set_value_no(4,$key+2,$row['banve_name']);	
+            $excel->set_value_no(5,$key+2,$row['user_name']);
+        	$excel->set_value_no(6,$key+2,$row['add_datetime']); 
 		}
         $excel->save($file_name);
         $excel->free();
