@@ -489,7 +489,7 @@ class File_model extends ACWModel
         left join m_user u on t.add_user_id = u.user_id
 				left join m_user utt on d.user_ttql = utt.user_id
             where /*t.`status`=3
-                and*/ t.file_type ='pdf'
+                and*/ t.file_type in ('pdf','rar')
                 and t.del_flg = 0
 		";
 		
