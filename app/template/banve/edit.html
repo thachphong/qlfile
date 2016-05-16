@@ -1,23 +1,32 @@
 	<div class="series_wrap">
-		<div class="title_wrap clear_fix">
-			<h2><img src="<%$smarty.const.ACW_BASE_URL%>shared/img/icon_file2.gif" />Thông tin bản vẽ</h2>
+		<div class="title_wrap clear_fix" style="padding-right: 15px">
+			<h2><img src="<%$smarty.const.ACW_BASE_URL%>shared/img/icon_file2.gif" />Thông tin bản vẽ</h2>			
+			<div style="float: right;">
+				<input type="button" id="category_close" value="Đóng" />
+				<input type="button" id="category_delete" value="Xóa" />
+				<input type="button" id="category_save" value="Cập nhật" />
+			</div>
 		</div>
-		<form id="category_form">
+		<form id="category_form" class="scroll_form">
 		<input id="update_child" name="update_child" type="hidden" value="0"/>
 		<div class="info_wrap">
 			<div class="hl_wrap">
-				<h3>Thông Tin cơ bản</h3>
-				<ul class="btn_wrap">
-					<li><input type="button" id="category_close" value="Đóng" /></li>
-					<li><input type="button" id="category_delete" value="Xóa" /></li>
-					<li><input type="button" id="category_save" value="Cập nhật" /></li>
-				</ul>
+				<h3>Thông Tin cơ bản</h3>				
 			</div>
 			<table class="category_1">
 				<colgroup><col width="120px" /><col width="20px" /></colgroup>
 				<tr>					
 					<th colspan="2">Khổ giấy<%if $parent_level=='0'%><span class="edit_require">*</span><%/if%></th>                
-					<td colspan="2"><input style="width: 100px" maxlength="1" id="kho_giay" name="kho_giay" type="text"  value="<%$kho_giay%>"/></td>
+					<td colspan="2"><!--input style="width: 100px" maxlength="1" id="kho_giay" name="kho_giay" type="text"  value="<%$kho_giay%>"/>-->
+						<select style="width: 100px" id="kho_giay" name="kho_giay">
+							<option value=""></option>
+							<option value="0" <%if $kho_giay=='0'%>selected<%/if%>>0</option>
+							<option value="1" <%if $kho_giay=='1'%>selected<%/if%>>1</option>
+							<option value="2" <%if $kho_giay=='2'%>selected<%/if%>>2</option>
+							<option value="3" <%if $kho_giay=='3'%>selected<%/if%>>3</option>
+							<option value="4" <%if $kho_giay=='4'%>selected<%/if%>>4</option>
+						</select>
+					</td>
 				</tr>
 				<tr>					
 					<th colspan="2">Mã bản vẽ<%if $parent_level=='0'%><span class="edit_require">*</span><%/if%></th>                
@@ -71,7 +80,8 @@
 				</thead>
 				<%foreach $banve_child as $row%>
 				<tr> 
-                    <td><%$row.kho_giay%></td>
+                    <td><%$row.kho_giay%>                    	
+                    </td>
                     <td><%$row.banve_no%></td>
                     <td style="text-align: center;"><input type="checkbox" onclick="return false" <%if $row.dungchung == '1'%>checked<%/if%>/></td>
                     <td><%if $row.level =='1'%>Bản vẽ tổng thể 
@@ -92,3 +102,12 @@
 			<input type="hidden" name="parent_level" id="parent_level" value="<%$parent_level%>">			
 		</form>
 	</div><!-- / .series_wrap -->
+<script type='text/javascript'>
+$(function() {	
+
+		var wh = $(window).height();
+		
+		$('#category_form').height(wh - 255);
+	
+});
+</script>

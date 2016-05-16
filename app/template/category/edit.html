@@ -1,17 +1,22 @@
 	<div class="series_wrap">
-		<div class="title_wrap clear_fix">
+		<div class="title_wrap clear_fix" style="padding-right: 15px">
 			<h2><img src="<%$smarty.const.ACW_BASE_URL%>shared/img/icon_file2.gif" />Thông tin thư mục</h2>
+			<div style="float: right;">
+				<input type="button" id="category_close" value="Đóng" />
+				<input type="button" id="category_delete" value="Xóa" />
+				<input type="button" id="category_save" value="Cập nhật" />
+			</div>
 		</div>
-		<form id="category_form">
+		<form id="category_form" class="scroll_form">
 		<input id="update_child" name="update_child" type="hidden" value="0"/>
 		<div class="info_wrap">
 			<div class="hl_wrap">
 				<h3>Thông Tin cơ bản</h3>
-				<ul class="btn_wrap">
+				<!--<ul class="btn_wrap">
 					<li><input type="button" id="category_close" value="Đóng" /></li>
 					<li><input type="button" id="category_delete" value="Xóa" /></li>
 					<li><input type="button" id="category_save" value="Cập nhật" /></li>
-				</ul>
+				</ul>-->
 			</div>
 			<table class="category_1">
 				<colgroup><col width="120px" /><col width="20px" /></colgroup>
@@ -39,3 +44,12 @@
 			<input type="hidden" name="my_id" value="<%$my_id%>">
 		</form>
 	</div><!-- / .series_wrap -->
+<script type='text/javascript'>
+$(function() {	
+
+		var wh = $(window).height();
+		
+		$('#category_form').height(wh - 205);
+	
+});
+</script>

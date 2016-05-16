@@ -52,7 +52,7 @@
 				<!-- InstanceEndEditable -->
 				<!-- InstanceBeginEditable name="main_contents" -->
 				<div class="main_contents">
-					<div class="main_innner height3" id="edit_contents_html">
+					<div class="main_innner height3" id="edit_contents_html" style="overflow-y: none">
                         
 					</div><!-- / .main_innner -->
 				</div><!-- / .main_contents -->
@@ -170,7 +170,16 @@ $(function() {
              return;
         }
         add_index++;
-        var select_str ='<tr> <td><input size="10" name="add_khogiay[]" id="add_khogiay_'+add_index+'"></td>';
+        var select_str ='<tr> <td>';//<input size="10" name="add_khogiay[]" id="add_khogiay_'+add_index+'"></td>';
+        select_str +='<select style="width: 80px" id="add_khogiay_'+add_index+'" name="add_khogiay[]">';
+		select_str +='<option value=""></option>';
+		select_str +='<option value="0" >0</option>';
+		select_str +='<option value="1" >1</option>';
+		select_str +='<option value="2" >2</option>';
+		select_str +='<option value="3" >3</option>';
+		select_str +='<option value="4" >4</option>';
+		select_str +='</select>';
+					
         select_str +='<td><input readonly="true" size="20" name="add_banve_no[]" id="banve_no_'+add_index+'" ></td>';
         select_str +='<td style="text-align: center;"><input type="checkbox" class="add_dungchung" id="dungchung_ck_'+add_index+'"><input type="hidden" value="0" name="add_dungchung[]" id="dungchung_'+add_index+'"></td>';
         select_str +='<td><select name="add_level[]">';
@@ -366,6 +375,7 @@ $(function() {
 		var wh = $(window).height();
 		$(".height1").height(wh - 265);	// ツリー
 		$(".height3").height(wh - 200);	// 設定画面
+		$('#category_form').height(wh - 250);
 	});
 
 	// カテゴリ選択削除
@@ -449,13 +459,13 @@ $(function() {
                 Argo_ajax.message_box_error('','Bạn chưa nhập Tên bản vẽ !');
                 return false;
             }
-            if($('#parent_level').val()=='0' && $('#banve_no').val().trim()==''){
-                Argo_ajax.message_box_error('','Bạn chưa nhập Mã bản vẽ !');
+            if($('#parent_level').val()=='0' && $('#banve_no').val().trim().length !=7){
+                Argo_ajax.message_box_error('','Bạn chưa nhập đủ 7 ký tự cho Mã bản vẽ');
                 return false;
             }
         }else{
-            if($('#banve_no').val().trim()==''){
-                Argo_ajax.message_box_error('','Bạn chưa nhập Mã bản vẽ !');
+            if($('#banve_no').val().trim().length !=7){
+                Argo_ajax.message_box_error('','Bạn chưa nhập đủ 7 ký tự cho Mã bản vẽ !');
                 return false;
             }
         }    	

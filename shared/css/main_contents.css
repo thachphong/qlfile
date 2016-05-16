@@ -31,10 +31,12 @@
 	margin-left: 352px;
 	margin-right: 10px;
 	clear: both;
-	overflow-y: scroll;
+	/*overflow-y: scroll;*/
 	
 }
-/* Edit NBKD-872 hungtn VNIT 2015/01/05*/
+.main_innner .scroll_form{
+	overflow-y: scroll;
+}
 .resizetable .main_innner{
 	margin-left: 0px;
 	width: 100%;
