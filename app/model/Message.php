@@ -11,8 +11,7 @@ class Message_model extends ACWModel
 		$lang = ACWSession::get('lang');
 		if(isset($lang)==FALSE){
 			$lang = 1;
-		}
-		$lang =2;
+		}		
 		$sql = "select * from message_lang where screen=:screen and lang_key = :lang_key";
 		return $this->query($sql,array('screen'=>$screen,'lang_key' => $lang ));		
 	}
@@ -23,9 +22,7 @@ class Message_model extends ACWModel
 		foreach($data as $item){
 			$res[$item['msg_no']] = $item['des'];
 		}		
-		return $res;
-		//$result['SYS001'] ='bbbb';
-		//return $result;
+		return $res;		
 	}
 	
 }
