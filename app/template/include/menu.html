@@ -1,7 +1,7 @@
 <div class="header clear_fix">
-    
-	<p><img src="<%$smarty.const.ACW_BASE_URL%>shared/img/logo_small.jpg" style="height: 40px;margin-top: 5px;">
-    <%$smarty.const.AKAGANE_TITLE%></p>
+    <%assign var='menulang' value=Message_model::get_message('MENU')%>
+	<p><img src="<%$smarty.const.ACW_BASE_URL%>shared/img/logo_small.jpg" style="height: 40px;margin-top: 5px;">	
+    <%$menulang['SYS001']%></p>    
 	<ul class="subnav">
 		<li><a href="#">Help</a></li>
 		<li><a href="<%$smarty.const.ACW_BASE_URL%>login/delete">Thoát</a></li>

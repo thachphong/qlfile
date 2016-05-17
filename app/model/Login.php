@@ -31,12 +31,13 @@ class Login_model extends ACWModel
 	*/
 	public static function action_auth()
 	{
-		$param = self::get_param(array('user_id', 'passwd'));
+		$param = self::get_param(array('user_id', 'passwd','lang'));
 		if (self::get_validate_result()) {
 			$login = new Login_model();
 			$user_info = $login->check_login($param);
 			if (is_null($user_info) == false) {
 				ACWSession::set('user_info', $user_info);
+				ACWSession::set('lang', $param['lang']);
                 ACWSession::set('file_download', array());
                 if($user_info['upload'] > 0 || $user_info['kiemtra'] > 0 || $user_info['duyet'] > 0 || $user_info['trungtam_quanly'] > 0){
                     return ACWView::redirect(ACW_BASE_URL . 'don');
@@ -125,6 +126,8 @@ class Login_model extends ACWModel
 	public function check_login($param)
 	{
 		$param['passwd'] = md5(AKAGANE_SALT . $param['passwd']);
+		$sql_param['user_id'] =$param['user_id'];
+		$sql_param['passwd'] =$param['passwd'];		
 		$result = $this->query('
 			SELECT
                     user_id
@@ -153,7 +156,7 @@ class Login_model extends ACWModel
 			AND	upper(USER_NAME) = upper(:user_id)
 			AND
 				PASS = :passwd			
-			', $param);
+			', $sql_param);
 		if (count($result) != 1) {
 			return null;
 		}else{

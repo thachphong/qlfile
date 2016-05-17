@@ -1,7 +1,7 @@
 /*
 Navicat MySQL Data Transfer
 
-Source Server         : localhost
+Source Server         : mysql_local
 Source Server Version : 50505
 Source Host           : localhost:3306
 Source Database       : qlfile
@@ -10,13 +10,13 @@ Target Server Type    : MYSQL
 Target Server Version : 50505
 File Encoding         : 65001
 
-Date: 2016-05-17 00:19:29
+Date: 2016-05-17 18:08:46
 */
 
 SET FOREIGN_KEY_CHECKS=0;
 
 -- ----------------------------
--- Table structure for banve
+-- Table structure for `banve`
 -- ----------------------------
 DROP TABLE IF EXISTS `banve`;
 CREATE TABLE `banve` (
@@ -43,7 +43,7 @@ INSERT INTO `banve` VALUES ('2', '1110001', 'jjjjjjjjj', '1', '1', '0', '1', '20
 INSERT INTO `banve` VALUES ('3', '1110010', 'fdgsdgdfgsd', '2', '2', '0', '1', '2016-05-16 23:40:52', '1', '2016-05-16 23:40:52', '0', '3');
 
 -- ----------------------------
--- Table structure for capphat
+-- Table structure for `capphat`
 -- ----------------------------
 DROP TABLE IF EXISTS `capphat`;
 CREATE TABLE `capphat` (
@@ -65,7 +65,7 @@ CREATE TABLE `capphat` (
 -- ----------------------------
 
 -- ----------------------------
--- Table structure for don
+-- Table structure for `don`
 -- ----------------------------
 DROP TABLE IF EXISTS `don`;
 CREATE TABLE `don` (
@@ -100,7 +100,7 @@ CREATE TABLE `don` (
 -- ----------------------------
 
 -- ----------------------------
--- Table structure for don_folder
+-- Table structure for `don_folder`
 -- ----------------------------
 DROP TABLE IF EXISTS `don_folder`;
 CREATE TABLE `don_folder` (
@@ -116,7 +116,7 @@ CREATE TABLE `don_folder` (
 -- ----------------------------
 
 -- ----------------------------
--- Table structure for don_vi
+-- Table structure for `don_vi`
 -- ----------------------------
 DROP TABLE IF EXISTS `don_vi`;
 CREATE TABLE `don_vi` (
@@ -138,7 +138,7 @@ INSERT INTO `don_vi` VALUES ('2', 'Đơn vị 2', '0', '10', '2016-01-30', '10',
 INSERT INTO `don_vi` VALUES ('3', 'Đơn vị 3', '0', '10', '2016-01-30', '10', '2016-01-30');
 
 -- ----------------------------
--- Table structure for download
+-- Table structure for `download`
 -- ----------------------------
 DROP TABLE IF EXISTS `download`;
 CREATE TABLE `download` (
@@ -154,7 +154,7 @@ CREATE TABLE `download` (
 -- ----------------------------
 
 -- ----------------------------
--- Table structure for file
+-- Table structure for `file`
 -- ----------------------------
 DROP TABLE IF EXISTS `file`;
 CREATE TABLE `file` (
@@ -178,7 +178,7 @@ CREATE TABLE `file` (
 -- ----------------------------
 
 -- ----------------------------
--- Table structure for folder
+-- Table structure for `folder`
 -- ----------------------------
 DROP TABLE IF EXISTS `folder`;
 CREATE TABLE `folder` (
@@ -212,7 +212,7 @@ INSERT INTO `folder` VALUES ('12', 'F_11_01_02_001_003', '9', null, '0', '1', '2
 INSERT INTO `folder` VALUES ('13', 'foler_2', '1', null, '0', '1', '2016-02-26', '1', '2016-02-26');
 
 -- ----------------------------
--- Table structure for level
+-- Table structure for `level`
 -- ----------------------------
 DROP TABLE IF EXISTS `level`;
 CREATE TABLE `level` (
@@ -253,7 +253,7 @@ INSERT INTO `level` VALUES ('19', null, '0', '0', '1', '0', '1', '0', '1');
 INSERT INTO `level` VALUES ('20', null, '0', '1', '1', '0', '1', '0', '1');
 
 -- ----------------------------
--- Table structure for lichsu_in
+-- Table structure for `lichsu_in`
 -- ----------------------------
 DROP TABLE IF EXISTS `lichsu_in`;
 CREATE TABLE `lichsu_in` (
@@ -285,7 +285,7 @@ INSERT INTO `lichsu_in` VALUES ('14', 'HONGKY', 'BMD-CG06190-Cacte sau motor vo 
 INSERT INTO `lichsu_in` VALUES ('15', 'HONGKY', 'BMD-CG06190-Cacte sau motor vo nhom (chup gio 190x0.6).pdf', '1', '2016-01-15 07:48:00', '2016-03-13 11:46:43', 'PrintLogs__3.xls');
 
 -- ----------------------------
--- Table structure for may
+-- Table structure for `may`
 -- ----------------------------
 DROP TABLE IF EXISTS `may`;
 CREATE TABLE `may` (
@@ -310,7 +310,7 @@ INSERT INTO `may` VALUES ('4', 'gdsfs', 'sdfsfsf', '0', '2016-03-15 22:48:56', '
 INSERT INTO `may` VALUES ('5', 'gdsfs11', 'dsds', '0', '2016-03-15 22:54:11', '1', '0000-00-00 00:00:00', '2147483647');
 
 -- ----------------------------
--- Table structure for may_file
+-- Table structure for `may_file`
 -- ----------------------------
 DROP TABLE IF EXISTS `may_file`;
 CREATE TABLE `may_file` (
@@ -332,58 +332,62 @@ INSERT INTO `may_file` VALUES ('5', '4', '282', '2016-03-15 23:57:01', '1');
 INSERT INTO `may_file` VALUES ('7', '4', '277', '2016-03-15 23:57:18', '1');
 
 -- ----------------------------
--- Table structure for message_lang
+-- Table structure for `message_lang`
 -- ----------------------------
 DROP TABLE IF EXISTS `message_lang`;
 CREATE TABLE `message_lang` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `msg_no` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `des` varchar(200) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `des` varchar(200) CHARACTER SET utf8 DEFAULT NULL,
   `lang_key` int(1) DEFAULT NULL COMMENT '1: VN, 2:EN',
+  `screen` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Records of message_lang
 -- ----------------------------
-INSERT INTO `message_lang` VALUES ('1', 'MENU0001', 'KIểm tra yêu cầu XD', '1');
-INSERT INTO `message_lang` VALUES ('2', 'MENU0002', 'Lập yêu cầu XD', '1');
-INSERT INTO `message_lang` VALUES ('3', 'MENU0003', 'Lịch sử yêu cầu XD', '1');
-INSERT INTO `message_lang` VALUES ('4', 'MENU0004', 'Mượn bản vẽ', '1');
-INSERT INTO `message_lang` VALUES ('5', 'MENU0005', 'Phân bổ file', '1');
-INSERT INTO `message_lang` VALUES ('6', 'MENU0006', 'In File', '1');
-INSERT INTO `message_lang` VALUES ('7', 'MENU0007', 'Cấp phát file', '1');
-INSERT INTO `message_lang` VALUES ('8', 'MENU0008', 'Admin', '1');
-INSERT INTO `message_lang` VALUES ('9', 'MENU0009', 'Lịch sử mượn trả file', '1');
-INSERT INTO `message_lang` VALUES ('10', 'MENU0010', 'Lịch sử file cũ', '1');
-INSERT INTO `message_lang` VALUES ('11', 'MENU0011', 'Convert lại pdf', '1');
-INSERT INTO `message_lang` VALUES ('12', 'MENU0012', 'Lịch sử phân bổ', '1');
-INSERT INTO `message_lang` VALUES ('13', 'MENU0013', 'Danh mục bản vẽ', '1');
-INSERT INTO `message_lang` VALUES ('14', 'MENU0014', 'Danh sách máy', '1');
-INSERT INTO `message_lang` VALUES ('15', 'MENU0015', 'Đưa bản vẽ vào máy', '1');
-INSERT INTO `message_lang` VALUES ('16', 'MENU0016', 'Lịch sử in file', '1');
-INSERT INTO `message_lang` VALUES ('17', 'MENU0017', 'Lịch sử cấp phát file', '1');
-INSERT INTO `message_lang` VALUES ('18', 'MENU0018', 'Đơn vị', '1');
-INSERT INTO `message_lang` VALUES ('19', 'MENU0019', 'Phòng ban', '1');
-INSERT INTO `message_lang` VALUES ('20', 'MENU0020', 'Tổ nhóm', '1');
-INSERT INTO `message_lang` VALUES ('21', 'MENU0021', 'User', '1');
-INSERT INTO `message_lang` VALUES ('22', 'MENU0022', 'Thư mục', '1');
-INSERT INTO `message_lang` VALUES ('23', 'MENU0023', 'Phân quyền', '1');
-INSERT INTO `message_lang` VALUES ('24', 'MENU0024', 'Lịch sử download', '1');
-INSERT INTO `message_lang` VALUES ('25', 'MENU0025', 'Xóa đơn', '1');
-INSERT INTO `message_lang` VALUES ('26', 'LOGIN001', 'Xin Chào', '1');
-INSERT INTO `message_lang` VALUES ('27', 'LOGIN001', 'Wellcome', '2');
-INSERT INTO `message_lang` VALUES ('28', 'LOGIN002', 'Thoát', '1');
-INSERT INTO `message_lang` VALUES ('29', 'LOGIN002', 'Logout', '2');
-INSERT INTO `message_lang` VALUES ('30', 'BTN001', 'Tìm', '1');
-INSERT INTO `message_lang` VALUES ('31', 'BTN002', 'Find', '2');
-INSERT INTO `message_lang` VALUES ('32', 'SYS001', 'HỆ THỐNG XÉT DUYỆT BẢN VẼ', '1');
-INSERT INTO `message_lang` VALUES ('33', 'SYS001', 'DRAWING APPROVAL SYSTEM', '2');
-INSERT INTO `message_lang` VALUES ('34', 'MENU0001', 'Inspection Required Approval', '2');
-INSERT INTO `message_lang` VALUES ('35', 'MENU0002', 'Establish Requirements', '2');
+INSERT INTO `message_lang` VALUES ('1', 'MENU0001', 'KIểm tra yêu cầu XD', '1', 'MENU');
+INSERT INTO `message_lang` VALUES ('2', 'MENU0002', 'Lập yêu cầu XD', '1', 'MENU');
+INSERT INTO `message_lang` VALUES ('3', 'MENU0003', 'Lịch sử yêu cầu XD', '1', 'MENU');
+INSERT INTO `message_lang` VALUES ('4', 'MENU0004', 'Mượn bản vẽ', '1', 'MENU');
+INSERT INTO `message_lang` VALUES ('5', 'MENU0005', 'Phân bổ file', '1', 'MENU');
+INSERT INTO `message_lang` VALUES ('6', 'MENU0006', 'In File', '1', 'MENU');
+INSERT INTO `message_lang` VALUES ('7', 'MENU0007', 'Cấp phát file', '1', 'MENU');
+INSERT INTO `message_lang` VALUES ('8', 'MENU0008', 'Admin', '1', 'MENU');
+INSERT INTO `message_lang` VALUES ('9', 'MENU0009', 'Lịch sử mượn trả file', '1', 'MENU');
+INSERT INTO `message_lang` VALUES ('10', 'MENU0010', 'Lịch sử file cũ', '1', 'MENU');
+INSERT INTO `message_lang` VALUES ('11', 'MENU0011', 'Convert lại pdf', '1', 'MENU');
+INSERT INTO `message_lang` VALUES ('12', 'MENU0012', 'Lịch sử phân bổ', '1', 'MENU');
+INSERT INTO `message_lang` VALUES ('13', 'MENU0013', 'Danh mục bản vẽ', '1', 'MENU');
+INSERT INTO `message_lang` VALUES ('14', 'MENU0014', 'Danh sách máy', '1', 'MENU');
+INSERT INTO `message_lang` VALUES ('15', 'MENU0015', 'Đưa bản vẽ vào máy', '1', 'MENU');
+INSERT INTO `message_lang` VALUES ('16', 'MENU0016', 'Lịch sử in file', '1', 'MENU');
+INSERT INTO `message_lang` VALUES ('17', 'MENU0017', 'Lịch sử cấp phát file', '1', 'MENU');
+INSERT INTO `message_lang` VALUES ('18', 'MENU0018', 'Đơn vị', '1', 'MENU');
+INSERT INTO `message_lang` VALUES ('19', 'MENU0019', 'Phòng ban', '1', 'MENU');
+INSERT INTO `message_lang` VALUES ('20', 'MENU0020', 'Tổ nhóm', '1', 'MENU');
+INSERT INTO `message_lang` VALUES ('21', 'MENU0021', 'User', '1', 'MENU');
+INSERT INTO `message_lang` VALUES ('22', 'MENU0022', 'Thư mục', '1', 'MENU');
+INSERT INTO `message_lang` VALUES ('23', 'MENU0023', 'Phân quyền', '1', 'MENU');
+INSERT INTO `message_lang` VALUES ('24', 'MENU0024', 'Lịch sử download', '1', 'MENU');
+INSERT INTO `message_lang` VALUES ('25', 'MENU0025', 'Xóa đơn', '1', 'MENU');
+INSERT INTO `message_lang` VALUES ('26', 'MENU0026', 'Xin Chào', '1', 'MENU');
+INSERT INTO `message_lang` VALUES ('27', 'MENU0026', 'Wellcome', '2', 'MENU');
+INSERT INTO `message_lang` VALUES ('28', 'MENU0027', 'Thoát', '1', 'MENU');
+INSERT INTO `message_lang` VALUES ('29', 'MENU0027', 'Logout', '2', 'MENU');
+INSERT INTO `message_lang` VALUES ('30', 'BTN001', 'Tìm', '1', null);
+INSERT INTO `message_lang` VALUES ('31', 'BTN002', 'Find', '2', null);
+INSERT INTO `message_lang` VALUES ('32', 'SYS001', 'HỆ THỐNG XÉT DUYỆT BẢN VẼ', '1', 'MENU');
+INSERT INTO `message_lang` VALUES ('33', 'SYS001', 'DRAWING APPROVAL SYSTEM', '2', 'MENU');
+INSERT INTO `message_lang` VALUES ('34', 'MENU0001', 'Inspection Required Approval', '2', 'MENU');
+INSERT INTO `message_lang` VALUES ('35', 'MENU0002', 'Establish Requirements', '2', 'MENU');
+INSERT INTO `message_lang` VALUES ('36', 'MENU0003', 'Required Approval History', '2', 'MENU');
+INSERT INTO `message_lang` VALUES ('37', 'MENU0004', 'Borrow Drawings', '2', 'MENU');
+INSERT INTO `message_lang` VALUES ('38', 'MENU0005', 'Allocation of Drawings', '2', 'MENU');
 
 -- ----------------------------
--- Table structure for m_user
+-- Table structure for `m_user`
 -- ----------------------------
 DROP TABLE IF EXISTS `m_user`;
 CREATE TABLE `m_user` (
@@ -421,7 +425,7 @@ INSERT INTO `m_user` VALUES ('10', 'ttql2', 'ttql2', '6671367c704cfadc7ef46d373d
 INSERT INTO `m_user` VALUES ('11', 'xxx', 'xxx', '6671367c704cfadc7ef46d373d5e5714', '2', '5', null, null, '3', '0', null, '1', '2016-02-26', '1', '2016-02-26');
 
 -- ----------------------------
--- Table structure for phanquyen
+-- Table structure for `phanquyen`
 -- ----------------------------
 DROP TABLE IF EXISTS `phanquyen`;
 CREATE TABLE `phanquyen` (
@@ -446,7 +450,7 @@ INSERT INTO `phanquyen` VALUES ('13', '1', '1', '4', '1', '2016-02-12 23:11:56')
 INSERT INTO `phanquyen` VALUES ('14', '2', null, '13', '1', '2016-02-26 14:22:11');
 
 -- ----------------------------
--- Table structure for phong_ban
+-- Table structure for `phong_ban`
 -- ----------------------------
 DROP TABLE IF EXISTS `phong_ban`;
 CREATE TABLE `phong_ban` (
@@ -471,7 +475,7 @@ INSERT INTO `phong_ban` VALUES ('4', 'Phong ban 4', '1', '0', null, null, null, 
 INSERT INTO `phong_ban` VALUES ('5', 'Phong ban 6', '2', '0', '1', '2016-02-12', '1', '2016-02-12');
 
 -- ----------------------------
--- Table structure for to_nhom
+-- Table structure for `to_nhom`
 -- ----------------------------
 DROP TABLE IF EXISTS `to_nhom`;
 CREATE TABLE `to_nhom` (
@@ -495,7 +499,7 @@ INSERT INTO `to_nhom` VALUES ('2', 'To 2', '1', '1', '0', '1', '2016-02-16', '1'
 INSERT INTO `to_nhom` VALUES ('3', 'To 21', '2', '1', '0', '1', '2016-02-16', '1', '2016-02-16');
 
 -- ----------------------------
--- Procedure structure for pro_get_allchild
+-- Procedure structure for `pro_get_allchild`
 -- ----------------------------
 DROP PROCEDURE IF EXISTS `pro_get_allchild`;
 DELIMITER ;;
@@ -515,7 +519,7 @@ END
 DELIMITER ;
 
 -- ----------------------------
--- Function structure for f_get_allfolder_child
+-- Function structure for `f_get_allfolder_child`
 -- ----------------------------
 DROP FUNCTION IF EXISTS `f_get_allfolder_child`;
 DELIMITER ;;
@@ -560,7 +564,7 @@ END
 DELIMITER ;
 
 -- ----------------------------
--- Function structure for f_get_all_banve
+-- Function structure for `f_get_all_banve`
 -- ----------------------------
 DROP FUNCTION IF EXISTS `f_get_all_banve`;
 DELIMITER ;;
