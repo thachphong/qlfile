@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50505
 File Encoding         : 65001
 
-Date: 2016-05-17 18:08:46
+Date: 2016-05-18 16:59:00
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -338,53 +338,46 @@ DROP TABLE IF EXISTS `message_lang`;
 CREATE TABLE `message_lang` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `msg_no` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `des` varchar(200) CHARACTER SET utf8 DEFAULT NULL,
-  `lang_key` int(1) DEFAULT NULL COMMENT '1: VN, 2:EN',
+  `des_vn` varchar(200) CHARACTER SET utf8 DEFAULT NULL,
   `screen` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `des_en` varchar(200) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `add_user_id` int(11) DEFAULT NULL,
+  `add_datetime` date DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Records of message_lang
 -- ----------------------------
-INSERT INTO `message_lang` VALUES ('1', 'MENU0001', 'KIểm tra yêu cầu XD', '1', 'MENU');
-INSERT INTO `message_lang` VALUES ('2', 'MENU0002', 'Lập yêu cầu XD', '1', 'MENU');
-INSERT INTO `message_lang` VALUES ('3', 'MENU0003', 'Lịch sử yêu cầu XD', '1', 'MENU');
-INSERT INTO `message_lang` VALUES ('4', 'MENU0004', 'Mượn bản vẽ', '1', 'MENU');
-INSERT INTO `message_lang` VALUES ('5', 'MENU0005', 'Phân bổ file', '1', 'MENU');
-INSERT INTO `message_lang` VALUES ('6', 'MENU0006', 'In File', '1', 'MENU');
-INSERT INTO `message_lang` VALUES ('7', 'MENU0007', 'Cấp phát file', '1', 'MENU');
-INSERT INTO `message_lang` VALUES ('8', 'MENU0008', 'Admin', '1', 'MENU');
-INSERT INTO `message_lang` VALUES ('9', 'MENU0009', 'Lịch sử mượn trả file', '1', 'MENU');
-INSERT INTO `message_lang` VALUES ('10', 'MENU0010', 'Lịch sử file cũ', '1', 'MENU');
-INSERT INTO `message_lang` VALUES ('11', 'MENU0011', 'Convert lại pdf', '1', 'MENU');
-INSERT INTO `message_lang` VALUES ('12', 'MENU0012', 'Lịch sử phân bổ', '1', 'MENU');
-INSERT INTO `message_lang` VALUES ('13', 'MENU0013', 'Danh mục bản vẽ', '1', 'MENU');
-INSERT INTO `message_lang` VALUES ('14', 'MENU0014', 'Danh sách máy', '1', 'MENU');
-INSERT INTO `message_lang` VALUES ('15', 'MENU0015', 'Đưa bản vẽ vào máy', '1', 'MENU');
-INSERT INTO `message_lang` VALUES ('16', 'MENU0016', 'Lịch sử in file', '1', 'MENU');
-INSERT INTO `message_lang` VALUES ('17', 'MENU0017', 'Lịch sử cấp phát file', '1', 'MENU');
-INSERT INTO `message_lang` VALUES ('18', 'MENU0018', 'Đơn vị', '1', 'MENU');
-INSERT INTO `message_lang` VALUES ('19', 'MENU0019', 'Phòng ban', '1', 'MENU');
-INSERT INTO `message_lang` VALUES ('20', 'MENU0020', 'Tổ nhóm', '1', 'MENU');
-INSERT INTO `message_lang` VALUES ('21', 'MENU0021', 'User', '1', 'MENU');
-INSERT INTO `message_lang` VALUES ('22', 'MENU0022', 'Thư mục', '1', 'MENU');
-INSERT INTO `message_lang` VALUES ('23', 'MENU0023', 'Phân quyền', '1', 'MENU');
-INSERT INTO `message_lang` VALUES ('24', 'MENU0024', 'Lịch sử download', '1', 'MENU');
-INSERT INTO `message_lang` VALUES ('25', 'MENU0025', 'Xóa đơn', '1', 'MENU');
-INSERT INTO `message_lang` VALUES ('26', 'MENU0026', 'Xin Chào', '1', 'MENU');
-INSERT INTO `message_lang` VALUES ('27', 'MENU0026', 'Wellcome', '2', 'MENU');
-INSERT INTO `message_lang` VALUES ('28', 'MENU0027', 'Thoát', '1', 'MENU');
-INSERT INTO `message_lang` VALUES ('29', 'MENU0027', 'Logout', '2', 'MENU');
-INSERT INTO `message_lang` VALUES ('30', 'BTN001', 'Tìm', '1', null);
-INSERT INTO `message_lang` VALUES ('31', 'BTN002', 'Find', '2', null);
-INSERT INTO `message_lang` VALUES ('32', 'SYS001', 'HỆ THỐNG XÉT DUYỆT BẢN VẼ', '1', 'MENU');
-INSERT INTO `message_lang` VALUES ('33', 'SYS001', 'DRAWING APPROVAL SYSTEM', '2', 'MENU');
-INSERT INTO `message_lang` VALUES ('34', 'MENU0001', 'Inspection Required Approval', '2', 'MENU');
-INSERT INTO `message_lang` VALUES ('35', 'MENU0002', 'Establish Requirements', '2', 'MENU');
-INSERT INTO `message_lang` VALUES ('36', 'MENU0003', 'Required Approval History', '2', 'MENU');
-INSERT INTO `message_lang` VALUES ('37', 'MENU0004', 'Borrow Drawings', '2', 'MENU');
-INSERT INTO `message_lang` VALUES ('38', 'MENU0005', 'Allocation of Drawings', '2', 'MENU');
+INSERT INTO `message_lang` VALUES ('1', 'MENU0001', 'KIểm tra yêu cầu XD', 'MENU', 'Inspection Required Approval', null, null);
+INSERT INTO `message_lang` VALUES ('2', 'MENU0002', 'Lập yêu cầu XD', 'MENU', 'Establish Requirements', null, null);
+INSERT INTO `message_lang` VALUES ('3', 'MENU0003', 'Lịch sử yêu cầu XD', 'MENU', 'Required Approval History', null, null);
+INSERT INTO `message_lang` VALUES ('4', 'MENU0004', 'Mượn bản vẽ', 'MENU', 'Borrow Drawings', null, null);
+INSERT INTO `message_lang` VALUES ('5', 'MENU0005', 'Phân bổ file', 'MENU', 'Allocation of Drawings', null, null);
+INSERT INTO `message_lang` VALUES ('6', 'MENU0006', 'In File', 'MENU', null, null, null);
+INSERT INTO `message_lang` VALUES ('7', 'MENU0007', 'Cấp phát file', 'MENU', null, null, null);
+INSERT INTO `message_lang` VALUES ('8', 'MENU0008', 'Admin', 'MENU', null, null, null);
+INSERT INTO `message_lang` VALUES ('9', 'MENU0009', 'Lịch sử mượn trả file', 'MENU', null, null, null);
+INSERT INTO `message_lang` VALUES ('10', 'MENU0010', 'Lịch sử file cũ', 'MENU', null, null, null);
+INSERT INTO `message_lang` VALUES ('11', 'MENU0011', 'Convert lại pdf', 'MENU', null, null, null);
+INSERT INTO `message_lang` VALUES ('12', 'MENU0012', 'Lịch sử phân bổ', 'MENU', null, null, null);
+INSERT INTO `message_lang` VALUES ('13', 'MENU0013', 'Danh mục bản vẽ', 'MENU', null, null, null);
+INSERT INTO `message_lang` VALUES ('14', 'MENU0014', 'Danh sách máy', 'MENU', null, null, null);
+INSERT INTO `message_lang` VALUES ('15', 'MENU0015', 'Đưa bản vẽ vào máy', 'MENU', null, null, null);
+INSERT INTO `message_lang` VALUES ('16', 'MENU0016', 'Lịch sử in file', 'MENU', null, null, null);
+INSERT INTO `message_lang` VALUES ('17', 'MENU0017', 'Lịch sử cấp phát file', 'MENU', null, null, null);
+INSERT INTO `message_lang` VALUES ('18', 'MENU0018', 'Đơn vị', 'MENU', null, null, null);
+INSERT INTO `message_lang` VALUES ('19', 'MENU0019', 'Phòng ban', 'MENU', null, null, null);
+INSERT INTO `message_lang` VALUES ('20', 'MENU0020', 'Tổ nhóm', 'MENU', null, null, null);
+INSERT INTO `message_lang` VALUES ('21', 'MENU0021', 'User', 'MENU', null, null, null);
+INSERT INTO `message_lang` VALUES ('22', 'MENU0022', 'Thư mục', 'MENU', null, null, null);
+INSERT INTO `message_lang` VALUES ('23', 'MENU0023', 'Phân quyền', 'MENU', null, null, null);
+INSERT INTO `message_lang` VALUES ('24', 'MENU0024', 'Lịch sử download', 'MENU', null, null, null);
+INSERT INTO `message_lang` VALUES ('25', 'MENU0025', 'Xóa đơn', 'MENU', null, null, null);
+INSERT INTO `message_lang` VALUES ('26', 'MENU0026', 'Xin Chào', 'MENU', 'Wellcome', null, null);
+INSERT INTO `message_lang` VALUES ('28', 'MENU0027', 'Thoát', 'MENU', 'Logout', null, null);
+INSERT INTO `message_lang` VALUES ('30', 'BTN001', 'Tìm', null, 'Find', null, null);
+INSERT INTO `message_lang` VALUES ('32', 'SYS001', 'HỆ THỐNG XÉT DUYỆT BẢN VẼ', 'MENU', 'DRAWING APPROVAL SYSTEM', null, null);
 
 -- ----------------------------
 -- Table structure for `m_user`
