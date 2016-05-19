@@ -2,7 +2,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/base.dwt" codeOutsideHTMLIsLocked="false" -->
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<title>Danh mục bản vẽ</title>
+	<%assign var='lang' value=Message_model::get_message('BANVE')%>
+	<title><%$lang['BVE002']%><!--Danh mục bản vẽ--></title>
 	<%include 'include/head.html'%>
 	<link href="<%$smarty.const.ACW_BASE_URL%>shared/css/category.css" rel="stylesheet" type="text/css" />
 	<script type="text/javascript" src="<%$smarty.const.ACW_BASE_URL%>js/jquery.upload-1.0.2.js"></script>
@@ -23,10 +24,10 @@
         				<col width="" />
         			</colgroup>
         			<tr>
-        				<th>Điều kiện tìm</th>
-        				<td class="first">Mã bản vẽ  <input type="text" maxlength="8" size="15" name="s_banve_no" id="s_banve_no" value="" /></td>
-                        <td>Tên bản vẽ  <input type="text" maxlength="255" size="30" name="s_banve_name" id="s_banve_name" value="" /></td>
-                                        <td class="al_l"><button type="button" id="btn_search">Tìm</button> <button type="button" id="btn_clear">Xóa</button></td></tr>
+        				<th><%$lang['BVE001']%><!--Điều kiện tìm--></th>
+        				<td class="first"><%$lang['BVE003']%><!--Mã bản vẽ-->  <input type="text" maxlength="8" size="15" name="s_banve_no" id="s_banve_no" value="" /></td>
+                        <td><%$lang['BVE004']%><!--Tên bản vẽ-->  <input type="text" maxlength="255" size="30" name="s_banve_name" id="s_banve_name" value="" /></td>
+                                        <td class="al_l"><button type="button" id="btn_search"><%$lang['BVE005']%><!--Tìm--></button> <button type="button" id="btn_clear">Xóa</button></td></tr>
         		</table>
         		</form>
         	</div>
@@ -39,12 +40,12 @@
 				<div class="side_contents">
 					<ul class="btn_wrap">
 						
-						<li><input type="button" id="btn_new" value="Thêm mới" /></li>                                                
+						<li><input type="button" id="btn_new" value="<%$lang["BVE006"]%>" /></li>  <!--Thêm mới -->                                             
                                                 <li>
                                                 <input type='button' value='<%$smarty.const.UNFOLD_TEXT%>' class='tree_fold' />
                                                 </li>                                                
-                        <li><input type="button" id="btn_excel" value="Xuất excel" /></li>
-                        <li><input type="button" id="btn_copy" value="Copy" /></li>
+                        <li><input type="button" id="btn_excel" value="<%$lang["BVE007"]%>" /></li><!--Xuất excel-->
+                        <li><input type="button" id="btn_copy" value="<%$lang["BVE025"]%>" /></li> <!--Copy-->
 					</ul>
 					<div class="tree_wrap height1" id="tree_view">
 					</div><!-- / .tree_wrap -->
@@ -80,7 +81,7 @@ $(function() {
 	html_ajax.done_func = function(data) {
 		if (data === '') {
 			// エラー
-			Argo_ajax.message_box_error("", 'Không có dữ liệu');
+			Argo_ajax.message_box_error("", '<%$lang["BVE008"]%>'); //Không có dữ liệu;
 			// ツリー再描画
 			$arr_s = $('#search_form').serializeArray();
 			tree_ajax.connect('POST', 'banve/tree',$arr_s);
@@ -98,7 +99,7 @@ $(function() {
 				Argo_ajax.message_box_error('', data.error[0]['info']);
 			}
 		} else {
-            Argo_ajax.message_box(' ', 'Cập nhật thành công !');
+            Argo_ajax.message_box(' ', '<%$lang["BVE009"]%>');//Cập nhật thành công !
 			$('#edit_contents_html').empty();
 			// ツリー更新
             $arr_s = $('#search_form').serializeArray();
@@ -122,7 +123,7 @@ $(function() {
 	$('#btn_new').click(function() {
         var level_no = $('#level_no').val();
         if(level_no=='5'){
-             Argo_ajax.message_box(' ', 'Cấp "Bản vẽ phôi" không thể tạo cấp con !');
+             Argo_ajax.message_box(' ', '<%$lang["BVE010"]%>'); //Cấp "Bản vẽ phôi" không thể tạo cấp con !
              return;
         }
 		$('#edit_contents_html').empty();
@@ -166,7 +167,7 @@ $(function() {
 	$(document).on('click', '#section_add', function() {
         var level_no = $('#level_no').val();
         if(level_no=='5'){
-             Argo_ajax.message_box(' ', 'Cấp "Bản vẽ phôi" không thể tạo cấp con !');
+             Argo_ajax.message_box(' ', '<%$lang["BVE010"]%>'); //Cấp "Bản vẽ phôi" không thể tạo cấp con !
              return;
         }
         add_index++;
@@ -186,15 +187,15 @@ $(function() {
         for(var i= (parseInt(level_no)+1); i<=5;i++){
         	var loai_bv ='';
         	if( i ==1 ){
-        		loai_bv ='Bản vẽ tổng thể';
+        		loai_bv ='<%$lang["BVE011"]%>'; //Bản vẽ tổng thể
         	}else if(i ==2){
-        		loai_bv ='Bản vẽ cụm lớn';
+        		loai_bv ='<%$lang["BVE012"]%>';  //Bản vẽ cụm lớn
         	}else if(i ==3){
-        		loai_bv ='Bản vẽ cụm nhỏ';
+        		loai_bv ='<%$lang["BVE013"]%>';  //Bản vẽ cụm nhỏ
         	}else if(i ==4){
-        		loai_bv ='Bản vẽ chi tiết';
+        		loai_bv ='<%$lang["BVE014"]%>';  //Bản vẽ chi tiết
         	}else if(i ==5){
-        		loai_bv ='Bản vẽ phôi';
+        		loai_bv ='<%$lang["BVE015"]%>';  //Bản vẽ phôi
         	}
             select_str +='<option value="'+i+'">'+loai_bv+'</option>';
         }			     
@@ -247,7 +248,7 @@ $(function() {
             $('#copy_dialog').dialog({
                 modal: true,
                 width: 600,
-                title: 'Chọn bản vẽ cấp cha',
+                title: '<%$lang["BVE016"]%>',  //Chọn bản vẽ cấp cha
                 height: 170, 
                 closeOnEscape: true
             });
@@ -268,7 +269,7 @@ $(function() {
             }
         }*/
         if($('#level_no').val()!='1' && $('#states').val().length == 0 ){
-            Argo_ajax.message_box("", 'Bạn chưa chọn mã bản vẽ  cấp cha !');
+            Argo_ajax.message_box("", '<%$lang["BVE017"]%>'); //Bạn chưa chọn mã bản vẽ  cấp cha !
             return ;
         }
         var banve_form = selected_category_id.replace("ltree_","");
@@ -357,7 +358,7 @@ $(function() {
 
 	// 削除
 	$(document).on('click', '#category_delete', function() {
-		Argo_ajax.ok_cancel_box(' ', 'Bạn chắc chắn muốn xóa bản vẽ mục này？', function () {			
+		Argo_ajax.ok_cancel_box(' ', '<%$lang["BVE018"]%>', function () {	//Bạn chắc chắn muốn xóa bản vẽ mục này？		
 			var my_id = $('#category_form').find('input[name="my_id"]').val();
 			$('#edit_contents_html').empty();
 			json_ajax.connect('GET', 'banve/delete/' + my_id);
@@ -366,7 +367,7 @@ $(function() {
 
 	// 閉じる
 	$(document).on('click', '#category_close', function() {
-		Argo_ajax.ok_cancel_box(' ', 'Bạn có chắc chắn muốn thoát？', function () {
+		Argo_ajax.ok_cancel_box(' ', '<%$lang["BVE019"]%>', function () { //Bạn có chắc chắn muốn thoát？
 			$('#edit_contents_html').empty();
 		});
 	});
@@ -453,19 +454,19 @@ $(function() {
         $chk_flg= true;
         if($('#dungchung').val() !='1'){
             if($('#kho_giay').val().trim()==''){
-            Argo_ajax.message_box_error('','Bạn chưa nhập khổ giấy !');
+            Argo_ajax.message_box_error('','<%$lang["BVE020"]%>'); //Bạn chưa nhập khổ giấy !
             return false;
             }else if($('#banve_name').val().trim()==''){
-                Argo_ajax.message_box_error('','Bạn chưa nhập Tên bản vẽ !');
+                Argo_ajax.message_box_error('','<%$lang["BVE021"]%>');  //Bạn chưa nhập Tên bản vẽ !
                 return false;
             }
             if($('#parent_level').val()=='0' && $('#banve_no').val().trim().length !=7){
-                Argo_ajax.message_box_error('','Bạn chưa nhập đủ 7 ký tự cho Mã bản vẽ');
+                Argo_ajax.message_box_error('','<%$lang["BVE022"]%>');  //Bạn chưa nhập đủ 7 ký tự cho Mã bản vẽ
                 return false;
             }
         }else{
             if($('#banve_no').val().trim().length !=7){
-                Argo_ajax.message_box_error('','Bạn chưa nhập đủ 7 ký tự cho Mã bản vẽ !');
+                Argo_ajax.message_box_error('','<%$lang["BVE022"]%>');  //Bạn chưa nhập đủ 7 ký tự cho Mã bản vẽ !
                 return false;
             }
         }    	
@@ -474,7 +475,7 @@ $(function() {
     		if($(elem).is(':checked')){
                 var id =$(elem).attr('id').replace('dungchung_ck_','');
     			if($('#banve_no_'+id).val().length == 0){
-                    Argo_ajax.message_box_error('','Bạn phải nhập mã cho bản vẽ dùng chung !');
+                    Argo_ajax.message_box_error('','<%$lang["BVE023"]%>');  //Bạn phải nhập mã cho bản vẽ dùng chung !
                     $chk_flg = false;
                     return false;
                 }
@@ -484,7 +485,7 @@ $(function() {
     		if($(elem).val().trim() != ''){
                 var id =$(elem).attr('id').replace('add_banve_name_','');
     			if($('#add_khogiay_'+id).val().trim().length == 0){
-                    Argo_ajax.message_box_error('','Bạn phải nhập khổ giấy cho bản vẽ con !');
+                    Argo_ajax.message_box_error('','<%$lang["BVE024"]%>'); //Bạn phải nhập khổ giấy cho bản vẽ con !
                     $chk_flg = false;
                     return false;
                 }

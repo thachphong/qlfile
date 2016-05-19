@@ -25,6 +25,21 @@ class Message_model extends ACWModel
 		}		
 		return $res;		
 	}
+	public static function get_msg($msg_no){
+		$db = new Message_model();
+		$data = $db->get_message_row($msg_no);
+		$res = array();
+		$lang = ACWSession::get('lang');
+		$column ='des_vn';
+		if(isset($lang)&& $lang = 2){
+			$column='des_en';
+		}
+		if(count($data)>0)
+		{
+			return $data[0][$column];
+		}
+		return '';		
+	}
 	public static function action_index()
 	{  
 		$param = self::get_param(array(
@@ -38,6 +53,12 @@ class Message_model extends ACWModel
 			'data_search'=>$param
 		));
 	}
+	public function get_message_row($msg_no){
+		$sql = "select * from message_lang 
+				where msg_no = :msg_no	";
+		$sql_param['msg_no'] =$msg_no;		
+		return $this->query($sql,$sql_param);
+	}
 	public function get_message_rows($param){
 		$sql = "select * from message_lang 
 				where screen like :screen
@@ -50,7 +71,7 @@ class Message_model extends ACWModel
 		if(isset($param['s_des']) && strlen($param['s_des'])> 0){
 			$sql_param['des'] ='%'.$param['s_des'].'%';
 		}
-		return $this->query($sql);
+		return $this->query($sql,$sql_param);
 	}
 	public static function action_update()
 	{

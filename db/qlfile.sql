@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50505
 File Encoding         : 65001
 
-Date: 2016-05-18 16:59:00
+Date: 2016-05-19 18:30:31
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -344,7 +344,7 @@ CREATE TABLE `message_lang` (
   `add_user_id` int(11) DEFAULT NULL,
   `add_datetime` date DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=72 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Records of message_lang
@@ -378,6 +378,45 @@ INSERT INTO `message_lang` VALUES ('26', 'MENU0026', 'Xin Chào', 'MENU', 'Wellc
 INSERT INTO `message_lang` VALUES ('28', 'MENU0027', 'Thoát', 'MENU', 'Logout', null, null);
 INSERT INTO `message_lang` VALUES ('30', 'BTN001', 'Tìm', null, 'Find', null, null);
 INSERT INTO `message_lang` VALUES ('32', 'SYS001', 'HỆ THỐNG XÉT DUYỆT BẢN VẼ', 'MENU', 'DRAWING APPROVAL SYSTEM', null, null);
+INSERT INTO `message_lang` VALUES ('33', 'BVE001', 'Điều kiện tìm', 'BANVE', 'Condition', null, null);
+INSERT INTO `message_lang` VALUES ('34', 'BVE002', 'Danh mục bản vẽ', 'BANVE', 'Drawing category', null, null);
+INSERT INTO `message_lang` VALUES ('35', 'BVE003', 'Mã bản vẽ', 'BANVE', 'Drawing no', null, null);
+INSERT INTO `message_lang` VALUES ('36', 'BVE004', 'Tên bản vẽ', 'BANVE', 'Drawing name', null, null);
+INSERT INTO `message_lang` VALUES ('37', 'BVE005', 'Tìm', 'BANVE', 'Find', null, null);
+INSERT INTO `message_lang` VALUES ('38', 'BVE006', 'Thêm mới', 'BANVE', 'Add', null, null);
+INSERT INTO `message_lang` VALUES ('39', 'BVE007', 'Xuất excel', 'BANVE', 'Export excel', null, null);
+INSERT INTO `message_lang` VALUES ('40', 'BVE008', 'Không có dữ liệu', 'BANVE', 'Not found data', null, null);
+INSERT INTO `message_lang` VALUES ('41', 'BVE009', 'Cập nhật thành công !', 'BANVE', 'Save successful', null, null);
+INSERT INTO `message_lang` VALUES ('42', 'BVE020', 'Bạn chưa nhập khổ giấy !', 'BANVE', null, null, null);
+INSERT INTO `message_lang` VALUES ('43', 'BVE019', 'Bạn có chắc chắn muốn thoát？', 'BANVE', 'Are you sure exit  ?', null, null);
+INSERT INTO `message_lang` VALUES ('44', 'BVE018', 'Bạn chắc chắn muốn xóa bản vẽ mục này？', 'BANVE', 'Are you sure delete this drawing ?', null, null);
+INSERT INTO `message_lang` VALUES ('45', 'BVE017', 'Bạn chưa chọn mã bản vẽ  cấp cha !', 'BANVE', 'You did not choose parent level drawing', null, null);
+INSERT INTO `message_lang` VALUES ('46', 'BVE016', 'Chọn bản vẽ cấp cha', 'BANVE', 'Select parent level drawing', null, null);
+INSERT INTO `message_lang` VALUES ('47', 'BVE015', 'Bản vẽ phôi', 'BANVE', 'Embryo drawing', null, null);
+INSERT INTO `message_lang` VALUES ('48', 'BVE014', 'Bản vẽ chi tiết', 'BANVE', 'Detailed drawings', null, null);
+INSERT INTO `message_lang` VALUES ('49', 'BVE013', 'Bản vẽ cụm nhỏ', 'BANVE', 'Drawing small clusters', null, null);
+INSERT INTO `message_lang` VALUES ('50', 'BVE012', 'Bản vẽ cụm lớn', 'BANVE', 'Drawing large clusters', null, null);
+INSERT INTO `message_lang` VALUES ('51', 'BVE011', 'Bản vẽ tổng thể', 'BANVE', 'Overall drawing', null, null);
+INSERT INTO `message_lang` VALUES ('52', 'BVE010', 'Cấp \"Bản vẽ phôi\" không thể tạo cấp con !', 'BANVE', 'Embryo drawing can not create child level !', null, null);
+INSERT INTO `message_lang` VALUES ('53', 'BVE037', 'Tồn tại bản vẻ con, không thể xóa !', 'BANVE', null, null, null);
+INSERT INTO `message_lang` VALUES ('54', 'BVE029', 'Mã bản vẽ \"%s\" đã có, vui lòng nhập tên khác !', 'BANVE', null, null, null);
+INSERT INTO `message_lang` VALUES ('55', 'BVE028', 'Tên bản vẽ \"%s\" đã có, vui lòng nhập tên khác !', 'BANVE', null, null, null);
+INSERT INTO `message_lang` VALUES ('56', 'BVE027', 'Mã bản vẽ \"%s\" chưa có, không thể tạo dùng chung, vui lòng tạo mới !', 'BANVE', null, null, null);
+INSERT INTO `message_lang` VALUES ('57', 'BVE025', 'Copy', 'BANVE', 'Copy', null, null);
+INSERT INTO `message_lang` VALUES ('58', 'BVE026', 'Tham số không hợp lệ', 'BANVE', null, null, null);
+INSERT INTO `message_lang` VALUES ('59', 'BVE024', 'Bạn phải nhập khổ giấy cho bản vẽ con !', 'BANVE', null, null, null);
+INSERT INTO `message_lang` VALUES ('60', 'BVE023', 'Bạn phải nhập mã cho bản vẽ dùng chung !', 'BANVE', null, null, null);
+INSERT INTO `message_lang` VALUES ('61', 'BVE022', 'Bạn chưa nhập đủ 7 ký tự cho Mã bản vẽ !', 'BANVE', null, null, null);
+INSERT INTO `message_lang` VALUES ('62', 'BVE021', 'Bạn chưa nhập Tên bản vẽ !', 'BANVE', null, null, null);
+INSERT INTO `message_lang` VALUES ('63', 'BVE036', 'Ngày tạo', 'BANVE', null, null, null);
+INSERT INTO `message_lang` VALUES ('64', 'BVE035', 'Người tạo', 'BANVE', null, null, null);
+INSERT INTO `message_lang` VALUES ('65', 'BVE034', 'Tên bản vẽ', 'BANVE', null, null, null);
+INSERT INTO `message_lang` VALUES ('66', 'BVE033', 'Loại bản vẽ', 'BANVE', null, null, null);
+INSERT INTO `message_lang` VALUES ('67', 'BVE032', 'Mã bản vẽ', 'BANVE', null, null, null);
+INSERT INTO `message_lang` VALUES ('68', 'BVE031', 'Khổ giấy', 'BANVE', null, null, null);
+INSERT INTO `message_lang` VALUES ('69', 'BVE030', 'Dùng chung', 'BANVE', null, null, null);
+INSERT INTO `message_lang` VALUES ('70', 'BVE038', 'Có', 'BANVE', 'Yes', null, null);
+INSERT INTO `message_lang` VALUES ('71', 'BVE039', 'Không', 'BANVE', 'No', null, null);
 
 -- ----------------------------
 -- Table structure for `m_user`

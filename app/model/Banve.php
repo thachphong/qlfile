@@ -274,7 +274,9 @@ class Banve_model extends ACWModel
                 $param['kho_giay'] = $dc_data['kho_giay'];
                 return TRUE;     
             }else{
-                ACWError::add('banve_no', 'Mã bản vẽ "'.$param['banve_no'].'" chưa có, không thể tạo dùng chung, vui lòng tạo mới !');
+            	$msg_err= sprintf(Message_model::get_msg('BVE027'), $param['banve_no']);
+            	ACWError::add('banve_no', $msg_err);
+                //ACWError::add('banve_no', 'Mã bản vẽ "'.$param['banve_no'].'" chưa có, không thể tạo dùng chung, vui lòng tạo mới !');
                 return FALSE;
             }
         }
@@ -288,7 +290,9 @@ class Banve_model extends ACWModel
 		}
 		$result = $this->query($sql, $sel_param);	
 		if ($result[0]['cnt'] > 0) {
-			ACWError::add('banve_name', 'Tên bản vẽ "'.$sel_param['banve_name'].'" đã có, vui lòng nhập tên khác !');
+			$msg_err= sprintf(Message_model::get_msg('BVE028'), $sel_param['banve_name']);
+            ACWError::add('banve_name', $msg_err);
+			//ACWError::add('banve_name', 'Tên bản vẽ "'.$sel_param['banve_name'].'" đã có, vui lòng nhập tên khác !');
 			return false;
 		}
 		if(isset($param['banve_no'])&& strlen($param['banve_no'])>0 ){
@@ -298,7 +302,9 @@ class Banve_model extends ACWModel
 				
 				$result = $this->query($sql, $sel_param);				
 				if ($result[0]['cnt'] > 0) {
-					ACWError::add('banve_no', 'Mã bản vẽ "'.$sel_param['banve_no'].'" đã có, vui lòng nhập tên khác !');
+					$msg_err= sprintf(Message_model::get_msg('BVE029'), $sel_param['banve_no']);
+           			ACWError::add('banve_no', $msg_err);
+					//ACWError::add('banve_no', 'Mã bản vẽ "'.$sel_param['banve_no'].'" đã có, vui lòng nhập tên khác !');
 					return false;
 				}	
 			}				
@@ -442,8 +448,9 @@ class Banve_model extends ACWModel
 			", array(
 				'banve_id' => $banve_id
 			));
-		if ($series[0]['cnt'] > 0) {
-			ACWError::add('banve_child', 'Tồn tại bản vẻ con, không thể xóa');
+		if ($series[0]['cnt'] > 0) {			
+           	ACWError::add('banve_child', Message_model::get_msg('BVE030'));
+			//ACWError::add('banve_child', 'Tồn tại bản vẻ con, không thể xóa');
 			return;
 		}
 	    $user_login = ACWSession::get('user_info');
@@ -631,26 +638,27 @@ class Banve_model extends ACWModel
             $file->CopyFile(ACW_ROOT_DIR.'/shared/Template.xlsx',$file_name);
         }
         $excel->load($file_name);
-        $excel->set_value_no(0,1,'Dùng chung');
-        $excel->set_value_no(1,1,'Khổ giấy');
-        $excel->set_value_no(2,1,'Mã bản vẽ');
-        $excel->set_value_no(3,1,'Loại bản vẽ');
-        $excel->set_value_no(4,1,'Tên bản vẽ');
-        $excel->set_value_no(5,1,'Người tạo');
-        $excel->set_value_no(6,1,'Ngày tạo');        
+        $lang = Message_model::get_message('BAVE');
+        $excel->set_value_no(0,1,$lang['BVE030']); //'Dùng chung'
+        $excel->set_value_no(1,1,$lang['BVE031']); //'Khổ giấy'
+        $excel->set_value_no(2,1,$lang['BVE032']);  //'Mã bản vẽ'
+        $excel->set_value_no(3,1,$lang['BVE033']);  //'Loại bản vẽ'
+        $excel->set_value_no(4,1,$lang['BVE034']);  // 'Tên bản vẽ'
+        $excel->set_value_no(5,1,$lang['BVE035']);  //'Người tạo'
+        $excel->set_value_no(6,1,$lang['BVE036']);  //'Ngày tạo'      
         $list = $this->get_all();
         foreach($list as $key=>$row){
         	$loai_bv ='';
         	if($row['level']=='1'){
-				$loai_bv ='Bản vẽ tổng thể';
+				$loai_bv =$lang['BVE011'];//'Bản vẽ tổng thể';
 			}else if($row['level']=='2'){
-				$loai_bv ='Bản vẽ cụm lớn';
+				$loai_bv =$lang['BVE012'];//'Bản vẽ cụm lớn';
 			}else if($row['level']=='3'){
-				$loai_bv ='Bản vẽ cụm nhỏ';
+				$loai_bv =$lang['BVE013'];//'Bản vẽ cụm nhỏ';
 			}else if($row['level']=='4'){
-				$loai_bv ='Bản vẽ chi tiết';
+				$loai_bv =$lang['BVE014'];//'Bản vẽ chi tiết';
 			}else if($row['level']=='5'){
-				$loai_bv ='Bản vẽ phôi';
+				$loai_bv =$lang['BVE015'];//'Bản vẽ phôi';
 			}
 			if($row['dungchung']=='1'){
 				$dungchung = 'Có' ;		
