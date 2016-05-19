@@ -181,6 +181,20 @@ $(function() {
 		var wh = $(window).height();
 		$(".height2").height(wh - 206);	
 	});
+	$(document).on("click", "#btn_save", function () {
+		$arr = $('#form_data').serializeArray();
+		var json_ajax = new Argo_ajax("json");
+		json_ajax.done_func = function(data) {
+			if(data.status == 'OK')
+			{
+				Argo_ajax.message_box('','Cập nhật thành công !');
+			}else{
+				Argo_ajax.message_box_error('', data.error);
+			}
+		};
+		json_ajax.connect("POST", "message/update",$arr);
+	});
+	
 });
 
 /*function open_may_edit(may_id)

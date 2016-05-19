@@ -3,7 +3,7 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<%assign var='lang' value=Message_model::get_message('BANVE')%>
-	<title><%$lang['BVE002']%><!--Danh mục bản vẽ--></title>
+	<title><%$lang['BVE002']%></title><!--Danh mục bản vẽ-->
 	<%include 'include/head.html'%>
 	<link href="<%$smarty.const.ACW_BASE_URL%>shared/css/category.css" rel="stylesheet" type="text/css" />
 	<script type="text/javascript" src="<%$smarty.const.ACW_BASE_URL%>js/jquery.upload-1.0.2.js"></script>
@@ -27,7 +27,7 @@
         				<th><%$lang['BVE001']%><!--Điều kiện tìm--></th>
         				<td class="first"><%$lang['BVE003']%><!--Mã bản vẽ-->  <input type="text" maxlength="8" size="15" name="s_banve_no" id="s_banve_no" value="" /></td>
                         <td><%$lang['BVE004']%><!--Tên bản vẽ-->  <input type="text" maxlength="255" size="30" name="s_banve_name" id="s_banve_name" value="" /></td>
-                                        <td class="al_l"><button type="button" id="btn_search"><%$lang['BVE005']%><!--Tìm--></button> <button type="button" id="btn_clear">Xóa</button></td></tr>
+                                        <td class="al_l"><button type="button" id="btn_search"><%$lang['BVE005']%><!--Tìm--></button> <button type="button" id="btn_clear"><%$lang['BVE040']%></button></td></tr><!--Xóa-->
         		</table>
         		</form>
         	</div>
@@ -42,7 +42,7 @@
 						
 						<li><input type="button" id="btn_new" value="<%$lang["BVE006"]%>" /></li>  <!--Thêm mới -->                                             
                                                 <li>
-                                                <input type='button' value='<%$smarty.const.UNFOLD_TEXT%>' class='tree_fold' />
+                                                <input type='button' value='<%$lang["BVE041"]%>' class='tree_fold' />
                                                 </li>                                                
                         <li><input type="button" id="btn_excel" value="<%$lang["BVE007"]%>" /></li><!--Xuất excel-->
                         <li><input type="button" id="btn_copy" value="<%$lang["BVE025"]%>" /></li> <!--Copy-->

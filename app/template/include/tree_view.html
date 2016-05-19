@@ -1,4 +1,5 @@
 <script type="text/javascript" src="<%$smarty.const.ACW_BASE_URL%>js/jquery.mjs.nestedSortable.js"></script>
+<%assign var='treelang' value=Message_model::get_message('TREE')%>
 <script type="text/javascript">
 /**
  *  TreeViewプラグイン
@@ -353,7 +354,7 @@ TreeView.unfold_all = function (tree_view_id,btn_fold,init){//Open all
 	  	$(this).find(".img_open").hide();
 	});
 	if(btn_fold != null){
-		btn_fold.val('<%$smarty.const.FOLD_TEXT%>');
+		btn_fold.val('<%$treelang["TREE002"]%>'); //$smarty.const.FOLD_TEXT
 	}
 	
 	if(init === false)//when click in button NBKD-494 load tree empty
@@ -374,7 +375,7 @@ TreeView.fold_all = function (tree_view_id,btn_fold){//Close all
 	  	$(this).find(".img_open").show();
 	});
 	if(btn_fold != null){
-		btn_fold.val('<%$smarty.const.UNFOLD_TEXT%>');
+		btn_fold.val('<%$treelang["TREE001"]%>');//$smarty.const.UNFOLD_TEXT
 	}
 	TreeView.open_selected(tree_view_id,false);
 };

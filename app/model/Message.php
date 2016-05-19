@@ -1,5 +1,5 @@
 <?php
-
+	  
 class Message_model extends ACWModel
 {
 	
@@ -7,21 +7,22 @@ class Message_model extends ACWModel
 	{
 		Login_model::check();	
 	}
-	public function get_all($screen){				
-		$sql = "select * from message_lang where screen=:screen ";
+	public function get_all($screen){	
+		$lang = ACWSession::get('lang');
+		$column ='des_vn';
+		if(isset($lang)&& $lang == 2){
+			$column='des_en';
+		}			
+		$sql = "select msg_no,$column as msg from message_lang where screen=:screen ";
 		return $this->query($sql,array('screen'=>$screen));		
 	}
 	public static function get_message($creen){
 		$db = new Message_model();
 		$data = $db->get_all($creen);
 		$res = array();
-		$lang = ACWSession::get('lang');
-		$column ='des_vn';
-		if(isset($lang)&& $lang = 2){
-			$column='des_en';
-		}
+		
 		foreach($data as $item){			
-			$res[$item['msg_no']] = $item[$column];
+			$res[$item['msg_no']] = $item['msg'];
 		}		
 		return $res;		
 	}
@@ -39,6 +40,19 @@ class Message_model extends ACWModel
 			return $data[0][$column];
 		}
 		return '';		
+	}
+	public static function action_change()
+	{  
+		$lang = ACWSession::get('lang');
+		if($lang == 1){
+			ACWSession::set('lang',2);
+		}else{
+			ACWSession::set('lang',1);
+		}
+		$url = $_SERVER['HTTP_REFERER'];
+		header("Location: $url");
+		exit;
+		//return ACWView::json('sssss');
 	}
 	public static function action_index()
 	{  

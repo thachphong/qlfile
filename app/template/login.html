@@ -2,7 +2,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Đăng nhập</title>
+<%assign var='lang' value=Message_model::get_message('LOGIN')%>
+<title><%$lang['LOG006']%></title><!--Đăng nhập-->
 <link href="<%$smarty.const.ACW_BASE_URL%>shared/css/reset.css" rel="stylesheet" type="text/css" />
 <link href="<%$smarty.const.ACW_BASE_URL%>shared/css/login.css" rel="stylesheet" type="text/css" />
 </head>
@@ -12,12 +13,12 @@
         
 		<form action="<%$smarty.const.ACW_BASE_URL%>login/auth" name="login_form" method="POST" id="login_form">
 		<table>
-			<tr><td colspan="3"><h1><%$smarty.const.AKAGANE_TITLE%></h1></td></tr>
+			<tr><td colspan="3"><h1><%$lang['LOG001']%></h1></td></tr>
 			<tr><td colspan="3"></td></tr>
             <tr><td colspan="3"></td></tr>
-			<tr><th></th><th>TÊN ĐĂNG NHẬP</th><td><input type="text" size="20" name="user_id" id="user_id" value="<%$user_id%>"/></td></tr>
-			<tr><th></th><th>MẬT KHẨU</th><td><input type="password" size="20" name="passwd" id="passwd" /></td></tr>
-			<tr><th></th><th>NGÔN NGỮ</th><td><select name="lang">
+			<tr><th></th><th><%$lang['LOG002']%></th><td><input type="text" size="20" name="user_id" id="user_id" value="<%$user_id%>"/></td></tr><!--TÊN ĐĂNG NHẬP-->
+			<tr><th></th><th><%$lang['LOG003']%></th><td><input type="password" size="20" name="passwd" id="passwd" /></td></tr><!--MẬT KHẨU-->
+			<tr><th></th><th><%$lang['LOG004']%></th><td><select name="lang"><!--NGÔN NGỮ-->
 													<option value="1">Việt Nam </option>
 													<option value="1">English </option>
 											  </select>
@@ -26,8 +27,8 @@
 			<tr>
                 <th></th>
 				<td colspan="2" style="text-align: right !important">
-					<a href="javascript:void(0);" style="float:right" class="btn img_opacity" id="btn_login">Đăng nhập</a>
-                    <a href="javascript:void(0);" style="float:right" class="btn img_opacity" id="btn_clear">Xóa</a>
+					<a href="javascript:void(0);" style="float:right" class="btn img_opacity" id="btn_login"><%$lang['LOG006']%></a><!--Đăng nhập-->
+                    <a href="javascript:void(0);" style="float:right" class="btn img_opacity" id="btn_clear"><%$lang['LOG005']%></a><!--Xóa-->
 				</td>
 			</tr>
 			<tr>
