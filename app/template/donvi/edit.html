@@ -5,6 +5,7 @@
 	height: 150px;
 }
 </style>
+<%assign var='lang' value=Message_model::get_message('DONVI')%>
 <script type="text/javascript">
 $(document).ready(function () {
     
@@ -88,13 +89,13 @@ $(document).ready(function () {
 <div class="main_contents">
 	<div class="series_wrap">
 		<div class="title_wrap clear_fix">
-			<h2><%if $data_row.donvi_id == null%>Thêm mới đơn vị<%else%>Sửa đơn vị<%/if%></h2>
+			<h2><%if $data_row.donvi_id == null%><%$lang['DOVI013']%><!--Thêm mới đơn vị--><%else%><%$lang['DOVI014']%><!--Sửa đơn vị--><%/if%></h2>
 		</div>
 		<div class="info_wrap">
 			<div class="hl_wrap">
 				<ul class="btn_wrap">
-					<li><input type="button" value="Thoát" class="img_opacity btn_close" /></li>
-					<li><input type="button" value="Cập nhật" class="img_opacity btn_save" /></li>
+					<li><input type="button" value="<%$lang['DOVI010']%>" class="img_opacity btn_close" /></li><!--Thoát-->
+					<li><input type="button" value="<%$lang['DOVI009']%>" class="img_opacity btn_save" /></li><!--Cập nhật-->
 				</ul>
 			</div>
 			<form id="edit_form">
@@ -102,7 +103,7 @@ $(document).ready(function () {
 				<table style="width: 100%;">
 					<tr>
 						<th>
-							Tên đơn vị <span class="edit_require">*</span>
+							<%$lang['DOVI003']%><!--Tên đơn vị--> <span class="edit_require">*</span>
 						</th>
 						<td>
 							<input type="hidden" name="donvi_id" value="<%$data_row.donvi_id%>"  style="width:250px;" />
@@ -116,11 +117,11 @@ $(document).ready(function () {
 					
 					<tr>
 						<th>
-							Trạng thái
+							<%$lang['DOVI007']%><!--Trạng thái-->
 						</th>
 						<td>
 							<select name="del_flg">							
-								<option value="0" <%if $data_row.del_flg == 0 %>selected="selected"<%/if%>>Sử dụng</option>
+								<option value="0" <%if $data_row.del_flg == 0 %>selected="selected"<%/if%>><%$lang['DOVI009']%>Sử dụng</option>
 							    <option value="1" <%if $data_row.del_flg == 1 %>selected="selected"<%/if%>>Ngưng sử dụng</option>
 							</select>
 						</td>

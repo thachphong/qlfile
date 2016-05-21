@@ -1,7 +1,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/base.dwt" codeOutsideHTMLIsLocked="false" --><head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Lịch sử xét duyệt</title>
+<%assign var='lang' value=Message_model::get_message('DON')%>
+<title><%$lang['DON018']%></title><!--Lịch sử xét duyệt-->
 		<%include 'include/head.html'%>
 		<link href="<%$smarty.const.ACW_BASE_URL%>shared/css/baitai.css" rel="stylesheet" type="text/css" />
         <link href="<%$smarty.const.ACW_BASE_URL%>shared/css/jquery.datetimepicker.css" rel="stylesheet" type="text/css" />
@@ -50,40 +51,41 @@
                     </select>
                 </td>                
                 <td class="al_l"><button class="button_blue" type="button" id="btn_search">Tìm</button> <button type="button" id="btn_clear" class="button_blue">Xóa</button></td>-->
-                <th>Điều kiện</th>
+                <th><%$lang['DON015']%></th><!--Điều kiện-->
                 <td class="first" style="padding: 0px 40px;">
                     <table class="table_search">
                     <tr>
-                        <td >Loại bản vẽ 
+                        <td ><%$lang['DON009']%> 
                         <select name="loaidon">
                             <option ></option>
-                            <option value="0" <%if $search_data.loaidon=='0'%>selected<%/if%> >Tạo mới</option>
-                            <option value="1" <%if $search_data.loaidon=='1'%>selected<%/if%>>Cập nhật</option>
-                        </select>
+                            <option value="0" <%if $search_data.loaidon=='0'%>selected<%/if%> ><%$lang['DON019']%></option><!-- Tạo mới-->
+                            <option value="1" <%if $search_data.loaidon=='1'%>selected<%/if%>><%$lang['DON020']%></option><!-- Cập nhật-->
+                        </select><!--Loại bản vẽ-->
                         </td>
-                        <td >Từ thời điểm <input type="text"  name="tu_ngay" class="datetimepicker" value="<%$search_data.tu_ngay%>" />
+                        <td><%$lang['DON011']%><input type="text"  name="tu_ngay" class="datetimepicker" value="<%$search_data.tu_ngay%>" /><!--Từ thời điểm -->
                 </td>
-                <td>đến<input type="text"  name="den_ngay" class="datetimepicker" value="<%$search_data.den_ngay%>" /></td>
+                <td><%$lang['DON012']%><input type="text"  name="den_ngay" class="datetimepicker" value="<%$search_data.den_ngay%>" /></td><!--đến-->
                 <!--<td>Mã số duyệt <input maxlength="20" type="text" name="maso_duyet" id="" value="<%$search_data.maso_duyet%>" />-->
                 </td>
-                <td>Tình trạng 
+                <td><%$lang['DON007']%>
                     <select name="trangthai">
                         <option ></option>
-                        <option value="0" <%if $search_data.trangthai=='0'%>selected<%/if%>>Đang Chờ</option>
-                        <option value="1" <%if $search_data.trangthai=='1'%>selected<%/if%>>Đã duyệt</option>
-                        <option value="2" <%if $search_data.trangthai=='2'%>selected<%/if%>>Không duyệt</option>
-                        <option value="3" <%if $search_data.trangthai=='2'%>selected<%/if%>>Xin mượn bản vẽ</option>
-                        <option value="4" <%if $search_data.trangthai=='4'%>selected<%/if%>>Trả yêu xin mượn bản vẽ</option>
-                        <option value="5" <%if $search_data.trangthai=='5'%>selected<%/if%>>Đã duyệt xin mượn bản vẽ</option>
+                        <option value="0" <%if $search_data.trangthai=='0'%>selected<%/if%>><%$lang['DON021']%></option><!--Đang Chờ-->
+                        <option value="1" <%if $search_data.trangthai=='1'%>selected<%/if%>><%$lang['DON022']%></option><!--Đã duyệt-->
+                        <option value="2" <%if $search_data.trangthai=='2'%>selected<%/if%>><%$lang['DON023']%></option><!--Không duyệt-->
+                        <option value="3" <%if $search_data.trangthai=='2'%>selected<%/if%>><%$lang['DON024']%></option><!--Xin mượn bản vẽ-->
+                        <option value="4" <%if $search_data.trangthai=='4'%>selected<%/if%>><%$lang['DON025']%></option><!--Trả yêu xin mượn bản vẽ-->
+                        <option value="5" <%if $search_data.trangthai=='5'%>selected<%/if%>><%$lang['DON026']%></option><!--Đã duyệt xin mượn bản vẽ-->
                         
                     </select>
-                </td>                 
-                <td class="al_l"><button class="button_blue" type="button" id="btn_search">Tìm</button> <button type="button" id="btn_clear" class="button_blue">Xóa</button></td>
+                </td> <!--Tình trạng -->                
+                <td class="al_l"><button class="button_blue" type="button" id="btn_search"><%$lang['DON016']%></button> <!--Tìm-->
+                <button type="button" id="btn_clear" class="button_blue"><%$lang['DON017']%></button></td><!--Xóa-->
                     </tr>
                     <tr>
-                        <td>Mã bản vẽ tổng <input maxlength="20" type="text" name="don_no" id="" value="<%$search_data.don_no%>" />                        
-                        <td>Mã số duyệt <input maxlength="20" type="text" name="maso_duyet" id="" value="<%$search_data.maso_duyet%>" />
-                        <td>Tên file <input maxlength="20" type="text" name="file_name" id="" value="<%$search_data.file_name%>" />
+                        <td><%$lang['DON010']%><input maxlength="20" type="text" name="don_no" id="" value="<%$search_data.don_no%>" /></td><!--Mã bản vẽ tổng -->                        
+                        <td><%$lang['DON013']%> <input maxlength="20" type="text" name="maso_duyet" id="" value="<%$search_data.maso_duyet%>" /></td><!--Mã số duyệt-->
+                        <td><%$lang['DON014']%> <input maxlength="20" type="text" name="file_name" id="" value="<%$search_data.file_name%>" /></td><!--Tên file-->
                     </tr>
                     </table>
                 </td>
@@ -106,14 +108,14 @@
 		<table id="data_list">
 			<thead>
 			<tr>
-				<th style="width: 40px;">No.</th>               
-                <th style="width: 60px;">Mã bản vẻ</th>
-                <th style="width: 200px;">Tiêu đề</th>
-                <th style="width: 70px;">Ngày lập</th>
-                <th style="width: 100px;">Người tạo</th>
-                <th style="width: 100px;">Người duyệt cuối</th>
-                <th style="width: 120px; text-align: center;">tình trạng</th>
-                <th style="width: 200px;">Nội dung</th>
+				<th style="width: 40px;"><%$lang['DON001']%></th> <!--No.  -->            
+                <th style="width: 60px;"><%$lang['DON002']%></th><!--Mã bản vẻ-->
+                <th style="width: 200px;"><%$lang['DON003']%></th> <!--Tiêu đề-->
+                <th style="width: 70px;"><%$lang['DON004']%></th> <!--Ngày lập-->
+                <th style="width: 100px;"><%$lang['DON005']%></th> <!--Người tạo-->
+                <th style="width: 100px;"><%$lang['DON016']%></th> <!--Người duyệt cuối-->
+                <th style="width: 120px; text-align: center;"><%$lang['DON007']%></th> <!--tình trạng-->
+                <th style="width: 200px;"><%$lang['DON008']%></th> <!--Nội dung-->
 			</tr>
 			</thead>
 			<tbody>

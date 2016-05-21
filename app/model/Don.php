@@ -450,7 +450,7 @@ class Don_model extends ACWModel
 		
 		if (ACWError::count() <= 0) {
 		    $result['status'] = 'OK';
-            $result['msg'] ="Cập nhật thành công !";
+            $result['msg'] =Message_model::get_msg('SYS001');// "Cập nhật thành công !";
 		} else {
 			$result['status'] = 'NG';
 			$result['error'] = ACWError::get_list();
@@ -497,7 +497,7 @@ class Don_model extends ACWModel
         }
         if (ACWError::count() <= 0) {
 		    $result['status'] = 'OK';
-            $result['msg'] ="Cập nhật thành công !";
+            $result['msg'] =Message_model::get_msg('SYS001');//"Cập nhật thành công !";
 		} else {
 			$result['status'] = 'NG';
 			$result['error'] = ACWError::get_list();
@@ -566,7 +566,7 @@ class Don_model extends ACWModel
         }
         if (ACWError::count() <= 0) {
 		    $result['status'] = 'OK';
-            $result['msg'] ="Cập nhật thành công !";
+            $result['msg'] =Message_model::get_msg('SYS001');//"Cập nhật thành công !";
 		} else {
 			$result['status'] = 'NG';
 			$result['error'] = ACWError::get_list();
@@ -600,7 +600,7 @@ class Don_model extends ACWModel
         }	
         if (ACWError::count() <= 0) {
 		    $result['status'] = 'OK';
-            $result['msg'] ="Xóa đơn thành công !";
+            $result['msg'] =Message_model::get_msg('SYS002');//"Xóa đơn thành công !";
 		} else {
 			$result['status'] = 'NG';
 			$result['error'] = ACWError::get_list();
@@ -612,12 +612,12 @@ class Don_model extends ACWModel
         $result = $this->query($sql,array('ver_id'=>$ver_id));
         if(count($result) >0 ){
             if($result[0]['trangthai'] !='-1'){
-                ACWError::add('ver', 'Đơn này đã gửi duyệt không thể xóa');
+                ACWError::add('ver', Message_model::get_msg('SYS003')); //'Đơn này đã gửi duyệt không thể xóa'
                 return false;
             }
             $login_info = ACWSession::get('user_info');
             if($result[0]['add_user_id'] !=$login_info['user_id']){
-                ACWError::add('ver', 'Bạn không có quyền xóa đơn này,vì bạn không phải là người tạo !');
+                ACWError::add('ver',Message_model::get_msg('SYS003')); // 'Bạn không có quyền xóa đơn này,vì bạn không phải là người tạo !'
                 return false;
             }
         }

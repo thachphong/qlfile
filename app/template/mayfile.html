@@ -2,7 +2,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/base.dwt" codeOutsideHTMLIsLocked="false" -->
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<title>Đưa file vào máy</title>
+	<%assign var='lang' value=Message_model::get_message('MAYFI')%>
+	<title><%$lang['MAFI001']%></title><!--Đưa file vào máy-->
 	<%include 'include/head.html'%>
 	<link href="<%$smarty.const.ACW_BASE_URL%>shared/css/category.css" rel="stylesheet" type="text/css" />
     <link href="<%$smarty.const.ACW_BASE_URL%>shared/css/relation.css" rel="stylesheet" type="text/css" />
@@ -36,14 +37,14 @@
                         <div class="series_wrap" style="padding-top: 10px">
 		<div class="info_wrap height4">
 			<div class="hl_wrap">
-				<h3 >Thông tin Máy</h3>
+				<h3 ><%$lang['MAFI002']%><!--Thông tin Máy--></h3>
 				<ul class="btn_wrap">
-					<li><input type="button" id="save_button" value="Cập nhật" /></li>
+					<li><input type="button" id="save_button" value="<%$lang['MAFI005']%>" /></li><!--Cập nhật-->
                                       
 				</ul>
 			</div>
 			<div class="edit_wrap related height6">
-				<h3 class="hl">File đã duyệt</h3>
+				<h3 class="hl"><%$lang['MAFI003']%><!--File đã duyệt--></h3>
 				<div class="tree_wrap height5 " >
 					<ul id="series_list">
                     
@@ -59,7 +60,7 @@
 			</div><!-- / .edit_wrap -->
 
 			<div class="edit_wrap height6">
-				<h3 class="hl">File trong Máy</h3>                                
+				<h3 class="hl"><%$lang['MAFI004']%><!--File trong Máy--></h3>                                
                 <div class="right_tree_wrap height5 " >
                     <ul id="don_list_folder">
                     
@@ -202,7 +203,7 @@ $(function() {
         var json_ajax = new Argo_ajax("json");
         json_ajax.done_func = function(data) {
             if(data.status =="OK"){
-                Argo_ajax.message_box(' ', 'Cập nhật thành công !');
+                Argo_ajax.message_box(' ', "<%$lang['MAFI006']%>"); //'Cập nhật thành công !'
             }else{
                 if (data.error.length > 0) {
 				    Argo_ajax.message_box_error('', data.error[0]['info']);

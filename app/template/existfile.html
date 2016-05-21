@@ -1,7 +1,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/base.dwt" codeOutsideHTMLIsLocked="false" --><head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>In file</title>
+<%assign var='lang' value=Message_model::get_message('CVRPDF')%>
+<title><%$lang['CPDF001']%></title>
 		<%include 'include/head.html'%>
 		<link href="<%$smarty.const.ACW_BASE_URL%>shared/css/baitai.css" rel="stylesheet" type="text/css" />
         
@@ -21,14 +22,14 @@
 				<col width="" />
 			</colgroup>
 			<tr>
-				<th>Điều kiện tìm</th>
-				<td class="first">Tên file  <input type="text" maxlength="50" size="30" name="search_file_name" id="search_file_name" value="<%$search_file_name%>" /></td>
-                                <td class="al_l"><button type="button" id="btn_search">Tìm</button> <button type="button" id="btn_clear">Xóa</button></td></tr>
+				<th><%$lang['CPDF002']%><!--Điều kiện tìm--></th>
+				<td class="first"><%$lang['CPDF003']%><!--Tên file-->  <input type="text" maxlength="50" size="30" name="search_file_name" id="search_file_name" value="<%$search_file_name%>" /></td>
+                                <td class="al_l"><button type="button" id="btn_search"><%$lang['CPDF004']%><!--Tìm--></button> <button type="button" id="btn_clear"><%$lang['CPDF005']%><!--Xóa--></button></td></tr>
 		</table>
 		</form>
 	</div>
 	<ul class="topic_path">
-		<li><h2>Danh sách file đã duyệt</h2></li>
+		<li><h2><%$lang['CPDF006']%><!--Danh sách file đã duyệt--></h2></li>
 	</ul>
 <!-- InstanceEndEditable -->
 <!-- InstanceBeginEditable name="side_contents" -->
@@ -41,11 +42,11 @@
 		<table id="data_list">
 			<thead>
 			<tr>
-				<th style="width: 40%;">Tên file</th>
-                <th style="width: 10%;text-align: center;">Ngày cập nhật</th>
-                <th style="width: 30%;text-align: center;">tiêu đề</th>
-                <th style="width: 10%;text-align: center;">Loại bản vẽ</th>
-                <th style="width: 10%;text-align: center;">Convert Pdf</th>
+				<th style="width: 40%;"><%$lang['CPDF003']%><!--Tên file--></th>
+                <th style="width: 10%;text-align: center;"><%$lang['CPDF007']%><!--Ngày cập nhật--></th>
+                <th style="width: 30%;text-align: center;"><%$lang['CPDF008']%><!--tiêu đề--></th>
+                <th style="width: 10%;text-align: center;"><%$lang['CPDF009']%><!--Loại bản vẽ--></th>
+                <th style="width: 10%;text-align: center;"><%$lang['CPDF001']%><!--Convert Pdf--></th>
 			</tr>
 			</thead>
 			<tbody>

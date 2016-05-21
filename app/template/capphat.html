@@ -1,7 +1,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/base.dwt" codeOutsideHTMLIsLocked="false" --><head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Cấp phát file</title>
+<%assign var='lang' value=Message_model::get_message('CAPPT')%>
+<title><%$lang['CAPP001']%></title><!--Cấp phát file-->
 		<%include 'include/head.html'%>
 		<link href="<%$smarty.const.ACW_BASE_URL%>shared/css/baitai.css" rel="stylesheet" type="text/css" />
 </head>
@@ -21,15 +22,15 @@
 				<col width="" />
 			</colgroup>
 			<tr>
-				<th>Điều kiện tìm</th>
-                <td class="first">Tiêu đề <input type="text" maxlength="50" size="30" name="search_tieude" id="search_tieude" value="<%$search.search_tieude%>" /></td>
-				<td class="">Tên file  <input type="text" maxlength="50" size="30" name="search_file_name" id="search_file_name" value="<%$search.search_file_name%>" /></td>
-                                <td class="al_l"><button type="button" id="btn_search">Tìm</button> <button type="button" id="btn_clear">Xóa</button></td></tr>
+				<th><%$lang['CAPP002']%><!--Điều kiện tìm--></th>
+                <td class="first"><%$lang['CAPP003']%><!--Tiêu đề--> <input type="text" maxlength="50" size="30" name="search_tieude" id="search_tieude" value="<%$search.search_tieude%>" /></td>
+				<td class=""><%$lang['CAPP004']%><!--Tên file-->  <input type="text" maxlength="50" size="30" name="search_file_name" id="search_file_name" value="<%$search.search_file_name%>" /></td>
+                                <td class="al_l"><button type="button" id="btn_search"><%$lang['CAPP005']%><!--Tìm--></button> <button type="button" id="btn_clear"><%$lang['CAPP006']%><!--Xóa--></button></td></tr>
 		</table>
 		</form>
 	</div>
 	<ul class="topic_path">
-		<li><h2>Danh sách file đã duyệt</h2></li>
+		<li><h2><%$lang['CAPP007']%><!--Danh sách file đã duyệt--></h2></li>
 	</ul>
 <!-- InstanceEndEditable -->
 <!-- InstanceBeginEditable name="side_contents" -->
@@ -42,12 +43,12 @@
 		<table id="data_list">
 			<thead>
 			<tr>
-				<th style="">Tên file</th>
-                <th style="width: 130px;text-align: center;">Ngày cập nhật</th>
-                <th style="text-align: center;">tiêu đề</th>
-                <th style="width: 120px;text-align: center;">Mã bản vẽ tổng</th>
-                <th style="width: 80px;text-align: center;">Loại bản vẽ</th>
-                <th style="width: 80px;text-align: center;">Cấp phát</th>
+				<th style=""><%$lang['CAPP004']%><!--Tên file--></th>
+                <th style="width: 130px;text-align: center;"><%$lang['CAPP008']%><!--Ngày cập nhật--></th>
+                <th style="text-align: center;"><%$lang['CAPP003']%><!--tiêu đề--></th>
+                <th style="width: 120px;text-align: center;"><%$lang['CAPP009']%><!--Mã bản vẽ tổng--></th>
+                <th style="width: 80px;text-align: center;"><%$lang['CAPP010']%><!--Loại bản vẽ--></th>
+                <th style="width: 80px;text-align: center;"><%$lang['CAPP011']%><!--Cấp phát--></th>
                <!-- <th style="width: 80px;text-align: center;">Thu hồi</th>-->
 			</tr>
 			</thead>
@@ -95,7 +96,7 @@ $(function() {
 		width: 900,
 		height: 500,
 		modal: true,
-		title: 'Cấp phát file'
+		title: '<%$lang["CAPP001"]%>' /*Cấp phát file*/
 	});
     var search_user_ajax = new Argo_ajax('json');
         search_user_ajax.done_func = function(data) {

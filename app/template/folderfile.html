@@ -2,7 +2,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/base.dwt" codeOutsideHTMLIsLocked="false" -->
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<title>Phân quyền file</title>
+	<%assign var='lang' value=Message_model::get_message('PHABO')%>
+	<title><%$lang['PBO001']%><!--Phân quyền file--></title>
 	<%include 'include/head.html'%>
 	<link href="<%$smarty.const.ACW_BASE_URL%>shared/css/category.css" rel="stylesheet" type="text/css" />
     <link href="<%$smarty.const.ACW_BASE_URL%>shared/css/relation.css" rel="stylesheet" type="text/css" />
@@ -38,12 +39,12 @@
 			<div class="hl_wrap">
 				<h3 >Thông tin thư mục</h3>
 				<ul class="btn_wrap">
-					<li><input type="button" id="save_button" value="Cập nhật" /></li>
+					<li><input type="button" id="save_button" value="<%$lang['PBO005']%>" /></li><!--Cập nhật-->
                                       
 				</ul>
 			</div>
 			<div class="edit_wrap related height6">
-				<h3 class="hl">Yêu cầu đã duyệt</h3>
+				<h3 class="hl"><%$lang['PBO003']%><!--Yêu cầu đã duyệt--></h3>
 				<div class="tree_wrap height5 " >
 					<ul id="series_list">
                     
@@ -59,7 +60,7 @@
 			</div><!-- / .edit_wrap -->
 
 			<div class="edit_wrap height6">
-				<h3 class="hl">Yêu cầu trong Thư mục</h3>                                
+				<h3 class="hl"><%$lang['PBO004']%><!--Yêu cầu trong Thư mục--></h3>                                
                 <div class="right_tree_wrap height5 " >
                     <ul id="don_list_folder">
                     
@@ -117,7 +118,7 @@ $(function() {
 				Argo_ajax.message_box_error('', data.error[0]['info']);
 			}
 		} else {
-            Argo_ajax.message_box(' ', 'Cập nhật thành công !');
+            Argo_ajax.message_box(' ', '<%$lang["PBO006"]%>');/*Cập nhật thành công !*/
 			$('#edit_contents_html').empty();
 			// ツリー更新
 			tree_ajax.connect('GET', 'category/tree');
@@ -202,7 +203,7 @@ $(function() {
         var json_ajax = new Argo_ajax("json");
         json_ajax.done_func = function(data) {
             if(data.status =="OK"){
-                Argo_ajax.message_box(' ', 'Cập nhật thành công !');
+                Argo_ajax.message_box(' ', '<%$lang["PBO006"]%>');/*Cập nhật thành công !*/
             }else{
                 if (data.error.length > 0) {
 				    Argo_ajax.message_box_error('', data.error[0]['info']);

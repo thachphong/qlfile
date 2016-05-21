@@ -1,7 +1,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/base.dwt" codeOutsideHTMLIsLocked="false" --><head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Quản lý Máy</title>
+<%assign var='lang' value=Message_model::get_message('MAY')%>
+<title><%$lang['MAY001']%></title><!--Quản lý Máy-->
 		<%include 'include/head.html'%>
 		<link href="<%$smarty.const.ACW_BASE_URL%>shared/css/baitai.css" rel="stylesheet" type="text/css" />
         
@@ -21,15 +22,15 @@
 				<col width="" />
 			</colgroup>
 			<tr>
-				<th>Điều kiện tìm</th>
-				<td class="first">Mã máy  <input type="text" maxlength="30" size="20" name="s_may_no" id="s_may_no" value="<%$data_search.s_may_no%>" /></td>
-                <td>Tên máy  <input type="text" maxlength="100" size="30" name="s_may_name" id="s_may_name" value="<%$data_search.s_may_name%>" /></td>
-                                <td class="al_l"><button type="button" id="btn_search">Tìm</button> <button type="button" id="btn_clear">Xóa</button></td></tr>
+				<th><%$lang['MAY002']%><!--Điều kiện tìm--></th>
+				<td class="first"><%$lang['MAY003']%>  <input type="text" maxlength="30" size="20" name="s_may_no" id="s_may_no" value="<%$data_search.s_may_no%>" /></td>
+                <td><%$lang['MAY004']%><!--Tên máy-->  <input type="text" maxlength="100" size="30" name="s_may_name" id="s_may_name" value="<%$data_search.s_may_name%>" /></td>
+                                <td class="al_l"><button type="button" id="btn_search"><%$lang['MAY005']%><!--Tìm--></button> <button type="button" id="btn_clear"><%$lang['MAY006']%><!--Xóa--></button></td></tr>
 		</table>
 		</form>
 	</div>
 	<ul class="topic_path">
-		<li><h2>Quản lý máy</h2></li>
+		<li><h2><%$lang['MAY001']%><!--Quản lý máy--></h2></li>
 	</ul>
 <!-- InstanceEndEditable -->
 <!-- InstanceBeginEditable name="side_contents" -->
@@ -38,13 +39,13 @@
 <div class="main_contents">
 <div class="main_innner height2">
 	<div class="baitai_wrap">
-		<p class="clear_fix" style="text-align: right;"><input type="button" value="Thêm mới" id="btn_new" /></p>
+		<p class="clear_fix" style="text-align: right;"><input type="button" value="<%$lang['MAY016']%>" id="btn_new" /></p><!--Thêm mới-->
 		<table id="data_list">
 			<thead>
 			<tr>
-				<th style="width: 100px;">Mã máy</th>
-                <th style="width: 100px;">Tên máy</th>
-                <th style="width: 100px;text-align: center;">Ngưng sử dụng</th>
+				<th style="width: 100px;"><%$lang['MAY003']%><!--Mã máy--></th>
+                <th style="width: 100px;"><%$lang['MAY004']%><!--Tên máy--></th>
+                <th style="width: 100px;text-align: center;"><%$lang['MAY007']%><!--Ngưng sử dụng--></th>
 			</tr>
 			</thead>
 			<tbody>
@@ -82,7 +83,7 @@ $(function() {
 		width: 500,
 		/*height: $(window).height() - 100,*/
 		modal: true,
-		title: 'Thông tin Máy'
+		title: '<%$lang["MAY012"]%>'/*Thông tin Máy*/
 	});
 	
         //Add Start - Trung VNIT - 2014/08/21

@@ -4,6 +4,7 @@
 	width: 180px;
 }
 </style>
+<%assign var='lang' value=Message_model::get_message('CAPPT')%>
 <script type="text/javascript">
 $(document).ready(function () {
     
@@ -50,7 +51,7 @@ $(document).ready(function () {
 		json_ajax.done_func = function(data) {
                    
 			if (data.status == 'OK') {
-				Argo_ajax.message_box(' ', 'Cập nhật thành công !');
+				Argo_ajax.message_box(' ', "<%$lang['CAPP012']%>");/*'Cập nhật thành công !'*/
                 $("#edit_dialog").dialog("close");				
 			}else{
                 if (data.error) {
@@ -58,11 +59,7 @@ $(document).ready(function () {
     					Argo_ajax.message_box_error(' ', data.error[0]['info']);
     				}
     			}	
-            }           
-            if(data.status == 'double_user'){
-                Argo_ajax.message_box_error(' ', 'Tên đăng nhập này đã có, vui lòng nhập tên khác');
-        	}
-           
+            }
 		};
 		var data = $("form#edit_form").serializeArray();
 		json_ajax.connect("POST", "file/capphatupdate", data);
@@ -192,9 +189,9 @@ $(document).ready(function () {
 		<div class="info_wrap" style="height: 400px;">
 			<div class="hl_wrap">
 				<ul class="btn_wrap">
-					<li><input type="button" value="Thoát" class="img_opacity btn_close" /></li>
-					<li><input type="button" value="Cập nhật" class="img_opacity btn_save" /></li>
-					<li><input type="button" value="Thêm" class="img_opacity btn_add" /></li>
+					<li><input type="button" value="<%$lang['CAPP013']%>" class="img_opacity btn_close" /></li><!--Thoát-->
+					<li><input type="button" value="<%$lang['CAPP014']%>" class="img_opacity btn_save" /></li><!--Cập nhật-->
+					<li><input type="button" value="<%$lang['CAPP015']%>" class="img_opacity btn_add" /></li><!--Thêm-->
 				</ul>
 			</div>
 			<form id="edit_form"    style=" overflow-y: scroll;    height: 380px;">
@@ -209,16 +206,16 @@ $(document).ready(function () {
 					</colgroup>
 					<tr style="font-weight:bold">
                         <td>
-							Đơn vị
+							<%$lang['CAPP016']%><!--Đơn vị-->
 						</td>
 						<td>
-							Phòng ban
+							<%$lang['CAPP017']%><!--Phòng ban-->
 						</td>
 						<td>
-							Tổ nhóm
+							<%$lang['CAPP018']%><!--Tổ nhóm-->
 						</td>
 						<td>
-							Số lượng
+							<%$lang['CAPP019']%><!--Số lượng-->
 						</td>
 					</tr>
 					<%foreach $data_rows as $item%>

@@ -1,7 +1,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/base.dwt" codeOutsideHTMLIsLocked="false" --><head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Quản lý Đơn vị</title>
+<%assign var='lang' value=Message_model::get_message('MUON')%>
+<title><%$lang['MUON001']%></title>
 		<%include 'include/head.html'%>
 		<link href="<%$smarty.const.ACW_BASE_URL%>shared/css/baitai.css" rel="stylesheet" type="text/css" />
         <link href="<%$smarty.const.ACW_BASE_URL%>shared/css/jquery.datetimepicker.css" rel="stylesheet" type="text/css" />
@@ -22,12 +23,12 @@
 				<col width="200px" /> 
 			</colgroup>
 			<tr>
-				<th>Điều kiện</th>
+				<th><%$lang['MUON002']%><!--Điều kiện--></th>
                 <td class="first">
-               	Tên file
+               	<%$lang['MUON003']%><!--Tên file-->
                     <input type="text" size="30" name="file_name" value="<%$search_data.file_name%>">
                 </td>                             
-                <td class="al_l"><button class="button_blue" type="button" id="btn_search">Tìm</button> <button type="button" id="btn_clear" class="button_blue">Xóa</button></td>
+                <td class="al_l"><button class="button_blue" type="button" id="btn_search"><%$lang['MUON004']%><!--Tìm--></button> <button type="button" id="btn_clear" class="button_blue"><%$lang['MUON005']%><!--Xóa--></button></td>
             </tr>            
 		</table>
 		</form>
@@ -47,13 +48,13 @@
 		<table id="data_list">
 			<thead>
 			<tr>
-				<th style="width: 40px;">No.</th>               
-                <th style="width: 60px;">Mã bản vẻ</th>
-                <th style="width: 200px;">Tiêu đề</th>
-                <th style="width: 70px;">Ngày lập</th>
-                <th style="width: 100px;">Người duyệt</th>
-                <th style="width: 120px; text-align: center;">tình trạng</th>
-                <th style="width: 200px;">Ghi chú</th>
+				<th style="width: 40px;"><%$lang['MUON006']%><!--No.--></th>               
+                <th style="width: 60px;"><%$lang['MUON007']%><!--Mã bản vẻ--></th>
+                <th style="width: 200px;"><%$lang['MUON008']%><!--Tiêu đề--></th>
+                <th style="width: 70px;"><%$lang['MUON009']%><!--Ngày lập--></th>
+                <th style="width: 100px;"><%$lang['MUON010']%><!--Người duyệt--></th>
+                <th style="width: 120px; text-align: center;"><%$lang['MUON011']%><!--tình trạng--></th>
+                <th style="width: 200px;"><%$lang['MUON012']%><!--Ghi chú--></th>
 			</tr>
 			</thead>
 			<tbody>

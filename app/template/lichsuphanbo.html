@@ -1,7 +1,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/base.dwt" codeOutsideHTMLIsLocked="false" --><head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Quản lý Đơn vị</title>
+<%assign var='lang' value=Message_model::get_message('LSPBO')%>
+<title><%$lang['LSPB001']%></title>
 		<%include 'include/head.html'%>
 		<link href="<%$smarty.const.ACW_BASE_URL%>shared/css/baitai.css" rel="stylesheet" type="text/css" />
         <link href="<%$smarty.const.ACW_BASE_URL%>shared/css/jquery.datetimepicker.css" rel="stylesheet" type="text/css" />
@@ -21,24 +22,24 @@
 				<col width="200px" /> -->
 			</colgroup>
 			<tr>
-				<th>Điều kiện</th>
+				<th><%$lang['LSPB002']%><!--Điều kiện--></th>
                 <td class="first">
-                Thư mục
+                <%$lang['LSPB003']%><!--Thư mục-->
                     <input value="<%$search_data.folder_name%>" name="folder_name" size="20"/>
                 </td>
                 <td >
-                Tiêu đề
+                <%$lang['LSPB004']%><!--Tiêu đề-->
                     <input value="<%$search_data.tieude%>" name="tieude" size="20"/>
                 </td>                
                 <td >
-                    Tên file
+                    <%$lang['LSPB005']%><!--Tên file-->
                     <input value="<%$search_data.file_name%>" name="file_name" size="20"/>
                 </td>
-                <td >Từ thời điểm <input type="text"  name="tu_ngay" class="datetimepicker" value="<%$search_data.tu_ngay%>" />
+                <td ><%$lang['LSPB006']%><!--Từ thời điểm--> <input type="text"  name="tu_ngay" class="datetimepicker" value="<%$search_data.tu_ngay%>" />
                 </td>
-                <td>đến<input type="text"  name="den_ngay" class="datetimepicker" value="<%$search_data.den_ngay%>" /></td>
+                <td><%$lang['LSPB007']%><!--đến--><input type="text"  name="den_ngay" class="datetimepicker" value="<%$search_data.den_ngay%>" /></td>
                                
-                <td class="al_l"><button type="button" id="btn_search">Tìm</button> <button type="button" id="btn_clear">Xóa</button></td>
+                <td class="al_l"><button type="button" id="btn_search"><%$lang['LSPB008']%><!--Tìm--></button> <button type="button" id="btn_clear"><%$lang['LSPB009']%><!--Xóa--></button></td>
             </tr>            
 		</table>
 		</form>
@@ -57,11 +58,11 @@
 		<table id="data_list">
 			<thead>
 			<tr>
-				<th style="width: 30px;">No.</th>
-                <th style="width: 100px;">Thư mục</th>
-                <th style="width: 100px;">Tiêu đề</th>
-                <th style="width: 100px;">Tên File</th>
-                <th style="width: 100px;">Ngày phân bổ</th>
+				<th style="width: 30px;"><%$lang['LSPB010']%><!--No.--></th>
+                <th style="width: 100px;"><%$lang['LSPB003']%><!--Thư mục--></th>
+                <th style="width: 100px;"><%$lang['LSPB004']%><!--Tiêu đề--></th>
+                <th style="width: 100px;"><%$lang['LSPB005']%><!--Tên File--></th>
+                <th style="width: 100px;"><%$lang['LSPB011']%><!--Ngày phân bổ--></th>
 			</tr>
 			</thead>
 			<tbody>

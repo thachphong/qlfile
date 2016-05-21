@@ -1,7 +1,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/base.dwt" codeOutsideHTMLIsLocked="false" --><head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Upload file</title>
+<%assign var='lang' value=Message_model::get_message('YEUCAU')%>
+<title><%$lang['YEU023']%></title><!--Upload file-->
 		<%include 'include/head.html'%>
 		<link href="<%$smarty.const.ACW_BASE_URL%>shared/css/baitai.css" rel="stylesheet" type="text/css" />
         <link href="<%$smarty.const.ACW_BASE_URL%>shared/css/jquery.datetimepicker.css" rel="stylesheet" type="text/css" />
@@ -57,34 +58,34 @@
             <!--<input type="hidden" name="version" id="ver_id" value=""> -->
             <table class="table_kiemtra" >
     			<tr>
-    				<td style="width: 50px;">Người lập</td>
+    				<td style="width: 50px;"><%$lang['YEU001']%></td><!--Người lập-->
                     <td style="width: 80px;"><input type="text" readonly="true" value="<%$data_row.user_name_disp%>"></td>
-                    <td style="width: 40px;">Bộ phận</td>
+                    <td style="width: 40px;"><%$lang['YEU002']%></td> <!--Bộ phận-->
                     <td style="width: 80px;"><input type="text" readonly="true" value="<%$data_row.phongban_name%>"></td>
-                    <td style="width: 50px;">Loại bản vẻ</td>
+                    <td style="width: 60px;"><%$lang['YEU003']%></td><!--Loại bản vẻ-->
                     <td style="width: 80px;">
                         <!--<input  type="hidden" name="loaidon" value="<%$loaidon%>"/>-->
                     	<select name="loaidon" id="loai_ban_ve" >
                             <option></option>
-                    		<option value="0" <%if $data_row.loaidon =='0' || $loaidon=='0'%>selected<%/if%> >Tạo mới</option>
-                    		<option value="1" <%if $data_row.loaidon =='1' || $loaidon=='1'%>selected<%/if%> >Cập nhật</option>
+                    		<option value="0" <%if $data_row.loaidon =='0' || $loaidon=='0'%>selected<%/if%> ><%$lang['YEU024']%></option><!--Tạo mới-->
+                    		<option value="1" <%if $data_row.loaidon =='1' || $loaidon=='1'%>selected<%/if%> ><%$lang['YEU025']%></option><!--Cập nhật-->
                     	</select>
                     </td>
-                    <td style="width: 40px;">Ngày lập</td>
+                    <td style="width: 40px;"><%$lang['YEU004']%></td><!--Ngày lập-->
                     <td style="width: 80px;"><input type="text" readonly="true" value="<%$data_row.add_datetime%>"></td>
-                    <td style="width: 80px;">Mã số xét duyệt</td>
+                    <td style="width: 80px;"><%$lang['YEU005']%></td><!--Mã số xét duyệt-->
                     <td style="width: 80px;"><input type="text" readonly="true" size="10" value="<%$data_row.maso_duyet%>"></td>
     			</tr>                
             </table>
             <table class="table_don" >
                 <tr>
-                    <td style="font-weight: bold">Tiêu đề</td>
+                    <td style="font-weight: bold"><%$lang['YEU006']%></td><!--Tiêu đề-->
                     <td colspan="9">
                         <input type="text" maxlength="255" value="<%$data_row.tieude%>" size="100" name="tieude" id="tieude" <%if $mode!= "new" || $loaidon =='1'%>readonly="true"<%/if%> >
                         
                     </td>
                 </tr>
-                <tr> <td style="font-weight: bold">Mã bản vẽ tổng</td>
+                <tr> <td style="font-weight: bold"><%$lang['YEU007']%></td><!--Mã bản vẽ tổng-->
                     <td colspan="9">
                         <!--<input type="text" maxlength="8" value="<%$data_row.don_no%>" size="30" name="don_no" id="don_no" <%if $mode!= "new" || $loaidon =='1'%>readonly="true"<%/if%> >-->                      
                         <select <%if $mode!= "new" || $loaidon =='1'%>disabled<%/if%> style="width:200px" name="don_no" id="states" >
@@ -96,7 +97,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="10" style="font-weight: bold">Nội dung(lập mới - chỉnh sửa bản vẽ)</td>
+                    <td colspan="10" style="font-weight: bold"><%$lang['YEU008']%></td><!--Nội dung(lập mới - chỉnh sửa bản vẽ)-->
                 </tr>
                 
                 <tr>
@@ -122,7 +123,7 @@
                         <col width="30px" />   				
 		    	    </colgroup>
 		            <tr >
-		                <td colspan="4" style="text-align: center; font-weight: bold">Đính kèm bản vẽ</td> 
+		                <td colspan="4" style="text-align: center; font-weight: bold"><%$lang['YEU009']%></td> <!--Đính kèm bản vẽ-->
 		            </tr>
                     <%foreach $filelist as $file%>
                     <tr>
@@ -157,16 +158,16 @@
                     <%/foreach%>                                     
 		        </table>
                 </div>
-		        <input type="button" class="button_blue" <%if ($mode!= "new" && $mode!= "upload")||$flg_muon=='1'||$flg_capnhat=='1'%>disabled<%/if%> id="chonfile" value="Chọn file"  style="margin: 6px 10px;" >
+		        <input type="button" class="button_blue" <%if ($mode!= "new" && $mode!= "upload")||$flg_muon=='1'||$flg_capnhat=='1'%>disabled<%/if%> id="chonfile" value="<%$lang['YEU012']%>"  style="margin: 6px 10px;" ><!--Chọn file-->
                 
                 <input style="display: none" name="file_upload[]" type="file" multiple="multiple" accept=".DWG,.doc,.docx,.xls,.xlsx,.rar"  id="file_upload" />           
                 <input type="hidden" name="folder_tmp"  id="folder_tmp" value="<%$data_row.folder_tmp%>" />
             </div>          
-			<input type="button" class="button_blue" style="margin-left:15px;" value="Save" id="btn_save" <%if $mode!= "new" && $mode!= "upload" && $mode!= "kiemtra" && $mode!= "duyet" && $mode!= "ttql"%>disabled<%/if%> >
-			<input type="button" class="button_blue" style="margin-left:15px;" value="Gửi mail yêu cầu kiểm tra" id="btn_update" <%if $mode!= "upload" || $flg_capnhat=='1'%>disabled<%/if%> >	
-            <input type="button" class="button_blue" style="margin-left:15px;" value="Gửi mail mượn bản vẽ" id="btn_xin_cn" <%if $mode != "xin_cn" && $mode !="duyet_cn" %>disabled<%/if%>  >
+			<input type="button" class="button_blue" style="margin-left:15px;" value="<%$lang['YEU011']%>" id="btn_save" <%if $mode!= "new" && $mode!= "upload" && $mode!= "kiemtra" && $mode!= "duyet" && $mode!= "ttql"%>disabled<%/if%> >
+			<input type="button" class="button_blue" style="margin-left:15px;" value="<%$lang['YEU012']%>" id="btn_update" <%if $mode!= "upload" || $flg_capnhat=='1'%>disabled<%/if%> >	<!--Gửi mail yêu cầu kiểm tra-->
+            <input type="button" class="button_blue" style="margin-left:15px;" value="<%$lang['YEU013']%>" id="btn_xin_cn" <%if $mode != "xin_cn" && $mode !="duyet_cn" %>disabled<%/if%>  ><!--Gửi mail mượn bản vẽ-->
             <!--<input type="button" class="button_blue" style="margin-left:15px;" value="Tạo đơn cập nhật" id="btn_tao_cn" <%if $mode != "duyet_cn" %>disabled<%/if%> onclick="location.href='<%$smarty.const.ACW_BASE_URL%>don/edit/cn/<%$data_row.don_id%>';" >-->
-            <input type="button" class="button_blue" style="margin-left:15px;" value="Xóa đơn" id="btn_xoa_don" <%if $mode != "upload" %>disabled<%/if%>  >	
+            <input type="button" class="button_blue" style="margin-left:15px;" value="<%$lang['YEU014']%>" id="btn_xoa_don" <%if $mode != "upload" %>disabled<%/if%>  >	<!--Xóa đơn-->
 			<!--<div id="selectedFiles"></div>-->
 			<!--<div id="show_img"></div>-->
             <table class="table_kiemtra" style="border: none">
@@ -183,7 +184,7 @@
     				<!--<col width="" />-->
 			    </colgroup>
                 <tr >
-                    <td  style="height:35px">Người kiểm tra</td>
+                    <td  style="height:35px"><%$lang['YEU015']%></td><!--Người kiểm tra-->
                     <td  style="">
                         <select class="width2" name="usr_kiemtra"  id="usr_kiemtra" <%if $mode!= "new" || $loaidon =='1'%>disabled<%/if%>>
                             <!--<option></option>-->
@@ -193,13 +194,13 @@
                         </select>
                     </td>
                     <td  style="">
-                        <input type="button" class="button_green" value="Kiểm tra" id="btn_kiemtra" <%if $mode !="kiemtra"%>disabled<%/if%> />
+                        <input type="button" class="button_green" value="<%$lang['YEU019']%>" id="btn_kiemtra" <%if $mode !="kiemtra"%>disabled<%/if%> /><!--Kiểm tra-->
                     </td>
                     <!--<td  style=""><input type="button" value="Duyệt" id="btn_duyet"></td>-->
-                    <td  style="text-align:right">Ngày tháng</td>
+                    <td  style="text-align:right"><%$lang['YEU016']%></td><!--Ngày tháng-->
                     <td  style=""><input type="text" size="20" readonly="true" value="<%if $data_row.trangthai != $tra_kt %><%$data_row.ngay_kt%><%/if%>"></td>
-                    <td ><input type="button" class="button_red btn_traduyet" value="Trả yêu cầu chỉnh sửa" id="btn_tra_<%$tra_kt%>" <%if $mode !="kiemtra"%>disabled<%/if%> style="margin-right:10px"/><!--</td>-->
-                    <!--<td  style="text-align:right ">-->Ngày tháng<!--</td>-->
+                    <td ><input type="button" class="button_red btn_traduyet" value="<%$lang['YEU022']%>" id="btn_tra_<%$tra_kt%>" <%if $mode !="kiemtra"%>disabled<%/if%> style="margin-right:10px"/><!--</td>-->
+                    <!--<td  style="text-align:right ">--><%$lang['YEU016']%><!--Ngày tháng--><!--</td>-->
                     <!--<td  style="">--><input type="text" style="margin-left:5px" size="20" readonly="true" value="<%if $data_row.trangthai == $tra_kt %><%$data_row.ngay_kt%><%/if%>">
                         
                     </td>
@@ -217,7 +218,7 @@
                     </td>
                 </tr>
                 <tr >
-                    <td  style="height:35px">Người Duyệt</td>
+                    <td  style="height:35px"><%$lang['YEU017']%></td><!--Người Duyệt-->
                     <td  style="">
                         <select class="width2" name="usr_duyet"  id="usr_duyet" <%if $mode!= "new" || $loaidon =='1'%>disabled<%/if%>>
                             <!--<option></option>-->
@@ -229,10 +230,11 @@
                     <!--<td  style="">
                         <input type="button" value="Kiểm tra" id="btn_kiemtra">
                     </td>-->
-                    <td  style=""><input type="button" class="button_green" value="Duyệt" style="width:68px" id="btn_duyet" <%if $mode !="duyet"%>disabled<%/if%> /></td>
-                    <td  style="text-align:right">Ngày tháng</td>
+                    <td  style=""><input type="button" class="button_green" value="<%$lang['YEU020']%>" style="width:68px" id="btn_duyet" <%if $mode !="duyet"%>disabled<%/if%> /></td><!--Duyệt-->
+                    <td  style="text-align:right"><%$lang['YEU016']%></td><!--Ngày tháng-->
                     <td  style=""><input type="text" size="20" readonly="true" value="<%if $data_row.trangthai != $tra_duyet %><%$data_row.ngay_duyet%><%/if%>"></td>
-                    <td  ><input type="button" class="button_red btn_traduyet" value="Trả yêu cầu chỉnh sửa" id="btn_tra_<%$tra_duyet%>" <%if $mode !="duyet"%>disabled<%/if%> style="margin-right:10px" /><!--</td>--> Ngày tháng
+                    <td  ><input type="button" class="button_red btn_traduyet" value="<%$lang['YEU022']%>" id="btn_tra_<%$tra_duyet%>" <%if $mode !="duyet"%>disabled<%/if%> style="margin-right:10px" /><!--Trả yêu cầu chỉnh sửa-->
+                    <!--</td>--><%$lang['YEU016']%><!-- Ngày tháng-->
                     <!--<td  style="text-align:right ">Ngày tháng</td>-->
                     <!--<td  style="">--><input style="margin-left:5px" type="text" size="20" readonly="true" value="<%if $data_row.trangthai == $tra_duyet %><%$data_row.ngay_kt%><%/if%>">
                         
@@ -251,7 +253,7 @@
                     </td>
                 </tr>
                 <tr >
-                    <td  style="">TTQL bản vẽ xét duyệt</td>
+                    <td  style=""><%$lang['YEU018']%></td><!--TTQL bản vẽ xét duyệt-->
                     <td  style="">
                         <select class="width2" name="usr_ttql"  id="usr_ttql" <%if $mode!= "new" || $loaidon =='1'%>disabled<%/if%> >
                             <option></option>
@@ -263,11 +265,11 @@
                     <!--<td  style="">
                         <input type="button" value="Kiểm tra" id="btn_kiemtra">
                     </td>-->
-                    <td  style=""><input type="button" class="button_green" value="Duyệt" style="width:68px" id="btn_ttql_duyet" <%if $mode !="ttql"%>disabled<%/if%> ></td>
-                    <td  style="text-align:right">Ngày tháng</td>
+                    <td  style=""><input type="button" class="button_green" value="<%$lang['YEU020']%>" style="width:68px" id="btn_ttql_duyet" <%if $mode !="ttql"%>disabled<%/if%> ></td><!--Duyệt-->
+                    <td  style="text-align:right"><%$lang['YEU016']%></td><!--Ngày tháng-->
                     <td  style=""><input type="text" size="20" readonly="true" value="<%if $data_row.trangthai != tra_ttql %><%$data_row.ngay_ttql%><%/if%>"></td>
-                    <td  ><input type="button" class="button_red btn_traduyet" value="Trả yêu cầu chỉnh sửa" id="btn_tra_<%$tra_ttql%>" <%if $mode !="ttql"%>disabled<%/if%> style="margin-right:10px" /><!--</td>-->
-                    <!--<td  style="text-align:right ">-->Ngày tháng<!--</td>-->
+                    <td  ><input type="button" class="button_red btn_traduyet" value="<%$lang['YEU022']%>" id="btn_tra_<%$tra_ttql%>" <%if $mode !="ttql"%>disabled<%/if%> style="margin-right:10px" /><!--</td>-->
+                    <!--<td  style="text-align:right ">--><%$lang['YEU016']%><!--Ngày tháng--><!--</td>-->
                     <!--<td  style="">--><input type="text" size="20" readonly="true" style="margin-left:5px" value="<%if $data_row.trangthai == $tra_ttql %><%$data_row.ngay_ttql%><%/if%>">
                         
                     </td>
@@ -289,11 +291,11 @@
                     <td></td>
                     <!--<td>
                     </td>-->
-                    <td  colspan="2"><input type="button" class="button_green" value="Duyệt mượn" style="float: right" id="btn_duyet_cn" <%if $mode != "cho_duyet_cn" %>disabled<%/if%> ></td>
-                    <td  style="text-align:right">Ngày tháng</td>
+                    <td  colspan="2"><input type="button" class="button_green" value="<%$lang['YEU021']%>" style="float: right" id="btn_duyet_cn" <%if $mode != "cho_duyet_cn" %>disabled<%/if%> ></td><!--Duyệt mượn-->
+                    <td  style="text-align:right"><%$lang['YEU016']%></td><!--Ngày tháng-->
                     <td  ><input type="text" size="20" readonly="true" value="<%if $data_row.trangthai != $tra_cn %><%$data_row.ngay_duyet_cn%><%/if%>"></td>
-                    <td><input type="button" class="button_red btn_traduyet" value="Trả yêu cầu mượn" id="btn_tra_<%$tra_cn%>"  style="margin-right:10px" <%if $mode != "cho_duyet_cn" %>disabled<%/if%>/>
-                    Ngày tháng
+                    <td><input type="button" class="button_red btn_traduyet" value="<%$lang['YEU040']%>" id="btn_tra_<%$tra_cn%>"  style="margin-right:10px" <%if $mode != "cho_duyet_cn" %>disabled<%/if%>/><!--Trả yêu cầu mượn-->
+                    <%$lang['YEU016']%><!--Ngày tháng-->
                     <input type="text" size="20" readonly="true" style="margin-left:5px" value="<%if $data_row.trangthai ==$tra_cn %><%$data_row.ngay_duyet_cn%><%/if%>">
                         
                     </td>
@@ -327,7 +329,7 @@
 	<h3 style="font-size: 18px;margin-bottom: 20px">Bạn muốn xin mượn bản vẽ hay bổ xung file ?</h3>
     
     <div>
-    <button class="button_blue" id="muon_ban_ve" style="margin-right: 10px;">Mượn bản vẽ</button>
+    <button class="button_blue" id="muon_ban_ve" style="margin-right: 10px;"><%$lang['YEU027']%></button><!--Mượn bản vẽ-->
     <button class="button_green" id="bo_xung_file">Bổ xung file</button>
     </div>
 </div>
@@ -354,7 +356,7 @@
                 <thead>
                 <tr>
                     <td class="header_table"><input type="checkbox" id="check_all"></td>
-                    <td style="font-weight: bold" class="header_table">Tên file</td>
+                    <td style="font-weight: bold" class="header_table"><%$lang['YEU029']%></td><!--Tên file-->
                 </tr>
                 </thead>
                 <%foreach $filelist as $file%>
@@ -369,8 +371,8 @@
 				</div>
                 <table style="width: 100%;" class="table_don">
                     <tr>
-                        <td style="font-weight: bold;width: 100px" class="header_table">Ngày hẹn trả</td>
-                        <td style="font-weight: bold" class="header_table">Lý do mượn</td>
+                        <td style="font-weight: bold;width: 100px" class="header_table"><%$lang['YEU026']%></td><!--Ngày hẹn trả-->
+                        <td style="font-weight: bold" class="header_table"><%$lang['YEU028']%></td><!--Lý do mượn-->
                     </tr>
                     <tr>
                         <td ><input id="ngay_hen_tra" type="text" style="width: 90px" class="datetimepicker"></td>
@@ -437,7 +439,7 @@
                     <thead>
                     <tr>
                         <td class="header_table"><input type="checkbox" id="check_tra_all"></td>
-                        <td style="font-weight: bold" class="header_table">Tên file</td>
+                        <td style="font-weight: bold" class="header_table"><%$lang['YEU029']%></td><!--Tên file-->
                     </tr>
                     </thead>
                     <%foreach $filelist as $file%>
@@ -450,7 +452,7 @@
     				</div>
                     <table style="width: 100%;" class="table_don">
                         <tr>
-                            <td style="font-weight: bold" class="header_table">Lý do trả yêu cầu</td>
+                            <td style="font-weight: bold" class="header_table"><%$lang['YEU030']%></td><!--Lý do trả yêu cầu-->
                         </tr>
                         <tr>
                             <td >
@@ -472,7 +474,7 @@ $(function() {
     $("#states").select2();   
     var quyen_tao_moi ='<%$quyen_tao_moi%>';
     if(quyen_tao_moi=='0'){
-        Argo_ajax.message_box('','Bạn không có quyền tạo yêu cầu mới !',function(){
+        Argo_ajax.message_box('','<%$lang["YEU031"]%>',function(){/*Bạn không có quyền tạo yêu cầu mới !*/
             location.href = '<%$smarty.const.ACW_BASE_URL%>' ;
         });
     }
@@ -647,7 +649,7 @@ $(function() {
                 //console.log('1---');
                 console.log(data_file.length);
                 if(data_file.length == 0){
-                    Argo_ajax.message_box(' ', 'Bạn chưa upload đủ file trả !');
+                    Argo_ajax.message_box(' ', '<%$lang["YEU032"]%>');/*Bạn chưa upload đủ file trả !*/
                     err = true;
                     return;
                 }
@@ -850,7 +852,7 @@ $(function() {
 		autoOpen: false,
 		width: 600,
 		modal: true,
-		title: 'Mượn bản vẽ'
+		title: '<%$lang["YEU027"]%>'/*Mượn bản vẽ*/
 	});
     $("#bo_xung_file_dialog").dialog({
 		autoOpen: false,
@@ -862,7 +864,7 @@ $(function() {
 		autoOpen: false,
 		width: 600,
 		modal: true,
-		title: 'Trả yêu cầu chỉnh sửa'
+		title: '<%$lang["YEU022"]%>'/*Trả yêu cầu chỉnh sửa*/
 	});
     $(document).off("click", "#btn_xin_cn");
 	$(document).on("click", "#btn_xin_cn", function () {
@@ -1032,32 +1034,32 @@ $(function() {
 	
 	function check_before_update(){		
 		if($('#tieude').val()==""){
-			Argo_ajax.message_box(' ', 'Bạn chưa nhập tiêu đề !');
+			Argo_ajax.message_box(' ', '<%$lang["YEU033"]%>');/*Bạn chưa nhập tiêu đề !*/
 			return false;
 		}
         if($('#don_no').val()==""){
-			Argo_ajax.message_box(' ', 'Bạn chưa nhập mã bản vẽ tổng !');
+			Argo_ajax.message_box(' ', '<%$lang["YEU034"]%>');/*Bạn chưa nhập mã bản vẽ tổng !*/
             $('#don_no').focus();
 			return false;
 		}
         if($('#loai_ban_ve').val()==""){
-			Argo_ajax.message_box(' ', 'Bạn chưa chọn loại bản vẽ !');
+			Argo_ajax.message_box(' ', '<%$lang["YEU035"]%>');/*Bạn chưa chọn loại bản vẽ !*/
 			return false;
 		}
 		if($('#noidung').val()==""){
-			Argo_ajax.message_box(' ', 'Bạn chưa nhập nội dung !');
+			Argo_ajax.message_box(' ', '<%$lang["YEU036"]%>');/*Bạn chưa nhập nội dung !*/
 			return false;
 		}
 		if($('#usr_kiemtra').val()==""){
-			Argo_ajax.message_box(' ', 'Bạn chưa chọn người kiểm tra !');
+			Argo_ajax.message_box(' ', '<%$lang["YEU037"]%>'); /*Bạn chưa chọn người kiểm tra !*/
 			return false;
 		}
 		if($('#usr_duyet').val()==""){
-			Argo_ajax.message_box(' ', 'Bạn chưa chọn người duyệt !');
+			Argo_ajax.message_box(' ', '<%$lang["YEU038"]%>');/*Bạn chưa chọn người duyệt !*/
 			return false;
 		}
 		if($('#usr_ttql').val()==""){
-			Argo_ajax.message_box(' ', 'Bạn chưa chọn trung tâm quản lý đuyệt !');
+			Argo_ajax.message_box(' ', '<%$lang["YEU039"]%>');/*Bạn chưa chọn trung tâm quản lý đuyệt !*/
 			return false;
 		}
 		return true;

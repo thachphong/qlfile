@@ -1,7 +1,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/base.dwt" codeOutsideHTMLIsLocked="false" --><head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>In file</title>
+<%assign var='lang' value=Message_model::get_message('LSMTRA')%>
+<title><%$lang['LSMT015']%></title>
 		<%include 'include/head.html'%>
 		<link href="<%$smarty.const.ACW_BASE_URL%>shared/css/baitai.css" rel="stylesheet" type="text/css" />
         
@@ -21,21 +22,21 @@
 				<col width="" />
 			</colgroup>
 			<tr>
-				<th>Điều kiện tìm</th>
-				<td class="first">Tên file  <input type="text" maxlength="50" size="30" name="search_file_name" id="search_file_name" value="<%$search_file_name%>" /></td>
-                <td>Trạng thái trả
+				<th><%$lang['LSMT001']%></th><!--Điều kiện tìm-->
+				<td class="first"><%$lang['LSMT002']%>  <input type="text" maxlength="50" size="30" name="search_file_name" id="search_file_name" value="<%$search_file_name%>" /></td><!--Tên file-->
+                <td><%$lang['LSMT003']%><!--Trạng thái trả-->
                   <select name="s_trangthai_tra" id="loai_ban_ve" >
                             <option></option>
-                    		<option value="0" <%if $s_trangthai_tra =='0' %>selected<%/if%> >Chưa trả file mượn</option>
-                    		<option value="1" <%if $s_trangthai_tra =='1' %>selected<%/if%> >Đã trả file mượn</option>
+                    		<option value="0" <%if $s_trangthai_tra =='0' %>selected<%/if%> ><%$lang['LSMT004']%><!--Chưa trả file mượn--></option>
+                    		<option value="1" <%if $s_trangthai_tra =='1' %>selected<%/if%> ><%$lang['LSMT005']%><!--Đã trả file mượn--></option>
                    </select>
                 </td>
-                                <td class="al_l"><button class="button_blue" type="button" id="btn_search">Tìm</button> <button type="button" id="btn_clear" class="button_blue">Xóa</button></td></tr>
+                                <td class="al_l"><button class="button_blue" type="button" id="btn_search"><%$lang['LSMT006']%><!--Tìm--></button> <button type="button" id="btn_clear" class="button_blue"><%$lang['LSMT007']%><!--Xóa--></button></td></tr>
 		</table>
 		</form>
 	</div>
 	<ul class="topic_path">
-		<li><h2>Danh sách file đã duyệt</h2></li>
+		<li><h2><%$lang['LSMT008']%><!--Danh sách file đã duyệt--></h2></li>
 	</ul>
 <!-- InstanceEndEditable -->
 <!-- InstanceBeginEditable name="side_contents" -->
@@ -48,13 +49,13 @@
 		<table id="data_list">
 			<thead>
 			<tr>
-				<th style="">Tên file</th>
-                <th style="width: 100px;text-align: center;">Người tạo</th>
-                <th style="width: 120px;text-align: center;">Ngày hẹn trả</th>
-                <th style="width: 200px;text-align: center;">lý do mượn</th>
-                <th style="width: 200px;text-align: center;">Tiêu đề</th>                
-                <th style="width: 100px;text-align: center;">Mã bản vẽ</th>
-                <th style="width: 100px;text-align: center;">Trạng thái</th>
+				<th style=""><%$lang['LSMT002']%><!--Tên file--></th>
+                <th style="width: 100px;text-align: center;"><%$lang['LSMT009']%><!--Người tạo--></th>
+                <th style="width: 120px;text-align: center;"><%$lang['LSMT010']%><!--Ngày hẹn trả--></th>
+                <th style="width: 200px;text-align: center;"><%$lang['LSMT011']%><!--lý do mượn--></th>
+                <th style="width: 200px;text-align: center;"><%$lang['LSMT012']%><!--Tiêu đề--></th>                
+                <th style="width: 100px;text-align: center;"><%$lang['LSMT013']%><!--Mã bản vẽ--></th>
+                <th style="width: 100px;text-align: center;"><%$lang['LSMT014']%><!--Trạng thái--></th>
 			</tr>
 			</thead>
 			<tbody>
@@ -149,7 +150,7 @@ $(function() {
                 var url = '<%$smarty.const.ACW_BASE_URL%>file/view/'+ info[0]+'/'+info[1]+'/'+info[2];
                 window.open(url, '_blank');
             }else{
-                Argo_ajax.message_box('','File này đang cập nhật !')
+                Argo_ajax.message_box('','<%$lang["LSMT016"]%>');/*File này đang cập nhật !*/
             }
     	};
     	json_ajax.connect("POST", "file/checkview", {

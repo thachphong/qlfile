@@ -1,3 +1,4 @@
+<%assign var='lang' value=Message_model::get_message('MAY')%>
 <script type="text/javascript">
 $(document).ready(function () {
     
@@ -78,13 +79,13 @@ $(document).ready(function () {
 <div class="main_contents">
 	<div class="series_wrap">
 		<div class="title_wrap clear_fix">
-			<h2><%if $data_row.may_id == null%>Thêm mới Máy<%else%>Sửa Máy<%/if%></h2>
+			<h2><%if $data_row.may_id == null%><%$lang['MAY009']%><!--Thêm mới Máy--><%else%><%$lang['MAY015']%><!--Sửa Máy--><%/if%></h2>
 		</div>
 		<div class="info_wrap">
 			<div class="hl_wrap">
 				<ul class="btn_wrap">
-					<li><input type="button" value="Thoát" class="img_opacity btn_close" /></li>
-					<li><input type="button" value="Cập nhật" class="img_opacity btn_save" /></li>
+					<li><input type="button" value="<%$lang['MAY014']%>" class="img_opacity btn_close" /></li><!--Thoát-->
+					<li><input type="button" value="<%$lang['MAY013']%>" class="img_opacity btn_save" /></li><!--Cập nhật-->
 				</ul>
 			</div>
 			<form id="edit_form">
@@ -92,7 +93,7 @@ $(document).ready(function () {
 				<table style="width: 100%;">
 					<tr>
 						<th>
-							Mã máy <span class="edit_require">*</span>
+							<%$lang['MAY003']%><!--Mã máy--> <span class="edit_require">*</span>
 						</th>
 						<td>
 							<input type="hidden" name="may_id" value="<%$data_row.may_id%>"  style="width:250px;" />
@@ -105,7 +106,7 @@ $(document).ready(function () {
 					</tr>
 					<tr>
 						<th>
-							Tên Máy
+							<%$lang['MAY004']%><!--Tên Máy-->
 						</th>
 						<td>
 							<input type="text" name="may_name" value="<%$data_row.may_name%>" maxlength="100" />
@@ -113,12 +114,12 @@ $(document).ready(function () {
 					</tr>
 					<tr>
 						<th>
-							Trạng thái
+							<%$lang['MAY008']%><!--Trạng thái-->
 						</th>
 						<td>
 							<select name="del_flg">							
-								<option value="0" <%if $data_row.del_flg == 0 %>selected="selected"<%/if%>>Sử dụng</option>
-							    <option value="1" <%if $data_row.del_flg == 1 %>selected="selected"<%/if%>>Ngưng sử dụng</option>
+								<option value="0" <%if $data_row.del_flg == 0 %>selected="selected"<%/if%>><%$lang['MAY010']%><!--Sử dụng--></option>
+							    <option value="1" <%if $data_row.del_flg == 1 %>selected="selected"<%/if%>><%$lang['MAY007']%><!--Ngưng sử dụng--></option>
 							</select>
 						</td>
 					</tr>

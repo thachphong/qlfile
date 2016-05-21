@@ -1,7 +1,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/base.dwt" codeOutsideHTMLIsLocked="false" --><head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>In file</title>
+<%assign var='lang' value=Message_model::get_message('OLDFILE')%>
+<title><%$lang['OLDF008']%></title>
 		<%include 'include/head.html'%>
 		<link href="<%$smarty.const.ACW_BASE_URL%>shared/css/baitai.css" rel="stylesheet" type="text/css" />
         
@@ -21,14 +22,14 @@
 				<col width="" />
 			</colgroup>
 			<tr>
-				<th>Điều kiện tìm</th>
-				<td class="first">Tên file  <input type="text" maxlength="50" size="30" name="search_file_name" id="search_file_name" value="<%$search_file_name%>" /></td>
-                                <td class="al_l"><button type="button" id="btn_search">Tìm</button> <button type="button" id="btn_clear">Xóa</button></td></tr>
+				<th><%$lang['OLDF001']%><!--Điều kiện tìm--></th>
+				<td class="first"><%$lang['OLDF002']%><!--Tên file-->  <input type="text" maxlength="50" size="30" name="search_file_name" id="search_file_name" value="<%$search_file_name%>" /></td>
+                                <td class="al_l"><button type="button" id="btn_search"><%$lang['OLDF003']%><!--Tìm--></button> <button type="button" id="btn_clear"><%$lang['OLDF004']%><!--Xóa--></button></td></tr>
 		</table>
 		</form>
 	</div>
 	<ul class="topic_path">
-		<li><h2>Danh sách file đã duyệt</h2></li>
+		<li><h2><%$lang['OLDF009']%> </h2></li>
 	</ul>
 <!-- InstanceEndEditable -->
 <!-- InstanceBeginEditable name="side_contents" -->
@@ -41,10 +42,10 @@
 		<table id="data_list">
 			<thead>
 			<tr>
-				<th style="width: 100px;">Tên file</th>
-                <th style="width: 100px;text-align: center;">Ngày cập nhật</th>
-                <th style="width: 100px;text-align: center;">tiêu đề</th>
-                <th style="width: 100px;text-align: center;">Loại bản vẽ</th>
+				<th style="width: 100px;"><%$lang['OLDF002']%><!--Tên file--></th>
+                <th style="width: 100px;text-align: center;"><%$lang['OLDF005']%><!--Ngày cập nhật--></th>
+                <th style="width: 100px;text-align: center;"><%$lang['OLDF006']%><!--tiêu đề--></th>
+                <th style="width: 100px;text-align: center;"><%$lang['OLDF007']%><!--Loại bản vẽ--></th>
 			</tr>
 			</thead>
 			<tbody>
