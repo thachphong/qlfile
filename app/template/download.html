@@ -1,7 +1,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/base.dwt" codeOutsideHTMLIsLocked="false" --><head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Quản lý Đơn vị</title>
+	<%assign var='lang' value=Message_model::get_message('LSDWN')%>
+<title><%$lang['LSDW001']%></title>
 		<%include 'include/head.html'%>
 		<link href="<%$smarty.const.ACW_BASE_URL%>shared/css/baitai.css" rel="stylesheet" type="text/css" />
         <link href="<%$smarty.const.ACW_BASE_URL%>shared/css/jquery.datetimepicker.css" rel="stylesheet" type="text/css" />
@@ -21,11 +22,11 @@
 				<col width="200px" /> 
 			</colgroup>
 			<tr>
-				<th>Điều kiện</th>
+				<th><%$lang['LSDW002']%><!--Điều kiện--></th>
                 <td class="first" style="padding: 0px 40px;">
                     <table class="table_search">
                     <tr>
-                        <td >Đơn vị
+                        <td ><%$lang['LSDW003']%><!--Đơn vị-->
                         <select name="s_donvi">
                             <option ></option>
                             <%foreach $donvi_list as $dv%> 
@@ -34,7 +35,7 @@
                         </select>
                         </td>
                         <td >
-                User
+                <%$lang['LSDW004']%><!--User-->
                     <select name="s_user_id">
                         <option ></option>
                         <%foreach $user_list as $usr%> 
@@ -42,19 +43,19 @@
                         <%/foreach%>                         
                     </select>
                 </td>
-                <td >Từ thời điểm <input type="text"  name="tu_ngay" class="datetimepicker" value="<%$search_data.tu_ngay%>" />
+                <td ><%$lang['LSDW007']%><!--Từ thời điểm --><input type="text"  name="tu_ngay" class="datetimepicker" value="<%$search_data.tu_ngay%>" />
                 </td>
-                <td>đến<input type="text"  name="den_ngay" class="datetimepicker" value="<%$search_data.den_ngay%>" /></td>
+                <td><%$lang['LSDW008']%><!--đến--><input type="text"  name="den_ngay" class="datetimepicker" value="<%$search_data.den_ngay%>" /></td>
                                
-                <td class="al_l"><button type="button" id="btn_search">Tìm</button> <button type="button" id="btn_clear">Xóa</button></td>
+                <td class="al_l"><button type="button" id="btn_search"><%$lang['LSDW009']%><!--Tìm--></button> <button type="button" id="btn_clear"><%$lang['LSDW010']%><!--Xóa--></button></td>
                     </tr>
                     <tr>
                         <td colspan="2">
-                            <label><input type="radio" value="0" name="loai" <%if $search_data.loai !="1"%>checked<%/if%> >Theo ngày</label>
-                            <label><input type="radio" value="1" name="loai" <%if $search_data.loai =="1"%>checked<%/if%>>Theo số lượng tổng</label>
+                            <label><input type="radio" value="0" name="loai" <%if $search_data.loai !="1"%>checked<%/if%> ><%$lang['LSDW011']%><!--Theo ngày--></label>
+                            <label><input type="radio" value="1" name="loai" <%if $search_data.loai =="1"%>checked<%/if%>><%$lang['LSDW012']%><!--Theo số lượng tổng--></label>
                         </td>
                         <td colspan="2">
-                            Tên file
+                            <%$lang['LSDW013']%><!--Tên file-->
                             <input value="<%$search_data.file_name%>" name="file_name" size="25"/>
                         </td>
                     </tr>
@@ -79,14 +80,14 @@
 		<table id="data_list">
 			<thead>
 			<tr>
-				<th style="width: 30px;">No.</th>
-                <th style="width: 100px;">Đơn vị</th>
-                <th style="width: 100px;">Phòng ban</th>
-                <th style="width: 100px;">Tổ nhóm</th>
-                <th style="width: 100px;">Tên user</th>
-                <th style="width: 120px; text-align: center;">Tên file</th>
-                <th style="width: 80px;">Ngày giờ</th>
-                <th style="width: 50px;">Số lần download</th>
+				<th style="width: 30px;"><%$lang['LSDW014']%><!--No.--></th>
+                <th style="width: 100px;"><%$lang['LSDW003']%><!--Đơn vị--></th>
+                <th style="width: 100px;"><%$lang['LSDW005']%><!--Phòng ban--></th>
+                <th style="width: 100px;"><%$lang['LSDW006']%><!--Tổ nhóm--></th>
+                <th style="width: 100px;"><%$lang['LSDW004']%><!--Tên user--></th>
+                <th style="width: 120px; text-align: center;"><%$lang['LSDW013']%><!--Tên file--></th>
+                <th style="width: 80px;"><%$lang['LSDW015']%><!--Ngày giờ--></th>
+                <th style="width: 50px;"><%$lang['LSDW016']%><!--Số lần download--></th>
 			</tr>
 			</thead>
 			<tbody>

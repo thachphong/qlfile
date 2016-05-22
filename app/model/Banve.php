@@ -496,6 +496,7 @@ class Banve_model extends ACWModel
 				,chd.parent_id AS parent_id
 				,true AS is_folder
 				,1 AS upd_sec
+				,chd.level
 			FROM		banve chd
 			WHERE	 banve_id = 1
             union 
@@ -505,6 +506,7 @@ class Banve_model extends ACWModel
 				,chd.parent_id AS parent_id
 				,true AS is_folder
 				,1 AS upd_sec
+				,chd.level
 			FROM		banve chd
 			WHERE	 chd.del_flg = 0
 			and chd.banve_id > 1
@@ -514,7 +516,7 @@ class Banve_model extends ACWModel
         $where ="";
         if(isset($param['s_banve_no']) && strlen(trim($param['s_banve_no']))>0){
             //$where .="and banve_no = :s_banve_no";
-            $param_sql['banve_no']=$param['s_banve_no'].'%';
+            $param_sql['banve_no']='%'.$param['s_banve_no'].'%';
             $flg_check = TRUE;
         }else{
             $param_sql['banve_no']= "%";

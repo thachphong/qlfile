@@ -2,7 +2,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/base.dwt" codeOutsideHTMLIsLocked="false" -->
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<title>Quản lý thư mục</title>
+	<%assign var='lang' value=Message_model::get_message('FOLDER')%>
+	<title><%$lang['FOLD001']%></title><!--Quản lý thư mục-->
 	<%include 'include/head.html'%>
 	<link href="<%$smarty.const.ACW_BASE_URL%>shared/css/category.css" rel="stylesheet" type="text/css" />
 	<script type="text/javascript" src="<%$smarty.const.ACW_BASE_URL%>js/jquery.upload-1.0.2.js"></script>
@@ -20,7 +21,7 @@
 				<div class="side_contents">
 					<ul class="btn_wrap">
 						<!--<li><input type="button" id="btn_sort" value="" /></li>-->
-						<li><input type="button" id="btn_new" value="Thêm mới" /></li>                                                
+						<li><input type="button" id="btn_new" value="<%$lang['FOLD002']%>" /></li>   <!--Thêm mới-->                                             
                                                 <li>
                                                 <input type='button' value='<%$smarty.const.UNFOLD_TEXT%>' class='tree_fold' />
                                                 </li>                                                
@@ -58,7 +59,7 @@ $(function() {
 	html_ajax.done_func = function(data) {
 		if (data === '') {
 			// エラー
-			Argo_ajax.message_box_error("", 'Không có dữ liệu');
+			Argo_ajax.message_box_error("", "<%$lang['FOLD011']%>"); //'Không có dữ liệu'
 			// ツリー再描画
 			tree_ajax.connect('GET', 'category/tree');
 			return;
@@ -75,7 +76,7 @@ $(function() {
 				Argo_ajax.message_box_error('', data.error[0]['info']);
 			}
 		} else {
-            Argo_ajax.message_box(' ', 'Cập nhật thành công !');
+            Argo_ajax.message_box(' ', "<%$lang['FOLD012']%>"); //'Cập nhật thành công !'
 			$('#edit_contents_html').empty();
 			// ツリー更新
 			tree_ajax.connect('GET', 'category/tree');

@@ -1,7 +1,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/base.dwt" codeOutsideHTMLIsLocked="false" --><head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Quản lý Máy</title>
+<%assign var='lang' value=Message_model::get_message('SETTING')%>
+<title><%$lang['SET001']%></title>
 		<%include 'include/head.html'%>
 		<link href="<%$smarty.const.ACW_BASE_URL%>shared/css/baitai.css" rel="stylesheet" type="text/css" />
         
@@ -21,15 +22,27 @@
 				<col width="" />
 			</colgroup>
 			<tr>
-				<th>Điều kiện tìm</th>
-				<td class="first">Tên màn hình  <input type="text" maxlength="30" size="20" name="s_screen" id="s_screen" value="<%$data_search.s_screen%>" /></td>
-                <td>Chuỗi thông báo  <input type="text" maxlength="100" size="30" name="s_des" id="s_des" value="<%$data_search.s_des%>" /></td>
-                                <td class="al_l"><button type="button" id="btn_search">Tìm</button> <button type="button" id="btn_clear">Xóa</button></td></tr>
+				<th><%$lang['SET002']%></th>
+				<td class="first"><%$lang['SET003']%><!--Tên màn hình  -->
+					<!--<input type="text" maxlength="30" size="20" name="s_screen" id="s_screen" value="<%$data_search.s_screen%>" />-->
+					<select name="s_screen" id="s_screen">
+						<option></option>
+						<%foreach $screen as $item%>
+							<option value="<%$item.screen_no%>" <%if $item.screen_no==$data_search.s_screen%>selected<%/if%>><%$item.screen_name%></option>
+						<%/foreach%>
+					</select>
+				</td>
+                <td><%$lang['SET004']%><!--Chuỗi thông báo  --><input type="text" maxlength="100" size="30" name="s_des" id="s_des" value="<%$data_search.s_des%>" /></td>
+                                <td class="al_l"><button type="button" id="btn_search"><%$lang['SET005']%><!--Tìm--></button> <button type="button" id="btn_clear"><%$lang['SET006']%><!--Xóa--></button></td></tr>
 		</table>
 		</form>
 	</div>
 	<ul class="topic_path">
-		<li><h2>Cài đặt ngôn ngữ</h2></li>
+		<li><h2><%$lang['SET001']%></h2></li>
+		<p class="clear_fix" style="text-align: right;padding-right: 40px">
+			<!--<input type="button" value="<%$lang['SET007']%>" id="btn_new" />-->
+			<input type="button" value="<%$lang['SET008']%>" id="btn_save" />
+		</p>
 	</ul>
 <!-- InstanceEndEditable -->
 <!-- InstanceBeginEditable name="side_contents" -->
@@ -38,19 +51,19 @@
 <div class="main_contents">
 <div class="main_innner height2">
 	<div class="baitai_wrap">
-		<p class="clear_fix" style="text-align: right;">
-			<input type="button" value="Thêm mới" id="btn_new" />
-			<input type="button" value="Cập nhật" id="btn_save" />
-		</p>
+		<!--<p class="clear_fix" style="text-align: right;">
+			<input type="button" value="<%$lang['SET007']%>" id="btn_new" />
+			<input type="button" value="<%$lang['SET008']%>" id="btn_save" />
+		</p>-->
 		<form id="form_data">
 		<table id="data_list">
 			<thead>
 			<tr>
-				<th style="width: 100px;">Sửa</th>
-				<th style="width: 100px;">Mã màn hình</th>
-                <th style="width: 100px;">Mã thông báo</th>
-                <th style="width: 100px;">Tiếng việt</th>
-                <th style="width: 100px;">Tiếng Anh</th>                
+				<th style="width: 30px;"><%$lang['SET009']%><!--Sửa--></th>
+				<th style="width: 100px;"><%$lang['SET003']%><!--Mã màn hình--></th>
+                <th style="width: 50px;"><%$lang['SET010']%><!--Mã thông báo--></th>
+                <th style="width: 100px;"><%$lang['SET011']%><!--Tiếng việt--></th>
+                <th style="width: 100px;"><%$lang['SET012']%><!--Tiếng Anh--></th>                
 			</tr>
 			</thead>
 			<tbody>
@@ -60,7 +73,7 @@
 					<input type="hidden" id="id_<%$row.id%>" value="<%$row.id%>" />
 				</td>
 				<td>
-					<span id="screen_dsp_<%$row.id%>"><%$row.screen%> </span>
+					<span id="screen_dsp_<%$row.id%>"><%$row.screen_name%> </span>
 					<input type="text" id="screen_<%$row.id%>" value="<%$row.screen%>" style="display:none">
 				</td>
                 <td>
@@ -68,12 +81,12 @@
 					<input type="text" id="message_no_<%$row.id%>" value="<%$row.msg_no%>" style="display:none">
 				</td>
 				<td>
-					<span id="screen_dsp_<%$row.id%>"><%$row.des_vn%> </span>
-					<input type="text" id="des_vn_<%$row.id%>" value="<%$row.des_vn%>" style="display:none">
+					<span id="des_vn_dsp_<%$row.id%>"><%$row.des_vn%> </span>
+					<input type="text" id="des_vn_<%$row.id%>" size="40" value="<%$row.des_vn%>" style="display:none">
 				</td>
 				<td>
-					<span id="screen_dsp_<%$row.id%>"><%$row.des_en%> </span>
-					<input type="text" id="des_en_<%$row.id%>" value="<%$row.des_vn%>" style="display:none">
+					<span id="des_en_dsp_<%$row.id%>"><%$row.des_en%> </span>
+					<input type="text" id="des_en_<%$row.id%>" size="40" value="<%$row.des_en%>" style="display:none">
 				</td>
 			</tr>
 <%/foreach%>
@@ -145,7 +158,8 @@ $(function() {
 	$(document).on("click", ".edit_row", function () {		
 		var id = $(this).attr('id');
 		id = id.replace('edit_','');
-		if(($this).is(':checked')){
+		console.log(id);
+		if($(this).is(':checked')){
 			$('#id_'+id).attr('name','edit_id[]');
 			/*$('#screen_dsp_'+id).hide();
 			$('#screen_'+id).attr('name','edit_screen[]');
@@ -167,12 +181,12 @@ $(function() {
 			$('#message_no_dsp_'+id).hide();
 			$('#message_no_'+id).attr('name','edit_message_no[]');
 			$('#message_no_'+id).show();*/
-			$('#des_vn_dsp_'+id).hide();
-			$('#des_vn_'+id).attr('name','edit_des_vn[]');
-			$('#des_vn_'+id).show();
-			$('#des_en_dsp_'+id).hide();
-			$('#des_en_'+id).attr('name','edit_des_en[]');
-			$('#des_en_'+id).show();
+			$('#des_vn_dsp_'+id).show();
+			$('#des_vn_'+id).attr('name','');
+			$('#des_vn_'+id).hide();
+			$('#des_en_dsp_'+id).show();
+			$('#des_en_'+id).attr('name','');
+			$('#des_en_'+id).hide();
 		}
 	});
 	table_shimashima('#data_list');
@@ -187,7 +201,8 @@ $(function() {
 		json_ajax.done_func = function(data) {
 			if(data.status == 'OK')
 			{
-				Argo_ajax.message_box('','Cập nhật thành công !');
+				Argo_ajax.message_box('',"<%$lang['SET013']%>", function(){$('#search_form').submit();});//'Cập nhật thành công !'
+				//$('#search_form').submit();
 			}else{
 				Argo_ajax.message_box_error('', data.error);
 			}

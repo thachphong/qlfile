@@ -140,6 +140,11 @@ TreeView.set = function (tree_id, data, after_select, cbx_flg){
 			if (obj.is_folder == false) {
 				a.addClass("treeview_item");
 			}
+			//doi mau theo level			
+			if(obj.level==1){
+				a.css('color','blue');
+				a.css('font-weight','bold');    
+			}
 			//Add start - NBKD-923 - Tin VNIT - 2014/01/30
 			else if(obj.parent_id != -1 && tree_view_id == "tree_view")
 			{
@@ -1129,7 +1134,7 @@ TreeView.push_item = function (obj,parent_id,tree_check) {
 	if (obj.is_folder == false) {
 		a.addClass("treeview_item");
 	}
-	//Add start - NBKD-923 - Tin VNIT - 2014/01/30
+	
 	else if(obj.parent_id != -1 && tree_view_id == "tree_view")
 	{
 		var child_yoyaku = TreeView.check_child_yoyaku(obj.id, false);

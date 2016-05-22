@@ -6,6 +6,7 @@
 }
 </style>
 <script type="text/javascript">
+<%assign var='lang' value=Message_model::get_message('GROUP')%>
 $(document).ready(function () {
     
         
@@ -106,13 +107,13 @@ $(document).ready(function () {
 <div class="main_contents">
 	<div class="series_wrap">
 		<div class="title_wrap clear_fix">
-			<h2><%if $data_row.donvi_id == null%>Thêm mới Tổ(nhóm)<%else%>Sửa Tổ(nhóm)<%/if%></h2>
+			<h2><%if $data_row.donvi_id == null%><%$lang['GRO014']%><!--Thêm mới Tổ(nhóm)--><%else%><%$lang['GRO017']%><!--Sửa Tổ(nhóm)--><%/if%></h2>
 		</div>
 		<div class="info_wrap">
 			<div class="hl_wrap">
 				<ul class="btn_wrap">
-					<li><input type="button" value="Thoát" class="img_opacity btn_close" /></li>
-					<li><input type="button" value="Cập nhật" class="img_opacity btn_save" /></li>
+					<li><input type="button" value="<%$lang['GRO016']%>" class="img_opacity btn_close" /></li><!--Thoát-->
+					<li><input type="button" value="<%$lang['GRO015']%>" class="img_opacity btn_save" /></li><!--Cập nhật-->
 				</ul>
 			</div>
 			<form id="edit_form">
@@ -120,7 +121,7 @@ $(document).ready(function () {
 				<table style="width: 100%;">
 					<tr>
 						<th>
-							Tên Tổ(nhóm) <span class="edit_require">*</span>
+							<%$lang['GRO003']%><!--Tên Tổ(nhóm)--> <span class="edit_require">*</span>
 						</th>
 						<td>
 							<input type="hidden" name="tonhom_id" value="<%$data_row.tonhom_id%>"  style="width:250px;" />
@@ -133,7 +134,7 @@ $(document).ready(function () {
 					</tr>
 					<tr>
 						<th>
-							Đơn vị 
+							<%$lang['GRO007']%><!--Đơn vị -->
 						</th>
 						<td>
 							<select name="donvi_id" id="donvi_id">
@@ -149,7 +150,7 @@ $(document).ready(function () {
 					</tr>
 					<tr>
 						<th>
-							Phòng ban
+							<%$lang['GRO006']%><!--Phòng ban-->
 						</th>
 						<td>
 							<select name="phongban_id" id="phongban_id">
@@ -161,12 +162,12 @@ $(document).ready(function () {
 					</tr>
 					<tr>
 						<th>
-							Trạng thái
+							<%$lang['GRO012']%><!--Trạng thái-->
 						</th>
 						<td>
 							<select name="del_flg">							
-								<option value="0" <%if $data_row.del_flg == 0 %>selected="selected"<%/if%>>Sử dụng</option>
-							    <option value="1" <%if $data_row.del_flg == 1 %>selected="selected"<%/if%>>Ngưng sử dụng</option>
+								<option value="0" <%if $data_row.del_flg == 0 %>selected="selected"<%/if%>><%$lang['GRO009']%><!--Sử dụng--></option>
+							    <option value="1" <%if $data_row.del_flg == 1 %>selected="selected"<%/if%>><%$lang['GRO008']%><!--Ngưng sử dụng--></option>
 							</select>
 						</td>
 					</tr>

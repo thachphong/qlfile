@@ -251,12 +251,14 @@ class File_model extends ACWModel
             for($i=0 ;$i< count($file_list);$i++)
             {
                 $file_name = $folder_tmp.'/'.$file_list[$i];
-                if($file->GetExtensionName($file_name)=='pdf'){
+                /*if($file->GetExtensionName($file_name)=='pdf'){
                     ACWError::add('file_name', 'File: "'.$file_list[$i].'" là file pdf, không thể upload !'); 
                 	$flg_copy = FALSE;
-                }
+                }*/
                 if($file->FileExists($file_name)){
-					ACWError::add('file_name', 'File: "'.$file_list[$i].'" bị trùng, không thể upload !');                                    
+                	$msg_err= sprintf(Message_model::get_msg('SYS005'), $file_list[$i]);
+            		ACWError::add('file_name', $msg_err);
+					//ACWError::add('file_name', 'File: "'.$file_list[$i].'" bị trùng, không thể upload !'); 
                 	$flg_copy = FALSE;	
 				}
             }
@@ -270,7 +272,9 @@ class File_model extends ACWModel
                     //ACWLog::debug_var('----upload-----','$file_tmp: '.$file_tmp);
                     //ACWLog::debug_var('----upload-----','$file_name: '.$file_name);
 	                if($file->MoveFile($file_tmp,$file_name)==FALSE){
-	                	ACWError::add('file_name', 'File: "'.$file_list[$i].'" bị trùng, không thể upload !');                                    
+	                	$msg_err= sprintf(Message_model::get_msg('SYS005'), $file_list[$i]);
+            			ACWError::add('file_name', $msg_err);
+	                	//ACWError::add('file_name', 'File: "'.$file_list[$i].'" bị trùng, không thể upload !');                                    
 	                    $flg_copy = FALSE;
 	                }else{
 						$arr_cop[] = $file_list[$i];
@@ -292,7 +296,7 @@ class File_model extends ACWModel
             $result['status']="OK";
             if (ACWError::count() <= 0) {
                 if(count($file_list) >0)   {                	
-                    $result['msg'] ="Upload thành công !";
+                    $result['msg'] =Message_model::get_msg('SYS006');//"Upload thành công !";
                 }             
     		} else {			
     			$err = ACWError::get_list();
@@ -331,11 +335,15 @@ class File_model extends ACWModel
             
             $file_name = $folder_tmp.'/'.$post['name'];
             if($file->FileExists($file_name)){
-			    ACWError::add('file_name', 'File: "'.$post['name'].'" bị trùng, không thể upload1 !');  
+            	$msg_err= sprintf(Message_model::get_msg('SYS005'), $post['name']);
+            	ACWError::add('file_name', $msg_err);
+			    //ACWError::add('file_name', 'File: "'.$post['name'].'" bị trùng, không thể upload !');  
                 $flg_copy = FALSE;	
 			}
             if(!$db->check_file_name_update($param['change_file_id'],$post['name'])){
-                ACWError::add('file_name', 'File: "'.$post['name'].'" không dúng tên file cập nhật !');  
+            	$msg_err= sprintf(Message_model::get_msg('SYS007'), $post['name']);
+            	ACWError::add('file_name', $msg_err);
+                //ACWError::add('file_name', 'File: "'.$post['name'].'" không dúng tên file cập nhật !');  
                 $flg_copy = FALSE;	
             }
             $result =array();
@@ -346,7 +354,9 @@ class File_model extends ACWModel
                    // ACWLog::debug_var('----upload-----','$file_tmp: '.$file_tmp);
                     //ACWLog::debug_var('----upload-----','$file_name: '.$file_name);
 	                if($file->MoveFile($file_tmp,$file_name)==FALSE){
-	                	ACWError::add('file_name', 'File: "'.$post['name'].'" bị trùng, không thể upload2 !');                                    
+	                	$msg_err= sprintf(Message_model::get_msg('SYS005'), $post['name']);
+            			ACWError::add('file_name', $msg_err);
+	                	//ACWError::add('file_name', 'File: "'.$post['name'].'" bị trùng, không thể upload2 !');                                    
 	                    $flg_copy = FALSE;
 	                }else{
 						$arr_cop[] = $post['name'];
@@ -358,7 +368,7 @@ class File_model extends ACWModel
             $result['file_name'] = $post['name'];
             $result['file_id'] = $param['change_file_id'];
             if (ACWError::count() <= 0) {
-                $result['msg'] ="Upload thành công !";
+                $result['msg'] =Message_model::get_msg('SYS006');//"Upload thành công !";
     		} else {			
     			$err = ACWError::get_list();
     			$result['status']="LOI";
@@ -378,7 +388,7 @@ class File_model extends ACWModel
 		
 		$result['error']="";
 		if($file->DeleteFile($file_path)==FALSE){			
-			$result['error']="Lỗi, không xóa được file";
+			$result['error']=Message_model::get_msg('SYS008');//"Lỗi, không xóa được file";
 		}
 		return ACWView::json($result);
 	}
@@ -420,7 +430,7 @@ class File_model extends ACWModel
 		}        
         if($param['donvi_name'] != ''){
             if(strlen($param['donvi_name']) > 100){
-                ACWError::add('lelng', 'Tên đơn vị không được quá 50 ký tự');
+                ACWError::add('lelng', Message_model::get_msg('SYS009'));//'Tên đơn vị không được quá 50 ký tự'
                 return false;
             }
         }
@@ -616,7 +626,7 @@ class File_model extends ACWModel
 		$sql = "
 			SELECT	t.*,(@rownum := @rownum + 1) AS stt,'' dl_flg
 			FROM	file t     ,(SELECT @rownum := 0) r        
-            where del_flg = :del_flg
+            where del_flg = :del_flg            
             and don_id=:don_id 
 		";
         $param_sql['don_id']= $don_id;
@@ -625,8 +635,9 @@ class File_model extends ACWModel
             if($type_file =='pdf' || $type_file =='dwg'){
                 $sql .=" and file_type = :file_type";
                 $param_sql['file_type']= $type_file;
-            }else{
-                $sql .=" and file_type <> 'pdf'";
+            }else{            	
+            	$sql .=" and convert_flg = 0";
+                //$sql .=" and file_type <> 'pdf'";
             }
         }
         if(strlen($status)>0){
@@ -660,7 +671,9 @@ class File_model extends ACWModel
 			if(!isset($params['flg_muon']) || $params['flg_muon']=='0'){
     			$res = $this->get_file_name_count($params);
     			if ($res['cnt'] > 0) {
-    				ACWError::add('file_name', 'File: "'.$params['file_name'].'" bị trùng, không thể upload !');
+    				$msg_err= sprintf(Message_model::get_msg('SYS005'), $params['file_name']);
+            		ACWError::add('file_name', $msg_err);
+    				//ACWError::add('file_name', 'File: "'.$params['file_name'].'" bị trùng, không thể upload !');
                     $this->rollback();
     				return;
     			}
@@ -680,6 +693,7 @@ class File_model extends ACWModel
                 		
                     , status
                     ,new_flg
+                    ,convert_flg
 					, add_user_id
 					, add_datetime
 					, upd_user_id
@@ -692,9 +706,10 @@ class File_model extends ACWModel
                  
                     , -1
                     , :new_flg
+                    , 0
 					, :upd_user_id 
 					, NOW() 
-					, :upd_user_id 
+					, :upd_user_id 					
 					, NOW() 
 				);
 			";
@@ -721,7 +736,7 @@ class File_model extends ACWModel
             $param_up['file_name'] = $params['file_name'];
 			//$param_up['status'] = $params['status'];
             $param_up['upd_user_id'] = $login_info['user_id'];
-            ACWLog::debug_var('---sql---',$param_up);
+            //ACWLog::debug_var('---sql---',$param_up);
             $this->execute($sql, $param_up);	
 		}			
 		
@@ -814,14 +829,18 @@ class File_model extends ACWModel
                 $params['doncn_id']= $doncn_id;  // don cập nhật id, đơn cũ
                 $res = $this->get_file_name_count($params);
     			if ($res['cnt'] == 0) {
-    				ACWError::add('file_name', 'File: "'.$params['file_name'].'" Không có trong đơn cũ, không thể cập nhật !');
+    				$msg_err= sprintf(Message_model::get_msg('SYS010'), $params['file_name']);
+            		ACWError::add('file_name', $msg_err);
+    				//ACWError::add('file_name', 'File: "'.$params['file_name'].'" Không có trong đơn cũ, không thể cập nhật !');
                     $this->rollback();
     				return FALSE;
     			}
             }else{
                 $res = $this->get_file_name_count($params);
     			if ($res['cnt'] > 0) {
-    				ACWError::add('file_name', 'File: "'.$params['file_name'].'" bị trùng, không thể thêm mới, vui lòng chọn file khác hoặc Xin mượn bản vẽ !');
+    				$msg_err= sprintf(Message_model::get_msg('SYS011'), $params['file_name']);
+            		ACWError::add('file_name', $msg_err);
+    				//ACWError::add('file_name', 'File: "'.$params['file_name'].'" bị trùng, không thể thêm mới, vui lòng chọn file khác hoặc Xin mượn bản vẽ !');
                     $this->rollback();
     				return FALSE;
     			}

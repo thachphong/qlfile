@@ -6,6 +6,7 @@
 }
 </style>
 <script type="text/javascript">
+<%assign var='lang' value=Message_model::get_message('USER')%>
 $(document).ready(function () {
     
         
@@ -33,7 +34,7 @@ $(document).ready(function () {
                             }
                             
                             if(data.status == 'double_user'){
-                                Argo_ajax.message_box_error(' ', 'Tên đăng nhập này đã có, vui lòng nhập tên khác');
+                                Argo_ajax.message_box_error(' ', "<%$lang['USER030']%>");//'Tên đăng nhập này đã có, vui lòng nhập tên khác');
                         }
                             
                     };
@@ -69,7 +70,7 @@ $(document).ready(function () {
 				location.reload();
 			}           
             if(data.status == 'double_user'){
-                Argo_ajax.message_box_error(' ', 'Tên đăng nhập này đã có, vui lòng nhập tên khác');
+                Argo_ajax.message_box_error(' ', "<%$lang['USER030']%>");//'Tên đăng nhập này đã có, vui lòng nhập tên khác');
         	}
            
 		};
@@ -156,13 +157,13 @@ $(document).ready(function () {
 <div class="main_contents">
 	<div class="series_wrap">
 		<div class="title_wrap clear_fix">
-			<h2>Thêm mới user</h2>
+			<h2><%$lang['USER026']%><!--Thêm mới user--></h2>
 		</div>
 		<div class="info_wrap">
 			<div class="hl_wrap">
 				<ul class="btn_wrap">
-					<li><input type="button" value="Thoát" class="img_opacity btn_close" /></li>
-					<li><input type="button" value="Cập nhật" class="img_opacity btn_save" /></li>
+					<li><input type="button" value="<%$lang['USER028']%>" class="img_opacity btn_close" /></li>
+					<li><input type="button" value="<%$lang['USER027']%>" class="img_opacity btn_save" /></li>
 				</ul>
 			</div>
 			<form id="edit_form">
@@ -170,7 +171,7 @@ $(document).ready(function () {
 				<table style="width: 100%;">
 					<tr>
 						<th>
-							Tên đăng nhập <span class="edit_require">*</span>
+							<%$lang['USER003']%><!--Tên đăng nhập--> <span class="edit_require">*</span>
 						</th>
 						<td>
 							<input type="hidden" name="user_id" value="<%$user_row.user_id%>"  style="width:200px;" />
@@ -183,18 +184,18 @@ $(document).ready(function () {
 					</tr>
 					<tr>
 						<th>
-							Mật khẩu
+							<%$lang['USER015']%><!--Mật khẩu-->
 						</th>
 						<td>
 							<input type="password" name="pass" value=""  style="width:200px;" />
 <%if $user_row.user_id != null%>
-							<label><input maxlength="50" type="checkbox" id="pass_change">Thay đổi mật khẩu</input></label>
+							<label><input maxlength="50" type="checkbox" id="pass_change"><%$lang['USER031']%><!--Thay đổi mật khẩu--></input></label>
 <%/if%>
 						</td>
 					</tr>
                     <tr>
 						<th>
-							Họ và tên
+							<%$lang['USER006']%><!--Họ và tên-->
 						</th>
 						<td>
 							<input  type="text" name="user_name_disp" value="<%$user_row.user_name_disp%>" style="width:200px;" maxlength="100"/>
@@ -202,7 +203,7 @@ $(document).ready(function () {
 					</tr>
                     <tr>
 						<th>
-							Email
+							<%$lang['USER007']%><!--Email-->
 						</th>
 						<td>
 							<input  type="email" autocomplete="off" name="email" value="<%$user_row.email%>" style="width:200px;" maxlength="50"/>
@@ -210,7 +211,7 @@ $(document).ready(function () {
 					</tr>
 					<tr>
 						<th>
-							Đơn vị 
+							<%$lang['USER009']%><!--Đơn vị -->
 						</th>
 						<td>
 							<select name="don_vi" id="don_vi">
@@ -226,7 +227,7 @@ $(document).ready(function () {
 					</tr>
 					<tr>
 						<th>
-							Phòng ban
+							<%$lang['USER008']%><!--Phòng ban-->
 						</th>
 						<td>
 							<select name="phong_ban" id="phong_ban">
@@ -238,7 +239,7 @@ $(document).ready(function () {
 					</tr>
 					<tr>
 						<th>
-							Tổ nhóm 
+							<%$lang['USER010']%><!--Tổ nhóm -->
 						</th>
 						<td>
 							<select name="to_nhom" id="to_nhom">
@@ -249,7 +250,7 @@ $(document).ready(function () {
 					</tr>
 					<tr>
 						<th>
-							IP máy
+							<%$lang['USER016']%><!--IP máy-->
 						</th>
 						<td>
 							<input  type="text" name="ip" value="<%$user_row.ip%>" style="width:200px;" maxlength="20"/>
@@ -257,26 +258,26 @@ $(document).ready(function () {
 					</tr>
 					<tr>
 						<th>
-							Quyền user
+							<%$lang['USER017']%><!--Quyền user-->
 						</th>
 						<td>
-							<label><input name="lev_in" type="checkbox" <%if $user_row.print==1%>checked<%/if%> style="margin-left: 10px">In</label>
+							<label><input name="lev_in" type="checkbox" <%if $user_row.print==1%>checked<%/if%> style="margin-left: 10px"><%$lang['USER018']%><!--In--></label>
                             <!--<label><input name="lev_phanbo"type="checkbox" <%if $user_row.phanbo==1%>checked<%/if%> style="margin-left: 10px">Cấp phát</label>-->
-                            <label><input name="lev_upload"type="checkbox" <%if $user_row.upload==1%>checked<%/if%> style="margin-left: 10px">Upload</label>
-                            <label><input name="lev_kiemtra"type="checkbox" <%if $user_row.kiemtra==1%>checked<%/if%> style="margin-left: 10px">Kiểm tra</label>
-                            <label><input name="lev_duyet"type="checkbox" <%if $user_row.duyet==1%>checked<%/if%> style="margin-left: 10px" >Duyệt</label>
-                            <label><input name="lev_ttql"type="checkbox" <%if $user_row.trungtam_quanly==1%>checked<%/if%> style="margin-left: 10px">Trung tâm quản lý</label>
-                            <label><input name="lev_admin"type="checkbox" <%if $user_row.admin==1%>checked<%/if%> style="margin-left: 10px">Admin</label>
+                            <label><input name="lev_upload"type="checkbox" <%if $user_row.upload==1%>checked<%/if%> style="margin-left: 10px"><%$lang['USER019']%><!--Upload--></label>
+                            <label><input name="lev_kiemtra"type="checkbox" <%if $user_row.kiemtra==1%>checked<%/if%> style="margin-left: 10px"><%$lang['USER020']%><!--Kiểm tra--></label>
+                            <label><input name="lev_duyet"type="checkbox" <%if $user_row.duyet==1%>checked<%/if%> style="margin-left: 10px" ><%$lang['USER021']%><!--Duyệt--></label>
+                            <label><input name="lev_ttql"type="checkbox" <%if $user_row.trungtam_quanly==1%>checked<%/if%> style="margin-left: 10px"><%$lang['USER022']%><!--Trung tâm quản lý--></label>
+                            <label><input name="lev_admin"type="checkbox" <%if $user_row.admin==1%>checked<%/if%> style="margin-left: 10px"><%$lang['USER023']%><!--Admin--></label>
 						</td>
 					</tr>
 					<tr>
 						<th>
-							Trạng thái
+							<%$lang['USER024']%><!--Trạng thái-->
 						</th>
 						<td>
 							<select name="del_flg">							
-								<option value="0" <%if $user_row.del_flg == 0 %>selected="selected"<%/if%>>Sử dụng</option>
-							    <option value="1" <%if $user_row.del_flg == 1 %>selected="selected"<%/if%>>Ngưng sử dụng</option>
+								<option value="0" <%if $user_row.del_flg == 0 %>selected="selected"<%/if%>><%$lang['USER012']%><!--Sử dụng--></option>
+							    <option value="1" <%if $user_row.del_flg == 1 %>selected="selected"<%/if%>><%$lang['USER011']%><!--Ngưng sử dụng--></option>
 							</select>
 						</td>
 					</tr>

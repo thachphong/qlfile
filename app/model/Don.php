@@ -1423,9 +1423,10 @@ class Don_model extends ACWModel
         $f = new File_lib();
         //$listfile = $f->FileList($folder_name);
         $sql="INSERT into file(file_name,don_id,file_type,status,
-                    add_user_id,add_datetime,upd_user_id,upd_datetime)
+                    add_user_id,add_datetime,upd_user_id,upd_datetime,convert_flg)
             select :file_pdf,don_id,'pdf',status,
-                    add_user_id,add_datetime,upd_user_id,upd_datetime from file
+                    add_user_id,add_datetime,upd_user_id,upd_datetime ,1
+        	from file
             where new_flg = 1
             and file_name = :file_name
             and don_id =:don_id 

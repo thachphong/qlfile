@@ -44,7 +44,7 @@ class Mail_lib extends PHPMailer_lib
 	}
 
 	public function loadBody($file) {
-	    $base_url = ACW_ROOT_DIR . "/user/template/";
+	    $base_url = ACW_ROOT_DIR . "/app/template/";
 	    $file = $base_url . $file;
 	    $this->msgHTML(file_get_contents($file), $base_url);
 	}

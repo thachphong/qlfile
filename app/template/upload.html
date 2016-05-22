@@ -128,8 +128,9 @@
                     <%foreach $filelist as $file%>
                     <tr>
                         <td style="height: 25px"><%$file.stt%></td>
-                        <td id="view_file_name_<%$file.file_id%>" class="<%if $file.dl_flg=='1'%>hover_view<%/if%>"><%if $file.file_type=="pdf"%>
-                            <a href="<%$smarty.const.ACW_BASE_URL%>file/view/<%$file.don_id%>/<%$file.ver_id%>/<%$data_row.trangthai%>/<%$file.file_id%>">
+                        <td id="view_file_name_<%$file.file_id%>" class="<%if $file.dl_flg=='1'%>hover_view<%/if%>">
+                        <%if $file.file_type=="pdf"%>
+                            <a href="<%$smarty.const.ACW_BASE_URL%>file/view/<%$file.don_id%>/<%$data_row.trangthai%>/<%$file.file_id%>">
                         <%/if%>
                         <%$file.file_name%>
                         <%if $file.file_type=="pdf"%>    
@@ -158,9 +159,9 @@
                     <%/foreach%>                                     
 		        </table>
                 </div>
-		        <input type="button" class="button_blue" <%if ($mode!= "new" && $mode!= "upload")||$flg_muon=='1'||$flg_capnhat=='1'%>disabled<%/if%> id="chonfile" value="<%$lang['YEU012']%>"  style="margin: 6px 10px;" ><!--Chọn file-->
+		        <input type="button" class="button_blue" <%if ($mode!= "new" && $mode!= "upload")||$flg_muon=='1'||$flg_capnhat=='1'%>disabled<%/if%> id="chonfile" value="<%$lang['YEU010']%>"  style="margin: 6px 10px;" ><!--Chọn file-->
                 
-                <input style="display: none" name="file_upload[]" type="file" multiple="multiple" accept=".DWG,.doc,.docx,.xls,.xlsx,.rar"  id="file_upload" />           
+                <input style="display: none" name="file_upload[]" type="file" multiple="multiple" accept=".DWG,.doc,.docx,.xls,.xlsx,.rar,.pdf"  id="file_upload" />           
                 <input type="hidden" name="folder_tmp"  id="folder_tmp" value="<%$data_row.folder_tmp%>" />
             </div>          
 			<input type="button" class="button_blue" style="margin-left:15px;" value="<%$lang['YEU011']%>" id="btn_save" <%if $mode!= "new" && $mode!= "upload" && $mode!= "kiemtra" && $mode!= "duyet" && $mode!= "ttql"%>disabled<%/if%> >

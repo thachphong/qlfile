@@ -32,7 +32,7 @@ class Message_model extends ACWModel
 		$res = array();
 		$lang = ACWSession::get('lang');
 		$column ='des_vn';
-		if(isset($lang)&& $lang = 2){
+		if(isset($lang)&& $lang == 2){
 			$column='des_en';
 		}
 		if(count($data)>0)
@@ -64,7 +64,8 @@ class Message_model extends ACWModel
 		$rows = $model->get_message_rows($param);		
 		return ACWView::template('message.html', array(
 			'data_rows' => $rows,			
-			'data_search'=>$param
+			'data_search'=>$param,
+			'screen' => $model->get_creen()
 		));
 	}
 	public function get_message_row($msg_no){
@@ -74,7 +75,8 @@ class Message_model extends ACWModel
 		return $this->query($sql,$sql_param);
 	}
 	public function get_message_rows($param){
-		$sql = "select * from message_lang 
+		$sql = "select l.*,s.screen_name from message_lang l
+				LEFT JOIN screen s on s.screen_no = l.screen
 				where screen like :screen
 				and (des_vn like :des or des_en like :des) ";
 		$sql_param['screen'] ='%';
@@ -170,9 +172,8 @@ class Message_model extends ACWModel
 				UPDATE
 					message_lang
 				SET
-				--	, screen = :screen					
-				--	, msg_no = :msg_no
-					, des_vn = :des_vn
+				
+					 des_vn = :des_vn
 					, des_en = :des_en
 					, add_user_id = :add_user_id
 					, add_datetime = NOW()
@@ -187,8 +188,8 @@ class Message_model extends ACWModel
 			foreach($edit_id as $key => $val){
 				$sql_upd['id'] =  $val;	
 			//	$sql_upd['screen'] =  $creen[$key];	
-				$sql_upd['des_vn'] =  $des_vn[$key];	
-				$sql_upd['des_en'] =  $des_en[$key];					
+				$sql_upd['des_vn'] =  $edit_des_vn[$key];	
+				$sql_upd['des_en'] =  $edit_des_en[$key];					
 				/*$res = $this->get_msg_no_count($sql_upd);
 				if ($res['cnt'] > 0) {
 					ACWError::add('may_no', 'Mã Thông báo đã có, Vui lòng sử dụng mã khác !');
@@ -216,5 +217,9 @@ class Message_model extends ACWModel
 		$filter['msg_no'] = $param['msg_no'];
 		$rows = $this->query($sql, $filter);
 		return $rows[0];
+	}
+	public function get_creen(){
+		$sql ="Select * from screen";
+		return $this->query($sql);
 	}
 }
