@@ -475,7 +475,7 @@ class Banve_model extends ACWModel
         if($level !=''){
             $sql .=" and level in ( ".$level ." )";
         }
-        $sql .=" order by banve_no";
+        $sql .=" order by banve_id";
         return $this->query($sql);
     }
     public function get_banve_tong($level = '')
@@ -640,16 +640,19 @@ class Banve_model extends ACWModel
             $file->CopyFile(ACW_ROOT_DIR.'/shared/Template.xlsx',$file_name);
         }
         $excel->load($file_name);
-        $lang = Message_model::get_message('BAVE');
-        $excel->set_value_no(0,1,$lang['BVE030']); //'Dùng chung'
-        $excel->set_value_no(1,1,$lang['BVE031']); //'Khổ giấy'
-        $excel->set_value_no(2,1,$lang['BVE032']);  //'Mã bản vẽ'
-        $excel->set_value_no(3,1,$lang['BVE033']);  //'Loại bản vẽ'
-        $excel->set_value_no(4,1,$lang['BVE034']);  // 'Tên bản vẽ'
-        $excel->set_value_no(5,1,$lang['BVE035']);  //'Người tạo'
-        $excel->set_value_no(6,1,$lang['BVE036']);  //'Ngày tạo'      
+        $lang = Message_model::get_message('BANVE');        
+        $excel->set_value_no(5,1,$lang['BVE031']); //'Khổ giấy'
+        $excel->set_value_no(6,1,$lang['BVE032']);  //'Mã bản vẽ'
+        $excel->set_value_no(7,1,$lang['BVE033']);  //'Loại bản vẽ'
+        $excel->set_value_no(8,1,$lang['BVE034']);  // 'Tên bản vẽ'
+        $excel->set_value_no(9,1,$lang['BVE030']); //'Dùng chung'
+        $excel->set_value_no(10,1,$lang['BVE035']);  //'Người tạo'
+        $excel->set_value_no(11,1,$lang['BVE036']);  //'Ngày tạo'     
         $list = $this->get_all();
-        foreach($list as $key=>$row){
+        $list = $this->sort_to_tree($list);
+        $row_index = 1;
+        $this->write_to_excel($excel,$list,$lang,$row_index);
+        /*foreach($list as $key=>$row){
         	$loai_bv ='';
         	if($row['level']=='1'){
 				$loai_bv =$lang['BVE011'];//'Bản vẽ tổng thể';
@@ -674,11 +677,108 @@ class Banve_model extends ACWModel
             $excel->set_value_no(4,$key+2,$row['banve_name']);	
             $excel->set_value_no(5,$key+2,$row['user_name']);
         	$excel->set_value_no(6,$key+2,$row['add_datetime']); 
-		}
+		}*/
         $excel->save($file_name);
         $excel->free();
        
     }
+    public function write_to_excel($excel,$data, $lang,&$row_index)
+    {
+		if(count($data > 0)){
+			foreach($data as $key=>$row){
+	        	$loai_bv ='';
+	        	$row_index++;
+	        	if($row['level']=='1'){
+					$loai_bv =$lang['BVE011'];//'Bản vẽ tổng thể';
+					$excel->set_background_color('blue',$row_index);
+					$excel->set_value_no(0,$row_index,"+");
+					$excel->set_value_no(1,$row_index,"-");
+					$excel->set_value_no(2,$row_index,"-");
+					$excel->set_value_no(3,$row_index,"-");
+					$excel->set_value_no(4,$row_index,"-");
+					$this->set_color($excel,0,11,$row_index,'C5D9F1');
+				}else if($row['level']=='2'){
+					$loai_bv =$lang['BVE012'];//'Bản vẽ cụm lớn';					
+					$excel->set_value_no(1,$row_index,"+");
+					$excel->set_value_no(2,$row_index,"-");
+					$excel->set_value_no(3,$row_index,"-");
+					$excel->set_value_no(4,$row_index,"-");
+					$this->set_color($excel,1,11,$row_index,'F2DDDC');
+				}else if($row['level']=='3'){
+					$loai_bv =$lang['BVE013'];//'Bản vẽ cụm nhỏ';					
+					$excel->set_value_no(2,$row_index,"+");
+					$excel->set_value_no(3,$row_index,"-");
+					$excel->set_value_no(4,$row_index,"-");
+					$this->set_color($excel,2,11,$row_index,'EAF1DD');
+				}else if($row['level']=='4'){
+					$loai_bv =$lang['BVE014'];//'Bản vẽ chi tiết';					
+					$excel->set_value_no(3,$row_index,"+");
+					$excel->set_value_no(4,$row_index,"-");
+					$this->set_color($excel,3,11,$row_index,'E5E0EC');
+				}else if($row['level']=='5'){
+					$loai_bv =$lang['BVE015'];//'Bản vẽ phôi';
+					$excel->set_value_no(4,$row_index,"+");
+					//$this->set_color($excel,4,11,$row_index,'C5D9F1');
+				}
+				if($row['dungchung']=='1'){
+					$dungchung = 'Có' ;		
+				}else{
+					$dungchung = 'Không' ;
+				}
+				
+				
+	            $excel->set_value_no(5,$row_index,$row['kho_giay']);
+	            $excel->set_value_no(6,$row_index,$row['banve_no']);	
+	            $excel->set_value_no(7,$row_index,$loai_bv);	
+	            $excel->set_value_no(8,$row_index,$row['banve_name']);	
+	            $excel->set_value_no(9,$row_index,$dungchung);
+	            $excel->set_value_no(10,$row_index,$row['user_name']);
+	        	$excel->set_value_no(11,$row_index,$row['add_datetime']); 
+	        	$this->write_to_excel($excel,$row['child'],$lang,$row_index);
+			}
+		}
+	}
+	public function set_color($excel,$from,$to,$row,$color){
+		for($i=$from ; $i<=$to ;$i++){
+			$excel->set_bg_color($i,$row,$color);
+		}		
+	}
+    public function sort_to_tree($data){
+    	$list = array();
+    	$index =0;
+    	foreach($data as $key=>$row){    		
+    		if($row['level']=='1'){
+    			$index++;
+    			$list[$index]['level']=$row['level'];
+    			$list[$index]['kho_giay']=$row['kho_giay'];
+    			$list[$index]['banve_no']=$row['banve_no'];
+    			$list[$index]['banve_name']=$row['banve_name'];
+    			$list[$index]['dungchung']=$row['dungchung'];
+    			$list[$index]['user_name']=$row['user_name'];
+    			$list[$index]['add_datetime']=$row['add_datetime'];
+    			$list[$index]['child']= $this->get_child($data,$row['banve_id']);
+    		}
+    	}
+		return $list;
+	}
+	public function get_child($data,$parent_id){
+		$list = array();
+    	$index =0;
+		foreach($data as $key=>$row){
+			if($row['parent_id']==$parent_id){
+				$index++;
+    			$list[$index]['level']=$row['level'];
+    			$list[$index]['kho_giay']=$row['kho_giay'];
+    			$list[$index]['banve_no']=$row['banve_no'];
+    			$list[$index]['banve_name']=$row['banve_name'];
+    			$list[$index]['dungchung']=$row['dungchung'];
+    			$list[$index]['user_name']=$row['user_name'];
+    			$list[$index]['add_datetime']=$row['add_datetime'];
+    			$list[$index]['child']= $this->get_child($data,$row['banve_id']);
+			}
+		}
+		return $list;		
+	}
     public function get_all_child($banve_id){
         $sql ="	select  banve_id,
 								banve_name,

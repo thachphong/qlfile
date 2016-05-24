@@ -302,7 +302,17 @@ class ImportExport_lib extends Excel_lib
             );
             $this->get_cell_style_no($col, $row)->applyFromArray($bg);
         }
-       
+       public function set_bg_color($col, $row,$color){
+            $bg = array(
+                'fill' => array(
+                    'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                    'startcolor' => array(
+                        'rgb' => $color,
+                    ),
+                ),
+            );
+            $this->get_cell_style_no($col, $row)->applyFromArray($bg);
+        }
         /**
 	 * 指定セルから値を取得する
 	 * @param string $cell  対象セルの位置文字列（'A1'等）
