@@ -222,6 +222,7 @@ class Folderfile_model extends ACWModel
 		$sql = "select t.don_id,
               t.don_no,
               t.tieude,
+              lower(t.tieude) tieude_search,
               t.noidung,
               t.loaidon,
               t.trangthai from don t

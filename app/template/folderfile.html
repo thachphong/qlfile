@@ -37,7 +37,9 @@
                         <div class="series_wrap" style="padding-top: 10px">
 		<div class="info_wrap height4">
 			<div class="hl_wrap">
-				<h3 >Thông tin thư mục</h3>
+				<input type="text" class="live-search-box" placeholder="search here"  style="width: 330px;
+    display: block; margin: 1px 5px;top: 3px; position: absolute;"/>
+				<!--<h3 >Thông tin thư mục</h3>-->
 				<ul class="btn_wrap">
 					<li><input type="button" id="save_button" value="<%$lang['PBO005']%>" /></li><!--Cập nhật-->
                                       
@@ -46,7 +48,7 @@
 			<div class="edit_wrap related height6">
 				<h3 class="hl"><%$lang['PBO003']%><!--Yêu cầu đã duyệt--></h3>
 				<div class="tree_wrap height5 " >
-					<ul id="series_list">
+					<ul id="series_list" class="live-search-list">
                     
 					</ul>			
 				</div><!-- / .side_contents -->
@@ -89,7 +91,7 @@ $(function() {
 	var section_data = [];
         var _is_edit_category = false;
     var _has_ctg_child = false; 
-    var DON_LI = '{{#list}}<li id="li_don_{{don_id}}"><a class="relation_series" href="javascript:void(0);" id="don_{{don_id}}">{{tieude}}</a></li>{{/list}}';
+    var DON_LI = '{{#list}}<li id="li_don_{{don_id}}" data-search-term="{{tieude_search}}"><a class="relation_series" href="javascript:void(0);" id="don_{{don_id}}">{{tieude}}</a></li>{{/list}}';
     var DONFOLDER_LI = '{{#list}}<li id="li_don_folder_{{don_id}}"><a class="rel_don_folder" href="javascript:void(0);" id="don_folder_{{don_id}}">{{tieude}}</a></li>{{/list}}';
     TreeView.override_on_click_open("#tree_view li", 'ltree');    
 
@@ -472,6 +474,26 @@ $(function() {
 		}
 	};
 	tree_ajax.connect('GET', 'category/tree');
+	
+	$('.live-search-list li').each(function(){
+		$(this).attr('data-search-term', $(this).text().toLowerCase());
+	});
+
+		$('.live-search-box').on('keyup', function(){
+
+		var searchTerm = $(this).val().toLowerCase();
+
+			$('.live-search-list li').each(function(){
+
+				if ($(this).filter('[data-search-term *= ' + searchTerm + ']').length > 0 || searchTerm.length < 1) {
+					$(this).show();
+				} else {
+					$(this).hide();
+				}
+
+			});
+
+		});
 		
 });
         
