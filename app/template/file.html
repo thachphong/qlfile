@@ -143,7 +143,7 @@ $(function() {
                 var url = '<%$smarty.const.ACW_BASE_URL%>file/view/'+ info[0]+'/'+info[1]+'/'+info[2];
                 window.open(url, '_blank');
             }else{
-                Argo_ajax.message_box('',"<%$lang['PRIN012']%>");/*'File này đang cập nhật !'*/
+                Argo_ajax.message_box('',"<%$lang['PRIN013']%>");/*'File này đang cập nhật !'*/
             }
     	};
     	json_ajax.connect("POST", "file/checkview", {
