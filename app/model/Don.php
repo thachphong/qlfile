@@ -1186,7 +1186,7 @@ class Don_model extends ACWModel
     public static function action_sendmail()
     {
         $mode = new Don_model();
-        $mode->send_mail(21,0);
+        $mode->send_mail(5,3);
         return ACWView::json('OK');
     }
 	public function send_mail($don_id,$status,$ghichu='')
@@ -1294,6 +1294,14 @@ class Don_model extends ACWModel
                     $mail_cc[] =$list_mail['mail_kt'];
                     $mail_cc[] =$list_mail['mail_duyet'];
                     $mail_cc[] =$list_mail['mail_ttql'];
+                    if(strlen($list_mail['cc_mail'])>0){
+						$list_cc = explode(';',$list_mail['cc_mail']);
+						foreach($list_cc as $cc){
+							if(strlen($cc)>0){
+								$mail_cc[]= $cc;
+							}
+						}
+					}
 			        break;
                 case DON_STATUS_TRA_KT:
 			        $mail_subject = '[Trả yêu cầu] Đã trả yêu cầu kiểm tra';
@@ -1361,7 +1369,7 @@ class Don_model extends ACWModel
             /*$mail_cc[] =$list_to['mail_duyet'];
             $mail_cc[] =$list_to['mail_ttql'];*/
            // ACWLog::debug_var('---don----','$mail_to: ');
-           // ACWLog::debug_var('---don----',$mail_to);
+        	// ACWLog::debug_var('---don----',$mail_cc);
             //ACWLog::debug_var('---don----','dont_send: '.$dont_send);
 			if(count($mail_to) > 0 && $dont_send == 0) {
 			    $email->AddListAddress($mail_to);
@@ -1381,7 +1389,8 @@ class Don_model extends ACWModel
             u1.email mail_add,
             u2.email mail_kt,
             u3.email mail_duyet,
-            u4.email mail_ttql
+            u4.email mail_ttql,
+            u4.list_mail cc_mail
             from don t
             INNER JOIN m_user u1 on u1.user_id= t.add_user_id
             LEFT JOIN m_user u2 on u2.user_id= t.user_kt

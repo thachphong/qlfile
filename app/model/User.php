@@ -66,6 +66,7 @@ class User_model extends ACWModel
             $user_row['duyet'] = null;
             $user_row['trungtam_quanly'] = null;
             $user_row['admin'] = null;
+            $user_row['list_mail'] = '';
 			
 		} else {
 			$user_row = $model->get_user_row($m_user_id);			
@@ -136,6 +137,7 @@ class User_model extends ACWModel
                 ,'lev_duyet'
                 ,'lev_ttql'
                 ,'lev_admin'
+                ,'list_mail'
 		));
 	    $params['lev_in']=($params['lev_in']=='on') ?1:0;
         $params['lev_upload']=($params['lev_upload']=='on') ?1:0;
@@ -175,6 +177,7 @@ class User_model extends ACWModel
 				, usr.ip
 				, usr.level
                 ,usr.del_flg
+                ,usr.list_mail
 			FROM
 				m_user usr
 				left join phong_ban pb on usr.PHONG_BAN = pb.phongban_id
@@ -239,6 +242,7 @@ class User_model extends ACWModel
 			'level' => $level_id,
 			'ip' => $params['ip'],
             'del_flg' => $params['del_flg'],
+            'list_mail' => $params['list_mail'],
             'upd_user_id'=>$login_info['user_id']
 		);		
 		if ($params['user_id'] == null) {		
@@ -268,6 +272,7 @@ class User_model extends ACWModel
 					, add_datetime
 					, upd_user_id
 					, upd_datetime
+					,list_mail
 				) VALUES (
 					  :user_id 
 					, :user_name 
@@ -284,6 +289,7 @@ class User_model extends ACWModel
 					, NOW() 
 					, :upd_user_id 
 					, NOW() 
+					, :list_mail
 				);
 			";
 			$sql_params['add_user_id'] = $login_info['user_id'];
@@ -306,6 +312,7 @@ class User_model extends ACWModel
 					, del_flg = COALESCE(:del_flg, 0)
 					, upd_user_id = :upd_user_id
 					, upd_datetime = NOW()
+					, list_mail = :list_mail
 				WHERE
 					user_id = :user_id
 			";

@@ -1063,6 +1063,10 @@ $(function() {
 			Argo_ajax.message_box(' ', '<%$lang["YEU039"]%>');/*Bạn chưa chọn trung tâm quản lý đuyệt !*/
 			return false;
 		}
+		if($('.att_file').length == 0){
+			Argo_ajax.message_box(' ', '<%$lang["YEU041"]%>');/*Bạn chưa upload file đính kèm!*/
+			return false;
+		}
 		return true;
 	}
 	
