@@ -11,8 +11,10 @@ class User_model extends ACWModel
 	{
 		switch ($action) {
             case 'update':
-			return self::_validate_update($param);
-                case 'index':
+				return self::_validate_update($param);
+			case 'updatepass':
+				return self::_validate_updatepass($param);
+            case 'index':
                     if($param['search_user_name'] != ''){
                         $s_user_name = $param['search_user_name'];
                         $param['s_user_name'] = strtolower($s_user_name);
@@ -35,7 +37,33 @@ class User_model extends ACWModel
 			'search_user_name'=>$param['search_user_name']
 		));
 	}
-	
+	public static function action_password()
+	{
+		return ACWView::template('user/password.html', array(
+		));
+	}
+	public static function action_updatepass()
+	{
+		$params = self::get_param(array(			
+			'old_pass',
+			'new_pass',
+            'renew_pass'
+		));
+	    
+		if (self::get_validate_result() === true) {
+			$model = new User_model();
+			$obj = $model->updatepass($params);
+		}
+		
+		if (ACWError::count() <= 0) {
+		    $result['status'] = 'OK';
+		} else {
+			$result['status'] = 'NG';
+			$result['error'] = ACWError::get_list();
+		}
+
+		return ACWView::json($result);
+	}
 	public static function action_edit()
 	{
 		$params = self::get_param(array(
@@ -104,6 +132,19 @@ class User_model extends ACWModel
                 return false;
             }
         }
+		return true;
+	}
+	private static function _validate_updatepass(&$param)
+	{	    
+		$validate = new Validate_lib();
+		
+		$login = new Login_model();
+		$login_info = ACWSession::get('user_info');
+		$user = $login->check_login(array('passwd'=>$param['old_pass'],'user_id'=>$login_info['user_name']));
+		if($user == null){
+			ACWError::add('saipass', 'Mật khẩu cũ không đúng !');
+            return false;
+		}
 		return true;
 	}
     public static function action_checkmaxlenght() {
@@ -325,6 +366,30 @@ class User_model extends ACWModel
 		
 		return true;
 	}
+	public function updatepass($params)
+	{
+		$this->begin_transaction();
+		$sql = "
+				UPDATE
+					m_user
+				SET					
+					 pass = :pass
+					, upd_user_id = :user_id
+					, upd_datetime = NOW()					
+				WHERE
+					user_id = :user_id
+			";
+		$login_info = ACWSession::get('user_info');
+			$pass_md5 = md5(AKAGANE_SALT . $params['new_pass']);
+			$sql_params['user_id'] = $login_info['user_id'];
+			$sql_params['pass'] = $pass_md5;
+		
+		$this->execute($sql, $sql_params);		
+		
+		$this->commit();
+		
+		return true;
+	}
 	
 	/**
 	 * ユーザ取得
@@ -407,7 +472,21 @@ class User_model extends ACWModel
 		$rows = $this->query($sql, $filter);
 		return $rows[0];
 	}
-	
+	public static function action_redirect(){
+		$user_info = ACWSession::get('user_info');
+		
+		if($user_info['upload'] > 0 || $user_info['kiemtra'] > 0 || $user_info['duyet'] > 0 || $user_info['trungtam_quanly'] > 0){
+            return ACWView::redirect(ACW_BASE_URL . 'don');
+        }else if($user_info['print'] > 0){
+            return ACWView::redirect(ACW_BASE_URL . 'file/blank');
+        }else if($user_info['phanbo'] > 0){  // cap phat
+            return ACWView::redirect(ACW_BASE_URL . 'file/capphat');
+        }else if($user_info['admin'] > 0){  
+            return ACWView::redirect(ACW_BASE_URL . 'file/donvi');
+        }
+        return ACWView::redirect(ACW_BASE_URL . 'don');
+        
+    }
 	
 }
 /* ファイルの終わり */

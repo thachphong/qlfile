@@ -78,7 +78,7 @@ class Login_model extends ACWModel
 			if (isset($param['user_id']) == false) {
 				ACWError::add('message', 'Vui lòng nhập tên đăng nhập !');
 			} else if ($param['passwd'] == false) {
-				ACWError::add('message', 'Vi lòng nhập mật khẩu !');
+				ACWError::add('message', 'Vui lòng nhập mật khẩu !');
 			}
 			if (ACWError::count() == 0) {
 				return true;	// チェックOK
