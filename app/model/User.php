@@ -142,7 +142,7 @@ class User_model extends ACWModel
 		$login_info = ACWSession::get('user_info');
 		$user = $login->check_login(array('passwd'=>$param['old_pass'],'user_id'=>$login_info['user_name']));
 		if($user == null){
-			ACWError::add('saipass', 'Mật khẩu cũ không đúng !');
+			ACWError::add('saipass',Message_model::get_msg('USER041')); //'Mật khẩu cũ không đúng !'
             return false;
 		}
 		return true;
