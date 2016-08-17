@@ -64,7 +64,7 @@ class Don_model extends ACWModel
             $param['tu_ngay']=$date->format('d/m/Y');
             $param['default_flg'] = 1;
         }
-		$rows = $model->get_don_rows($param);	
+		$rows = $model->get_history_rows($param);	
         	
 		return ACWView::template('don.html', array(
 			'data_rows' => $rows,			
@@ -1483,5 +1483,113 @@ class Don_model extends ACWModel
         file_put_contents($file_cmd,$cmd);
         pclose(popen("start /B ". $file_cmd, "r"));
     }
+    
+    public function get_history_rows($param)
+	{
+		$sql = "select DISTINCT t.don_id,
+              t.don_no,
+              t.tieude,
+              t.noidung,            
+              t.loaidon,
+              t.trangthai,
+              t.user_kt,
+              t.user_duyet,
+              t.user_ttql,
+              t.maso_duyet,
+              t.bophan,
+              t.ngay_kt,
+              t.ngay_duyet,
+              t.ngay_ttql,
+              t.ngay_duyet_muon ngay_duyet_cn,
+              t.add_user_id,
+							u.user_name_disp ,
+              ad.user_name_disp  add_user,
+            	DATE_FORMAT(t.add_datetime,'%d/%m/%Y %H:%i:%s') add_datetime    ,
+                (case 
+                  when t.trangthai  = -1 then 'Chưa gửi mail yêu kiểm tra'
+				  when t.trangthai  = 0 or t.trangthai  = 1 or t.trangthai  = 2 then 'Đang chờ'
+				  when t.trangthai  = 3 then 'Đã duyệt'
+				  when t.trangthai  = 4 or t.trangthai  = 5 or t.trangthai  = 6 then 'Không duyệt'
+                  when t.trangthai  = 7 then 'Xin mượn bản vẽ'
+                  when t.trangthai  = 8 then 'Trả yêu xin mượn bản vẽ'
+                  when t.trangthai  = 9 then 'Đã duyệt xin mượn bản vẽ'
+				  end)  as status_name
+                from don t	
+				    left join m_user u on u.user_id = t.upd_user_id
+                    left join m_user ad on ad.user_id = t.add_user_id
+				LEFT JOIN file as f on f.don_id = t.don_id  and f.file_type='dwg'
+                where t.del_flg=0
+                -- and t.trangthai <> -1 
+                ";
+		
+        $sql_param = array();
+		if (isset($param['loaidon']) ) {
+			$sql_param['loaidon'] =$param['loaidon'];
+			$sql .= " and t.loaidon = :loaidon ";
+		}
+        if (isset($param['don_no']) && empty($param['don_no'])==FALSE) {
+			$sql_param['don_no'] =SQL_lib::escape_like($param['don_no']);
+			$sql .= " and lower(t.don_no) like lower(:don_no) ";
+		}
+		if (isset($param['maso_duyet']) && empty($param['maso_duyet'])==FALSE) {
+			$sql_param['maso_duyet'] =SQL_lib::escape_like($param['maso_duyet']);
+			$sql .= " and lower(t.maso_duyet) like lower(:maso_duyet) ";
+		}
+		if (isset($param['file_name']) && empty($param['file_name'])==FALSE) {
+			$sql_param['file_name'] = '%'.(SQL_lib::escape_like($param['file_name'])).'%';
+			$sql .= " and lower(f.file_name) like lower(:file_name )";
+		}
+        if (isset($param['srch_muon']) && empty($param['srch_muon'])==FALSE) {
+			$sql .= " and f.`status` <> 9";
+		}
+        if (isset($param['trangthai']) ) {
+            //$sql .= " and t.trangthai = :trangthai ";
+            if($param['trangthai'] =="0") // dang Cho
+            {
+                $sql .= " and t.trangthai in (".DON_STATUS_NEW.",".DON_STATUS_KT.",".DON_STATUS_DUYET.")";
+            }else if($param['trangthai'] =="1") //da duyet
+            {
+                $sql .= " and t.trangthai = ".DON_STATUS_TTQL;
+            }else if($param['trangthai'] =="2")// không duyệt
+            {
+                $sql .= " and t.trangthai in (".DON_STATUS_TRA_KT.",".DON_STATUS_TRA_DUYET.",".DON_STATUS_TRA_TTQL.")";
+            }else if($param['trangthai'] =="3")// xin muon ban ve
+            {
+                $sql .= " and t.trangthai = ".DON_STATUS_XIN_CN;
+            }else if($param['trangthai'] =="4")// tra yeu cau muon ban ve
+            {
+                $sql .= " and t.trangthai = ".DON_STATUS_TRA_CN;
+            }else if($param['trangthai'] =="5")// duyet muon ban ve
+            {
+                $sql .= " and t.trangthai = ".DON_STATUS_DUYET_CN;
+            }else{
+				$sql .= " and t.trangthai = ".$param['trangthai'];
+			}
+            
+			//$sql_param['trangthai'] =$param['trangthai'];
+		}
+        $sql_param['tu_ngay'] ='00/00/0000';
+        //$sql_param['den_ngay'] ='SYSDATE()';
+        if (isset($param['tu_ngay']) && empty($param['tu_ngay'])==FALSE) {
+			$sql_param['tu_ngay'] = $param['tu_ngay'];
+		}
+        if (isset($param['den_ngay']) && empty($param['den_ngay'])==FALSE) {
+			$sql_param['den_ngay'] = $param['den_ngay'].' 23:59';
+            $sql .= " and t.add_datetime between STR_TO_DATE(:tu_ngay,'%d/%m/%Y') and STR_TO_DATE(:den_ngay,'%d/%m/%Y %H:%i')";
+		}else{
+            $sql .= " and t.add_datetime between STR_TO_DATE(:tu_ngay,'%d/%m/%Y %H:%i') and SYSDATE()";
+        }
+        //$sql .= "and t.add_datetime between :tu_ngay and :den_ngay";
+        $login_info = ACWSession::get('user_info');
+        /*$usr = new User_model();
+        if($usr->check_only_upload($login_info['user_id'])){
+            $sql .= " and t.add_user_id = ". $login_info['user_id'];
+        }*/
+		$sql .= "
+			ORDER BY
+				t.don_id
+		";		
+		return $this->query($sql, $sql_param);
+	}
 }
 /* ファイルの終わり */

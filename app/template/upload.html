@@ -937,12 +937,26 @@ $(function() {
     $(document).off("click", "#btn_save_muon");
 	$(document).on("click", "#btn_save_muon", function () {
         var arr = [];	
+        var count = 0;
         $('.file_muon').each(function(){
             if ($(this).is(':checked')) {
                 var id= $(this).attr('id').replace('f_','');
                 arr.push({name: 'file_muon[]', value: id});
+                count++;
             }
         });
+        if(count==0){
+        	Argo_ajax.message_box_error('','<%$lang["YEU042"]%>'); // "Bạn phải chọn file mượn !"
+        	return ;
+        }
+        if($('#ngay_hen_tra').val().length==0){
+        	Argo_ajax.message_box_error('','<%$lang["YEU043"]%>'); // "Bạn chưa nhập ngày hẹn trả !"
+        	return ;
+        }
+        if($('#lydo_muon').val().length==0){
+        	Argo_ajax.message_box_error('','<%$lang["YEU044"]%>' ); //"Bạn chưa nhập lý do mượn !"
+        	return ;
+        }
         arr.push({name: 'don_id', value: $('#don_id').val()});
         arr.push({name: 'ver_id', value: $('#ver_id').val()});
         arr.push({name: 'lydo_muon', value: $('#lydo_muon').val()});
