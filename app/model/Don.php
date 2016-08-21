@@ -669,7 +669,7 @@ class Don_model extends ACWModel
                 from don t	
 				    left join m_user u on u.user_id = t.upd_user_id
                     left join m_user ad on ad.user_id = t.add_user_id
-				LEFT JOIN file as f on f.don_id = t.don_id  and f.file_type='dwg'
+				LEFT JOIN file as f on f.don_id = t.don_id  -- and f.file_type='dwg'
                 where t.del_flg=0
                 and t.trangthai <> -1 ";
 		
@@ -1517,7 +1517,7 @@ class Don_model extends ACWModel
                 from don t	
 				    left join m_user u on u.user_id = t.upd_user_id
                     left join m_user ad on ad.user_id = t.add_user_id
-				LEFT JOIN file as f on f.don_id = t.don_id  and f.file_type='dwg'
+				LEFT JOIN file as f on f.don_id = t.don_id -- and f.file_type='dwg'
                 where t.del_flg=0
                 -- and t.trangthai <> -1 
                 ";
