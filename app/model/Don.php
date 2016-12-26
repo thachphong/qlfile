@@ -731,9 +731,9 @@ class Don_model extends ACWModel
         //$sql .= "and t.add_datetime between :tu_ngay and :den_ngay";
         $login_info = ACWSession::get('user_info');
         $usr = new User_model();
-        if($usr->check_only_upload($login_info['user_id'])){
+        /*if($usr->check_only_upload($login_info['user_id'])){
             $sql .= " and t.add_user_id = ". $login_info['user_id'];
-        }
+        }*/
 		$sql .= "
 			ORDER BY
 				t.don_id
