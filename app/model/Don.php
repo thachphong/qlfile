@@ -432,7 +432,8 @@ class Don_model extends ACWModel
                         }
                     }    
                 }
-                
+                //get mail người mượn 
+                $email_upd = $model->get_email_update($params['don_id']);
                 if($model->_update($params,$flg_upd_file)){
                     if($params['mode']=="ttql" && $params['trangthai'] == DON_STATUS_TTQL){
                         //$desti_path =self::get_folder_data_name($params['don_id']);
@@ -442,7 +443,7 @@ class Don_model extends ACWModel
                         $model->insert_file_pdf($main_folder,$params['don_id'],$filelist); 
                         $model->convert_dwg_to_pdf($main_folder,$filelist) ;                    
                     }
-                    $model->send_mail($params['don_id'],$params['trangthai']);
+                    $model->send_mail($params['don_id'],$params['trangthai'],'',$email_upd);
                 }
                 
             }
@@ -518,9 +519,9 @@ class Don_model extends ACWModel
             $model= new Don_model();
             $f = new File_model();
             $param_upd['status']= $params['trangthai'];  //tra file
+            $list_del='';
             if(isset($params['file_tra']) && !empty($params['file_tra']))
-            {
-                $list_del='';
+            {                
                 foreach($params['file_tra'] as $item){
                     //$param_upd['file_id']=$item;
                     //$f->update_file($param_upd);
@@ -553,12 +554,12 @@ class Don_model extends ACWModel
             $par_upd['noidung'] .= "\nLý do trả: ".$params['ghichu']   ; 
             $par_upd['noidung'] .= "\nFile trả :";
             $par_upd['noidung'] .= $list_del;
-              
+            $email_muon = $model->get_email_update($params['don_id']);  
             if($model->update_noidung($par_upd,FALSE)){
                 if($f->count_file($params['don_id'])== '0' ){
                     $model->delete_don($params['don_id']);
                 }
-                $model->send_mail($params['don_id'],$params['trangthai'],$params['ghichu']);
+                $model->send_mail($params['don_id'],$params['trangthai'],$params['ghichu'],$email_muon);
             }
         }catch (Exception $exc) {
             $result['status'] = 'NG';
@@ -1191,7 +1192,7 @@ class Don_model extends ACWModel
         $mode->send_mail(5,3);
         return ACWView::json('OK');
     }
-	public function send_mail($don_id,$status,$ghichu='')
+	public function send_mail($don_id,$status,$ghichu='',$email_upd='')
     {
         if($status == -1 ){
             return;
@@ -1340,12 +1341,14 @@ class Don_model extends ACWModel
                     $mail_to[]['mail_address']= $list_mail['mail_ttql'];
                     $mail_cc[] =$list_mail['mail_kt'];
                     $mail_cc[] =$list_mail['mail_duyet'];
-                    $mail_cc[] = $list_mail['mail_add'];
+                    //$mail_cc[] = $list_mail['mail_add'];
+                    $mail_cc[]=$login_info['email'];
 			        break;
                 case DON_STATUS_TRA_CN:
 			        $mail_subject = '[Trả yêu cầu] Trả yêu cầu xin mượn bản vẽ';
 			        $replacements['HEADER'] = '<h3 style="color: red;font-weight: bold;">Trả yêu cầu xin mượn bản vẽ</h3>';
-                    $mail_to[]['mail_address']= $list_mail['mail_add'];
+                    //$mail_to[]['mail_address']= $list_mail['mail_add'];
+                    $mail_to[]['mail_address']= $email_upd;
                     $mail_cc[] =$list_mail['mail_kt'];
                     $mail_cc[] =$list_mail['mail_duyet'];
                     $mail_cc[] =$list_mail['mail_ttql'];
@@ -1353,7 +1356,8 @@ class Don_model extends ACWModel
                 case DON_STATUS_DUYET_CN:
 			        $mail_subject = '[Duyệt] Duyệt yêu cầu xin mượn bản vẽ';
 			        $replacements['HEADER'] = '<h3 style="color: red;font-weight: bold;">[Duyệt]Duyệt yêu cầu xin mượn bản vẽ</h3>';
-                    $mail_to[]['mail_address']= $list_mail['mail_add'];
+                    //$mail_to[]['mail_address']= $list_mail['mail_add'];
+                    $mail_to[]['mail_address']= $email_upd;
                     $mail_cc[] =$list_mail['mail_kt'];
                     $mail_cc[] =$list_mail['mail_duyet'];
                     $mail_cc[] =$list_mail['mail_ttql'];
@@ -1402,6 +1406,17 @@ class Don_model extends ACWModel
         $res= $this->query($sql,array('don_id'=>$don_id));
         return $res[0];
     }
+    public function get_email_update($don_id){
+		$sql ="select   u1.email           
+            from don t
+            INNER JOIN m_user u1 on u1.user_id= t.upd_user_id          
+            where t.don_id= :don_id";
+        $res= $this->query($sql,array('don_id'=>$don_id));
+        if(count($res)> 0 ){
+			return $res[0]["email"];
+		}
+        return "";
+	}
     public function get_user_don($don_id,$user_id){
         $sql="select t.don_id,
               t.trangthai,

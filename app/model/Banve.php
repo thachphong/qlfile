@@ -57,6 +57,7 @@ class Banve_model extends ACWModel
 		$param['dungchung'] = 0;
         $param['user_name'] ='';
         $param['add_datetime'] ='';
+        $param['del_flg'] =0;
 		$pa_info=$db->get_banve_info($param['parent_id']);
 		if(count($pa_info)>0){
 			$param['parent_level'] = $pa_info['level'];
@@ -86,6 +87,7 @@ class Banve_model extends ACWModel
         $param['dungchung'] = $result['dungchung'];
         $param['user_name'] =$result['user_name'];
         $param['add_datetime'] =$result['add_datetime'];
+        $param['del_flg'] =$result['del_flg'];
         if(count($result)>0){
 			$param['parent_level'] = $result['level']-1;
 		}
@@ -201,7 +203,42 @@ class Banve_model extends ACWModel
 		}
 		return ACWView::json($result);
 	}
-	
+	public static function action_cancel()
+	{
+		$param = self::get_param(array('acw_url'));	// 自分のIDを取る
+		if (self::get_validate_result() == false)  {
+			ACWError::add('acw_url', 'Tham số không hợp lệ');
+		}
+		$db = new Banve_model();
+		$db->cancel_banve($param['my_id']);
+		if (ACWError::count() > 0) {
+			// エラー
+			$result['status'] = 'NG';
+			$result['error'] = ACWError::get_list();
+		} else {
+			// 正常
+			$result['status'] = 'OK';
+		}
+		return ACWView::json($result);
+	}
+	public static function action_restore()
+	{
+		$param = self::get_param(array('acw_url'));	// 自分のIDを取る
+		if (self::get_validate_result() == false)  {
+			ACWError::add('acw_url', 'Tham số không hợp lệ');
+		}
+		$db = new Banve_model();
+		$db->cancel_banve($param['my_id'],0);
+		if (ACWError::count() > 0) {
+			// エラー
+			$result['status'] = 'NG';
+			$result['error'] = ACWError::get_list();
+		} else {
+			// 正常
+			$result['status'] = 'OK';
+		}
+		return ACWView::json($result);
+	}
 	/**
 	* ツリー表示
 	*/
@@ -240,6 +277,8 @@ class Banve_model extends ACWModel
 				);
 			break;
 		case 'delete':
+		case 'cancel':
+		case 'restore':
 			if (count($param['acw_url']) != 1) {
 				return false;
 			}
@@ -449,7 +488,7 @@ class Banve_model extends ACWModel
 				'banve_id' => $banve_id
 			));
 		if ($series[0]['cnt'] > 0) {			
-           	ACWError::add('banve_child', Message_model::get_msg('BVE030'));
+           	ACWError::add('banve_child', Message_model::get_msg('BVE037'));
 			//ACWError::add('banve_child', 'Tồn tại bản vẻ con, không thể xóa');
 			return;
 		}
@@ -459,6 +498,33 @@ class Banve_model extends ACWModel
 					    ,upd_datetime = now()
                         WHERE banve_id = :banve_id",
 				array('banve_id' => $banve_id,'user_id'=>$user_login['user_id']));		
+
+		$this->commit();
+	}
+	public function cancel_banve($banve_id,$status = 2)
+	{
+		$this->begin_transaction();
+		
+		$series = $this->query("
+			SELECT
+				count(*) AS cnt
+			FROM
+				banve
+			WHERE parent_id = :banve_id and del_flg = 0
+			", array(
+				'banve_id' => $banve_id
+			));
+		if ($series[0]['cnt'] > 0) {			
+           	ACWError::add('banve_child', Message_model::get_msg('BVE052'));
+			//ACWError::add('banve_child', 'Tồn tại bản vẻ con, không thể hủy');
+			return;
+		}
+	    $user_login = ACWSession::get('user_info');
+		$this->execute("UPDATE banve SET del_flg = :status
+                        ,upd_user_id = :user_id
+					    ,upd_datetime = now()
+                        WHERE banve_id = :banve_id",
+				array('banve_id' => $banve_id,'status'=>$status,'user_id'=>$user_login['user_id']));		
 
 		$this->commit();
 	}
@@ -497,6 +563,7 @@ class Banve_model extends ACWModel
 				,true AS is_folder
 				,1 AS upd_sec
 				,chd.level
+				,chd.del_flg
 			FROM		banve chd
 			WHERE	 banve_id = 1
             union 
@@ -507,8 +574,9 @@ class Banve_model extends ACWModel
 				,true AS is_folder
 				,1 AS upd_sec
 				,chd.level
+				,chd.del_flg
 			FROM		banve chd
-			WHERE	 chd.del_flg = 0
+			WHERE	 chd.del_flg <> 1
 			and chd.banve_id > 1
 		";
         $param_sql =array();        
@@ -560,9 +628,10 @@ class Banve_model extends ACWModel
 		$r = $this->query("SELECT t.banve_id,t.banve_name,t.dungchung,
                         t.banve_no,t.kho_giay,t.level,t.parent_id ,u.user_name
                         ,DATE_FORMAT(t.add_datetime,'%d/%m/%Y %H:%i:%s') add_datetime	
+                        ,t.del_flg
                         FROM banve t
                         LEFT JOIN m_user u on u.user_id = t.add_user_id
-                        				WHERE	 t.del_flg = 0
+                        				WHERE	 t.del_flg <> 1
                         				and	t.banve_id = :banve_id 
 			", array ('banve_id' => $banve_id));
 		if(count($r) >0)

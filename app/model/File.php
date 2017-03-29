@@ -261,6 +261,13 @@ class File_model extends ACWModel
 					//ACWError::add('file_name', 'File: "'.$file_list[$i].'" bị trùng, không thể upload !'); 
                 	$flg_copy = FALSE;	
 				}
+				$base_name =  $file->GetBaseName($file_name);
+				if($db->check_ma_banve($base_name) == NULL){
+                	$msg_err= sprintf(Message_model::get_msg('SYS012'), $base_name);
+            		ACWError::add('file_name', $msg_err);
+					ACWLog::debug_var('mess',$msg_err);
+                	$flg_copy = FALSE;	
+				}
             }
             $result =array();
             $arr_cop = array();
@@ -311,7 +318,14 @@ class File_model extends ACWModel
                                  'error_message'=>$error_message,
                                  'search_file_name'=>$param['search_file_name'],
                                  'data_row'=>$data));*/
-    } 
+    }     
+    public function check_ma_banve($ma_bv_no){
+		$sql = "select CONCAT(kho_giay,banve_no) ma_file from banve where CONCAT(kho_giay,banve_no) =:ma_bv_no 
+		and del_flg = 0 ";
+		$res = $this->query($sql,array('ma_bv_no'=>$ma_bv_no));
+		if(count($res)> 0) return TRUE;
+		return FALSE;
+	}
     public static function action_changefile()
     {
         $param = self::get_param(array(

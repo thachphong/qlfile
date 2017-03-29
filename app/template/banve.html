@@ -185,7 +185,11 @@ $(function() {
         select_str +='<td><input readonly="true" size="20" name="add_banve_no[]" id="banve_no_'+add_index+'" ></td>';
         select_str +='<td style="text-align: center;"><input type="checkbox" class="add_dungchung" id="dungchung_ck_'+add_index+'"><input type="hidden" value="0" name="add_dungchung[]" id="dungchung_'+add_index+'"></td>';
         select_str +='<td><select name="add_level[]">';
-        for(var i= (parseInt(level_no)+1); i<=5;i++){
+        var start_level = parseInt(level_no) + 1;
+        if( parseInt(level_no) >= 3){
+        	start_level =parseInt(level_no);
+        } 
+        for(var i= start_level; i<=5;i++){
         	var loai_bv ='';
         	if( i ==1 ){
         		loai_bv ='<%$lang["BVE011"]%>'; //Bản vẽ tổng thể
@@ -365,7 +369,20 @@ $(function() {
 			json_ajax.connect('GET', 'banve/delete/' + my_id);
 		});
 	});
-
+	$(document).on('click', '#category_cancel', function() {
+		Argo_ajax.ok_cancel_box(' ', '<%$lang["BVE050"]%>', function () {	//Bạn chắc chắn muốn hủy bản vẽ mục này？		
+			var my_id = $('#category_form').find('input[name="my_id"]').val();
+			$('#edit_contents_html').empty();			
+			json_ajax.connect('GET', 'banve/cancel/' + my_id);
+		});
+	});
+	$(document).on('click', '#category_restore', function() {
+		Argo_ajax.ok_cancel_box(' ', '<%$lang["BVE050"]%>', function () {	//Bạn chắc chắn muốn hủy bản vẽ mục này？		
+			var my_id = $('#category_form').find('input[name="my_id"]').val();
+			$('#edit_contents_html').empty();		
+			json_ajax.connect('GET', 'banve/restore/' + my_id);
+		});
+	});
 	// 閉じる
 	$(document).on('click', '#category_close', function() {
 		Argo_ajax.ok_cancel_box(' ', '<%$lang["BVE019"]%>', function () { //Bạn có chắc chắn muốn thoát？

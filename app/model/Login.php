@@ -148,6 +148,7 @@ class Login_model extends ACWModel
                 ,l.phanbo
                 ,l.trungtam_quanly
                 ,l.print
+                ,email
 			FROM
 				m_user
 			left join phong_ban b on b.phongban_id = m_user.phong_ban

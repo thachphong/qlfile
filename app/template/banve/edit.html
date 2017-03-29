@@ -4,8 +4,13 @@
 			<h2><img src="<%$smarty.const.ACW_BASE_URL%>shared/img/icon_file2.gif" /><%$lang['BVE042']%></h2><!--Thông tin bản vẽ-->			
 			<div style="float: right;">
 				<input type="button" id="category_close" value="<%$lang['BVE044']%>" /><!--Đóng-->
-				<input type="button" id="category_delete" value="<%$lang['BVE040']%>" /><!--Xóa-->
-				<input type="button" id="category_save" value="<%$lang['BVE043']%>" /><!--Cập nhật-->
+				<%*<input type="button" id="category_delete" value="<%$lang['BVE040']%>" /> *%><!--Xóa-->
+				<%if $del_flg=='0'%>
+				<input type="button" id="category_cancel" value="<%$lang['BVE048']%>" /> <!--Hủy-->
+				<%else%>
+				<input type="button" id="category_restore" value="<%$lang['BVE049']%>" /> <!--Phục hồi-->
+				<%/if%>
+				<input type="button" id="category_save" value="<%$lang['BVE043']%>" <%if $del_flg != 0%>disabled="disabled"<%/if%>/><!--Cập nhật-->
 			</div>
 		</div>
 		<form id="category_form" class="scroll_form">
@@ -19,7 +24,7 @@
 				<tr>					
 					<th colspan="2"><%$lang['BVE031']%><%if $parent_level=='0'%><span class="edit_require">*</span><%/if%></th><!--Khổ giấy-->                
 					<td colspan="2"><!--input style="width: 100px" maxlength="1" id="kho_giay" name="kho_giay" type="text"  value="<%$kho_giay%>"/>-->
-						<select style="width: 100px" id="kho_giay" name="kho_giay">
+						<select style="width: 100px" id="kho_giay" name="kho_giay" <%if $del_flg != 0%>disabled="disabled"<%/if%>>
 							<option value=""></option>
 							<option value="0" <%if $kho_giay=='0'%>selected<%/if%>>0</option>
 							<option value="1" <%if $kho_giay=='1'%>selected<%/if%>>1</option>
@@ -32,7 +37,7 @@
 				</tr>
 				<tr>					
 					<th colspan="2"><%$lang['BVE032']%><%if $parent_level=='0'%><span class="edit_require">*</span><%/if%></th><!--Mã bản vẽ-->                
-					<td><input maxlength="7" id="banve_no" <%if $parent_level!='0'%>readonly="true"<%/if%> name="banve_no" type="text" size="10" value="<%$banve_no%>"/></td>
+					<td><input maxlength="7" id="banve_no" <%if $parent_level!='0'%>readonly="true"<%/if%> name="banve_no" type="text" size="10" value="<%$banve_no%>" <%if $del_flg != 0%>disabled="disabled"<%/if%>/></td>
 					<td><label><%$lang['BVE030']%>
 						<input type="checkbox" name="dungchung" id="dungchung"<%if $dungchung == '1'%>checked<%/if%> <%if strlen($banve_no)>0%>onclick="return false"<%/if%> value="<%$dungchung%>">						    </label><!--Dùng chung-->
 					</td>
@@ -48,7 +53,7 @@
                 </td>
 				</tr>
 				<tr><th colspan="2"><%$lang['BVE034']%><span class="edit_require">*</span></th><!--Tên bản vẽ-->
-				<td colspan="2"><input name="banve_name" id="banve_name" type="text" size="30" value="<%$banve_name%>"/></td>
+				<td colspan="2"><input name="banve_name" id="banve_name" type="text" size="30" value="<%$banve_name%>" <%if $del_flg != 0%>disabled="disabled"<%/if%>/></td>
 				</tr>
                 <tr>
                     <th colspan="2"><%$lang['BVE035']%></th><!--Người tạo-->
@@ -64,7 +69,7 @@
 			<div class="hl_wrap">
 				<h3><%$lang['BVE046']%></h3><!--Danh sách bản vẽ cấp con-->
 				<ul class="btn_wrap">
-					<li><input type="button" value="<%$lang['BVE047']%>" id="section_add" /><!--Thêm bản vẽ con-->						
+					<li><input type="button" value="<%$lang['BVE047']%>" id="section_add" <%if $del_flg != 0%>disabled="disabled"<%/if%>/><!--Thêm bản vẽ con-->						
 					</li>
 				</ul>
 			</div>
