@@ -234,10 +234,10 @@ class Folderfile_model extends ACWModel
         			don_folder f
         		WHERE
         			f.don_id = t.don_id
-              and f.folder_id =:folder_id
               )
-		";
-		return $this->query($sql,array('folder_id'=>$folder_id));
+		";//and f.folder_id =:folder_id
+		//return $this->query($sql,array('folder_id'=>$folder_id));
+		return $this->query($sql); // don phan bo roi ko hien lai nua
 	}
 	public function get_donfolder_rows($folder_id)
 	{

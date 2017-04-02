@@ -10,3 +10,5 @@ INSERT INTO message_lang(msg_no,des_vn,screen,des_en)
 VALUES ('BVE051', 'Phục hồi', 'BANVE', 'Are you sure restore this drawing ?');
 INSERT INTO message_lang(msg_no,des_vn,screen,des_en)
 VALUES ('BVE052', 'Tồn tại bản vẽ con, không thể hủy !', 'BANVE', 'Exists child drawing, can not cancel !');
+INSERT INTO message_lang(msg_no,des_vn,screen,des_en)
+VALUES ('BVE053', 'Di chuyển', 'BANVE', 'Move');
