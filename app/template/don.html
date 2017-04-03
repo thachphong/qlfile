@@ -7,6 +7,8 @@
 		<link href="<%$smarty.const.ACW_BASE_URL%>shared/css/baitai.css" rel="stylesheet" type="text/css" />
         <link href="<%$smarty.const.ACW_BASE_URL%>shared/css/jquery.datetimepicker.css" rel="stylesheet" type="text/css" />
         <script type="text/javascript" src="<%$smarty.const.ACW_BASE_URL%>shared/js/jquery.datetimepicker.full.min.js"></script>
+        <link href="<%$smarty.const.ACW_BASE_URL%>shared/css/tablesort.css" rel="stylesheet" type="text/css" />
+		<script type="text/javascript" src="<%$smarty.const.ACW_BASE_URL%>shared/js/jquery.tablesorter.min.js"></script>
 </head>
 <body class="column_1">
 <div class="bg">
@@ -105,17 +107,17 @@
 <div class="main_innner height2">
 	<div class="baitai_wrap">
 		<!--<p class="clear_fix" style="text-align: right;"><input type="button" value="Thêm mới" id="btn_new" /></p>-->
-		<table id="data_list">
+		<table id="data_list" class="table_sort">
 			<thead>
 			<tr>
-				<th style="width: 40px;"><%$lang['DON001']%></th> <!--No.  -->            
-                <th style="width: 60px;"><%$lang['DON002']%></th><!--Mã bản vẻ-->
-                <th style="width: 200px;"><%$lang['DON003']%></th> <!--Tiêu đề-->
-                <th style="width: 70px;"><%$lang['DON004']%></th> <!--Ngày lập-->
-                <th style="width: 100px;"><%$lang['DON005']%></th> <!--Người tạo-->
-                <th style="width: 100px;"><%$lang['DON006']%></th> <!--Người duyệt cuối-->
-                <th style="width: 120px; text-align: center;"><%$lang['DON007']%></th> <!--tình trạng-->
-                <th style="width: 200px;"><%$lang['DON008']%></th> <!--Nội dung-->
+				<th style="width: 40px;"><span><%$lang['DON001']%></span></th> <!--No.  -->            
+                <th style="width: 60px;"><span><%$lang['DON002']%></span></th><!--Mã bản vẻ-->
+                <th style="width: 200px;"><span><%$lang['DON003']%></span></th> <!--Tiêu đề-->                
+                <th style="width: 70px;"><span><%$lang['DON004']%></span></th> <!--Ngày lập-->
+                <th style="width: 100px;"><span><%$lang['DON005']%></span></th> <!--Người tạo-->
+                <th style="width: 100px;"><span><%$lang['DON006']%></span></th> <!--Người duyệt cuối-->
+                <th style="width: 120px; text-align: center;"><span><%$lang['DON007']%></span></th> <!--tình trạng-->
+                <th style="width: 200px;"><span><%$lang['DON008']%></span></th> <!--Nội dung-->
 			</tr>
 			</thead>
 			<tbody>
@@ -130,7 +132,7 @@
 				<td >
                     <input type="hidden" class="m_user_id" value="<%$row.don_id%>" />
 					<a href="<%$smarty.const.ACW_BASE_URL%>don/edit/<%$row.don_id%>" class="btn_edit"><%$row.tieude%></a>
-				</td>
+				</td>				
                 <td><%$row.add_datetime%> </td>
                 <td><%$row.add_user%></td>
                 <td><%$row.user_name_disp%></td>
@@ -151,7 +153,6 @@
 </div><!-- / .container -->
 </div><!-- / .bg -->
 <%include 'include/argo_ajax.html'%>
-<%include 'include/table_shima.html'%>
 <script type='text/javascript'>
 $(function() {
     //jQuery('#datetimepicker').datetimepicker();
@@ -227,12 +228,12 @@ $(function() {
 		var donvi_id = $(this).prev().val();
 		open_user_edit(donvi_id);
 	});
-	table_shimashima('#data_list');
 	
 	$(window).on("load resize", function(){
 		var wh = $(window).height();
-		$(".height2").height(wh - 206);	
+		$(".height2").height(wh - <%$padding%>);	
 	});
+	$('#data_list').tablesorter();
 });
 
 function open_user_edit(donvi_id)

@@ -35,6 +35,28 @@ class Download_model extends ACWModel
            // ,'tonhom_list' =>$usr->get_tonhom()
 		));
 	}
+	public static function action_blank()
+	{
+		$param = self::get_param(array(
+			's_donvi'
+            ,'s_user_id'
+            ,'s_tonhom'
+            ,'tu_ngay'
+            ,'den_ngay'
+            ,'file_name'
+            ,'loai'
+		));
+		$model = new Download_model();		
+		$rows =array();// $model->get_print_rows($param);		
+        $usr = new User_model();
+		return ACWView::template('download.html', array(
+			'data_rows' => $rows			
+			,'search_data'=>$param
+            ,'donvi_list' =>$usr->get_donvi()
+            ,'user_list' =>$usr->get_user_rows(null)
+           // ,'tonhom_list' =>$usr->get_tonhom()
+		));
+	}
     public function insert_download($file_id){
         $sql="insert into download(file_id,user_id,add_datetime)
               values(:file_id,:user_id,now())";

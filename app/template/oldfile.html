@@ -5,7 +5,8 @@
 <title><%$lang['OLDF008']%></title>
 		<%include 'include/head.html'%>
 		<link href="<%$smarty.const.ACW_BASE_URL%>shared/css/baitai.css" rel="stylesheet" type="text/css" />
-        
+        <link href="<%$smarty.const.ACW_BASE_URL%>shared/css/tablesort.css" rel="stylesheet" type="text/css" />
+		<script type="text/javascript" src="<%$smarty.const.ACW_BASE_URL%>shared/js/jquery.tablesorter.min.js"></script>
 </head>
 <body class="column_1">
 <div class="bg">
@@ -37,15 +38,15 @@
 <!-- InstanceBeginEditable name="main_contents" -->
 <div class="main_contents">
 <div class="main_innner height2">
-	<div class="baitai_wrap">
+	<div class="baitai_wrap" class="table_sort">
 		<!--<p class="clear_fix" style="text-align: right;"><input type="button" value="Thêm mới" id="btn_new" /></p>-->
-		<table id="data_list">
+		<table id="data_list" class="table_sort">
 			<thead>
 			<tr>
-				<th style="width: 100px;"><%$lang['OLDF002']%><!--Tên file--></th>
-                <th style="width: 100px;text-align: center;"><%$lang['OLDF005']%><!--Ngày cập nhật--></th>
-                <th style="width: 100px;text-align: center;"><%$lang['OLDF006']%><!--tiêu đề--></th>
-                <th style="width: 100px;text-align: center;"><%$lang['OLDF007']%><!--Loại bản vẽ--></th>
+				<th style="width: 100px;"><span><%$lang['OLDF002']%></span><!--Tên file--></th>
+                <th style="width: 100px;text-align: center;"><span><%$lang['OLDF005']%></span><!--Ngày cập nhật--></th>
+                <th style="width: 100px;text-align: center;"><span><%$lang['OLDF006']%></span><!--tiêu đề--></th>
+                <th style="width: 100px;text-align: center;"><span><%$lang['OLDF007']%></span><!--Loại bản vẽ--></th>
 			</tr>
 			</thead>
 			<tbody>
@@ -58,7 +59,7 @@
 				<td style="text-align: center;">
 					<%$row.add_datetime%>
 				</td>
-                <td style="text-align: center;">
+                <td>
 					<%$row.tieude%>
 				</td>
                 <td style="text-align: center;">
@@ -77,7 +78,6 @@
 </div><!-- / .container -->
 </div><!-- / .bg -->
 <%include 'include/argo_ajax.html'%>
-<%include 'include/table_shima.html'%>
 <script type='text/javascript'>
 $(function() {
 
@@ -140,12 +140,12 @@ $(function() {
     		"file_id": info[2]
     	});*/
 	});
-	table_shimashima('#data_list');
 	
 	$(window).on("load resize", function(){
 		var wh = $(window).height();
 		$(".height2").height(wh - 206);	
 	});
+	$('#data_list').tablesorter();
 });
 
 </script>

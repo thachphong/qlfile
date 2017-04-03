@@ -36,6 +36,7 @@ class File_model extends ACWModel
 		return ACWView::template('file.html',array(
                                     'data_rows' =>array()
                                     ,'search_file_name'=>''
+                                    ,'search_banve_name'=>''
                                     ,'flg_old'=>'0'
                                     )
                                     );
@@ -52,6 +53,7 @@ class File_model extends ACWModel
 	{	
         $param = self::get_param(array(
 			'search_file_name',
+			'search_banve_name',
             'flg_old'
 		));
         $db= new File_model();
@@ -59,6 +61,7 @@ class File_model extends ACWModel
 		return ACWView::template('file.html',array(
                                     'data_rows' =>$data
                                     ,'search_file_name'=>$param['search_file_name']
+                                    ,'search_banve_name'=>$param['search_banve_name']
                                     ,'flg_old'=>$param['flg_old']
                                     ));
 	}
@@ -503,7 +506,8 @@ class File_model extends ACWModel
 				  when d.loaidon = 1 then 'Cập nhật'
 				  end)  loaidon,
           DATE_FORMAT(t.add_datetime,'%d/%m/%Y %H:%i:%s') add_datetime,     
-          DATE_FORMAT(d.ngay_ttql,'%d/%m/%Y %H:%i:%s') ngay_ttql
+          DATE_FORMAT(d.ngay_ttql,'%d/%m/%Y %H:%i:%s') ngay_ttql,
+          bv.banve_name
 			FROM	file t
 				 inner join (select a.file_name,max(a.file_id) file_id from file a where del_flg=0 group by a.file_name) mx
 									on mx.file_id = t.file_id 
@@ -512,25 +516,24 @@ class File_model extends ACWModel
 				inner JOIN (SELECT DISTINCT * from temp_folder) tmp on tmp.folder_id = df.folder_id
         left join m_user u on t.add_user_id = u.user_id
 				left join m_user utt on d.user_ttql = utt.user_id
+				left join banve bv on t.file_name like CONCAT(bv.kho_giay,bv.banve_no,'%') 
             where /*t.`status`=3
                 and*/ t.file_type in ('pdf','rar')
                 and t.del_flg = 0
 		";
-		
+		$sql_param = array();
 		if (isset($param['search_file_name']) && !empty($param['search_file_name'])) {
-			$sql_param = array(
-					'file_name' =>  '%' . SQL_lib::escape_like($param['search_file_name']) . '%'
-				);
+			$sql_param['file_name'] =  '%' . SQL_lib::escape_like($param['search_file_name']) . '%';
 			$sql .= " and lower(t.file_name) like lower(:file_name) ";
-        }else if (isset($param['search_tieude']) && !empty($param['search_tieude'])) {
-			$sql_param = array(
-					':tieude' =>  '%' . SQL_lib::escape_like($param['search_file_name']) . '%'
-				);
+        }
+        if (isset($param['search_tieude']) && !empty($param['search_tieude'])) {
+			$sql_param['tieude'] = '%' . SQL_lib::escape_like($param['search_file_name']) . '%';
 			$sql .= " and lower(d.tieude) like lower(:tieude) ";
-		} else {
-			$sql_param = array();
 		}
-		
+		if (isset($param['search_banve_name']) && !empty($param['search_banve_name'])) {
+			$sql_param['banve_name'] = '%' . SQL_lib::escape_like($param['search_banve_name']) . '%';
+			$sql .= " and lower(bv.banve_name) like lower(:banve_name) ";
+		} 
 		$sql .= "
 			ORDER BY
 				t.file_id

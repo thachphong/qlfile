@@ -5,7 +5,8 @@
 <title><%$lang['CPDF001']%></title>
 		<%include 'include/head.html'%>
 		<link href="<%$smarty.const.ACW_BASE_URL%>shared/css/baitai.css" rel="stylesheet" type="text/css" />
-        
+        <link href="<%$smarty.const.ACW_BASE_URL%>shared/css/tablesort.css" rel="stylesheet" type="text/css" />
+		<script type="text/javascript" src="<%$smarty.const.ACW_BASE_URL%>shared/js/jquery.tablesorter.min.js"></script>
 </head>
 <body class="column_1">
 <div class="bg">
@@ -39,14 +40,14 @@
 <div class="main_innner height2">
 	<div class="baitai_wrap">
 		<!--<p class="clear_fix" style="text-align: right;"><input type="button" value="Thêm mới" id="btn_new" /></p>-->
-		<table id="data_list">
+		<table id="data_list" class="table_sort">
 			<thead>
 			<tr>
-				<th style="width: 40%;"><%$lang['CPDF003']%><!--Tên file--></th>
-                <th style="width: 10%;text-align: center;"><%$lang['CPDF007']%><!--Ngày cập nhật--></th>
-                <th style="width: 30%;text-align: center;"><%$lang['CPDF008']%><!--tiêu đề--></th>
-                <th style="width: 10%;text-align: center;"><%$lang['CPDF009']%><!--Loại bản vẽ--></th>
-                <th style="width: 10%;text-align: center;"><%$lang['CPDF001']%><!--Convert Pdf--></th>
+				<th style="width: 40%;"><span><%$lang['CPDF003']%></span><!--Tên file--></th>
+                <th style="width: 10%;text-align: center;"><span><%$lang['CPDF007']%></span><!--Ngày cập nhật--></th>
+                <th style="width: 30%;text-align: center;"><span><%$lang['CPDF008']%></span><!--tiêu đề--></th>
+                <th style="width: 10%;text-align: center;"><span><%$lang['CPDF009']%></span><!--Loại bản vẽ--></th>
+                <th style="width: 10%;text-align: center;"><span><%$lang['CPDF001']%></span><!--Convert Pdf--></th>
 			</tr>
 			</thead>
 			<tbody>
@@ -85,7 +86,6 @@
 </div><!-- / .container -->
 </div><!-- / .bg -->
 <%include 'include/argo_ajax.html'%>
-<%include 'include/table_shima.html'%>
 <script type='text/javascript'>
 $(function() {
 
@@ -153,13 +153,13 @@ $(function() {
             'don_id':$('#don_'+file_id).val(),
             'file_name':$('#file_name_'+file_id).val()
     	});
-	});
-	table_shimashima('#data_list');
+	});	
 	
 	$(window).on("load resize", function(){
 		var wh = $(window).height();
 		$(".height2").height(wh - 206);	
 	});
+	$('#data_list').tablesorter();
 });
 
 </script>

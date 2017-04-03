@@ -5,7 +5,8 @@
 <title><%$lang['DOVI001']%></title>
 		<%include 'include/head.html'%>
 		<link href="<%$smarty.const.ACW_BASE_URL%>shared/css/baitai.css" rel="stylesheet" type="text/css" />
-        
+        <link href="<%$smarty.const.ACW_BASE_URL%>shared/css/tablesort.css" rel="stylesheet" type="text/css" />
+		<script type="text/javascript" src="<%$smarty.const.ACW_BASE_URL%>shared/js/jquery.tablesorter.min.js"></script>
 </head>
 <body class="column_1">
 <div class="bg">
@@ -39,11 +40,11 @@
 <div class="main_innner height2">
 	<div class="baitai_wrap">
 		<p class="clear_fix" style="text-align: right;"><input type="button" value="<%$lang['DOVI006']%>" id="btn_new" /></p><!--Thêm mới-->
-		<table id="data_list">
+		<table id="data_list" class="table_sort">
 			<thead>
 			<tr>
-				<th style="width: 100px;"><%$lang['DOVI003']%><!--Tên Đơn vị--></th>
-                <th style="width: 100px;text-align: center;"><%$lang['DOVI005']%><!--Ngưng sử dụng--></th>
+				<th style="width: 100px;"><span><%$lang['DOVI003']%></span><!--Tên Đơn vị--></th>
+                <th style="width: 100px;text-align: center;"><span><%$lang['DOVI005']%></span><!--Ngưng sử dụng--></th>
 			</tr>
 			</thead>
 			<tbody>
@@ -69,7 +70,6 @@
 </div><!-- / .container -->
 </div><!-- / .bg -->
 <%include 'include/argo_ajax.html'%>
-<%include 'include/table_shima.html'%>
 <script type='text/javascript'>
 $(function() {
 
@@ -121,12 +121,12 @@ $(function() {
 		var donvi_id = $(this).prev().val();
 		open_user_edit(donvi_id);
 	});
-	table_shimashima('#data_list');
 	
 	$(window).on("load resize", function(){
 		var wh = $(window).height();
 		$(".height2").height(wh - 206);	
 	});
+	$('#data_list').tablesorter();
 });
 
 function open_user_edit(donvi_id)

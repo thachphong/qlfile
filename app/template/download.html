@@ -7,6 +7,8 @@
 		<link href="<%$smarty.const.ACW_BASE_URL%>shared/css/baitai.css" rel="stylesheet" type="text/css" />
         <link href="<%$smarty.const.ACW_BASE_URL%>shared/css/jquery.datetimepicker.css" rel="stylesheet" type="text/css" />
         <script type="text/javascript" src="<%$smarty.const.ACW_BASE_URL%>shared/js/jquery.datetimepicker.full.min.js"></script>
+        <link href="<%$smarty.const.ACW_BASE_URL%>shared/css/tablesort.css" rel="stylesheet" type="text/css" />
+		<script type="text/javascript" src="<%$smarty.const.ACW_BASE_URL%>shared/js/jquery.tablesorter.min.js"></script>
 </head>
 <body class="column_1">
 <div class="bg">
@@ -77,17 +79,17 @@
 <div class="main_innner height2">
 	<div class="baitai_wrap">
 		<!--<p class="clear_fix" style="text-align: right;"><input type="button" value="Thêm mới" id="btn_new" /></p>-->
-		<table id="data_list">
+		<table id="data_list" class="table_sort">
 			<thead>
 			<tr>
-				<th style="width: 30px;"><%$lang['LSDW014']%><!--No.--></th>
-                <th style="width: 100px;"><%$lang['LSDW003']%><!--Đơn vị--></th>
-                <th style="width: 100px;"><%$lang['LSDW005']%><!--Phòng ban--></th>
-                <th style="width: 100px;"><%$lang['LSDW006']%><!--Tổ nhóm--></th>
-                <th style="width: 100px;"><%$lang['LSDW004']%><!--Tên user--></th>
-                <th style="width: 120px; text-align: center;"><%$lang['LSDW013']%><!--Tên file--></th>
-                <th style="width: 80px;"><%$lang['LSDW015']%><!--Ngày giờ--></th>
-                <th style="width: 50px;"><%$lang['LSDW016']%><!--Số lần download--></th>
+				<th style="width: 30px;"><span><%$lang['LSDW014']%></span><!--No.--></th>
+                <th style="width: 100px;"><span><%$lang['LSDW003']%></span><!--Đơn vị--></th>
+                <th style="width: 100px;"><span><%$lang['LSDW005']%></span><!--Phòng ban--></th>
+                <th style="width: 100px;"><span><%$lang['LSDW006']%></span><!--Tổ nhóm--></th>
+                <th style="width: 100px;"><span><%$lang['LSDW004']%></span><!--Tên user--></th>
+                <th style="width: 120px; text-align: center;"><span><%$lang['LSDW013']%></span><!--Tên file--></th>
+                <th style="width: 80px;"><span><%$lang['LSDW015']%></span><!--Ngày giờ--></th>
+                <th style="width: 50px;"><span><%$lang['LSDW016']%></span><!--Số lần download--></th>
 			</tr>
 			</thead>
 			<tbody>
@@ -114,7 +116,6 @@
 </div><!-- / .container -->
 </div><!-- / .bg -->
 <%include 'include/argo_ajax.html'%>
-<%include 'include/table_shima.html'%>
 <script type='text/javascript'>
 $(function() {
     //jQuery('#datetimepicker').datetimepicker();
@@ -175,13 +176,13 @@ $(function() {
 	$(document).on("click", ".btn_edit", function () {		
 		var donvi_id = $(this).prev().val();
 		open_user_edit(donvi_id);
-	});
-	table_shimashima('#data_list');
+	});	
 	
 	$(window).on("load resize", function(){
 		var wh = $(window).height();
-		$(".height2").height(wh - 206);	
+		$(".height2").height(wh - 216);	
 	});
+	$('#data_list').tablesorter();
 });
 
 

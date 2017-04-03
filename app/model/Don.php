@@ -42,7 +42,8 @@ class Don_model extends ACWModel
 			'data_rows' => $rows,			
 			//'search_donvi_name'=>$param['search_donvi_name'],
             'mode'=>'main',
-            'menu'=>'#menu_kt'
+            'menu'=>'#menu_kt',
+            'padding'=>130
 		));
 	}
     public static function action_history()
@@ -55,7 +56,7 @@ class Don_model extends ACWModel
             'trangthai',
             'don_no',
             'file_name',
-            'default_flg'
+            'default_flg'            
 		));
 		$model = new Don_model();
         if(!isset($param['default_flg']) || $param['default_flg']!='1'){
@@ -70,7 +71,8 @@ class Don_model extends ACWModel
 			'data_rows' => $rows,			
 			'search_data'=>$param,
             'mode'=>'history',
-            'menu'=>'#menu_lsyc'
+            'menu'=>'#menu_lsyc',
+            'padding'=>220
 		));
 	}
     public static function action_xoadon()

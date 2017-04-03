@@ -5,6 +5,8 @@
 <title><%$lang['USER001']%></title>
 		<%include 'include/head.html'%>
 		<link href="<%$smarty.const.ACW_BASE_URL%>shared/css/baitai.css" rel="stylesheet" type="text/css" />
+		<link href="<%$smarty.const.ACW_BASE_URL%>shared/css/tablesort.css" rel="stylesheet" type="text/css" />
+		<script type="text/javascript" src="<%$smarty.const.ACW_BASE_URL%>shared/js/jquery.tablesorter.min.js"></script>
         
 </head>
 <body class="column_1">
@@ -39,17 +41,17 @@
 <div class="main_innner height2">
 	<div class="baitai_wrap">
 		<p class="clear_fix" style="text-align: right;"><input type="button" value="<%$lang['USER014']%>" id="btn_new" /></p><!--Thêm mới-->
-		<table id="user_list">
+		<table id="user_list" class="table_sort">
 			<thead>
 			<tr>
-				<th style="width: 100px;"><%$lang['USER003']%><!--Tên đăng nhập--></th>
-                <th style="width: 100px;"><%$lang['USER006']%><!--Họ và tên--></th>
-                <th style="width: 100px;"><%$lang['USER007']%><!--Email--></th>					
-				<th style="width: 100px;"><%$lang['USER009']%><!--Đơn vị--></th>
-				<th style="width: 100px; text-align: center;"><%$lang['USER008']%><!--Phòng ban--></th>
-				<th style="width: 100px;text-align: center;"><%$lang['USER010']%><!--Tổ nhóm--></th>
+				<th style="width: 100px;"><span><%$lang['USER003']%></span><!--Tên đăng nhập--></th>
+                <th style="width: 100px;"><span><%$lang['USER006']%></span><!--Họ và tên--></th>
+                <th style="width: 100px;"><span><%$lang['USER007']%></span><!--Email--></th>					
+				<th style="width: 100px;"><span><%$lang['USER009']%></span><!--Đơn vị--></th>
+				<th style="width: 100px; text-align: center;"><span><%$lang['USER008']%></span><!--Phòng ban--></th>
+				<th style="width: 100px;text-align: center;"><span><%$lang['USER010']%></span><!--Tổ nhóm--></th>
 				<!--<th style="width: 100px;text-align: center;">Loại user</th>-->
-                <th style="width: 100px;text-align: center;"><%$lang['USER011']%><!--Ngưng sử dụng--></th>
+                <th style="width: 100px;text-align: center;"><span><%$lang['USER011']%></span><!--Ngưng sử dụng--></th>
 			</tr>
 			</thead>
 			<tbody>
@@ -93,7 +95,6 @@
 </div><!-- / .container -->
 </div><!-- / .bg -->
 <%include 'include/argo_ajax.html'%>
-<%include 'include/table_shima.html'%>
 <script type='text/javascript'>
 $(function() {
 
@@ -154,13 +155,14 @@ $(function() {
 	});
 
 	// テーブルに縞模様
-	table_shimashima('#user_list');
+	//table_shimashima('#user_list');
 
 	// サイズ変更スクリプト
 	$(window).on("load resize", function(){
 		var wh = $(window).height();
 		$(".height2").height(wh - 206);	
 	});
+	$('#user_list').tablesorter(); 
 });
 
 function open_user_edit(m_user_id)
