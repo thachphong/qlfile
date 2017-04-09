@@ -3,6 +3,7 @@
 		<div class="title_wrap clear_fix" style="padding-right: 15px">
 			<h2><img src="<%$smarty.const.ACW_BASE_URL%>shared/img/icon_file2.gif" /><%$lang['BVE042']%></h2><!--Thông tin bản vẽ-->			
 			<div style="float: right;">
+				<input type="button" id="category_move" value="<%$lang['BVE053']%>" <%if $del_flg != 0%>disabled="disabled"<%/if%>/> <!--Move-->
 				<input type="button" id="category_close" value="<%$lang['BVE044']%>" /><!--Đóng-->
 				<%*<input type="button" id="category_delete" value="<%$lang['BVE040']%>" /> *%><!--Xóa-->
 				<%if $del_flg=='0'%>
@@ -13,13 +14,13 @@
 				<input type="button" id="category_save" value="<%$lang['BVE043']%>" <%if $del_flg != 0%>disabled="disabled"<%/if%>/><!--Cập nhật-->
 			</div>
 		</div>
-		<form id="category_form" class="scroll_form">
+		<form id="category_form" class="">
 		<input id="update_child" name="update_child" type="hidden" value="0"/>
 		<div class="info_wrap">
 			<div class="hl_wrap">
 				<h3><%$lang['BVE045']%></h3><!--Thông Tin cơ bản-->				
 			</div>
-			<table class="category_1">
+			<table class="category_1" style="margin-bottom: 0px">
 				<colgroup><col width="120px" /><col width="20px" /></colgroup>
 				<tr>					
 					<th colspan="2"><%$lang['BVE031']%><%if $parent_level=='0'%><span class="edit_require">*</span><%/if%></th><!--Khổ giấy-->                
@@ -73,7 +74,7 @@
 					</li>
 				</ul>
 			</div>
-			<table class="category_2" id="folder_list" style="width: 98%;">				
+			<table class="category_2 scroll_form" id="folder_list" style="width: 98%;height: 100px;display: block;margin-bottom: 0px" >				
 				<thead>
 					<tr>
                         <th style="width: 120px;"><%$lang['BVE031']%></th><!--Khổ giấy-->
@@ -115,6 +116,7 @@ $(function() {
 		var wh = $(window).height();
 		
 		$('#category_form').height(wh - 255);
-	
+		$('#folder_list').height(wh - 540);
+	    
 });
 </script>

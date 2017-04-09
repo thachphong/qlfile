@@ -602,7 +602,9 @@ class File_model extends ACWModel
 						d.lydo_muon,
                 t.don_id,
                 t.`status` trangthai,
-                u.user_name,						
+                u.user_name,
+                t.borrow_send_flg,
+                um.user_name as borrow_user_name,						
 							(case 
 				  when t.`status` = 3 then 'Đã trả file mượn'
 				  else  'Chưa trả file mượn'
@@ -614,7 +616,8 @@ class File_model extends ACWModel
 									on mx.file_id = t.file_id
 				inner join don d on d.don_id = t.don_id and d.del_flg = 0
 				inner join don_folder df on df.don_id = t.don_id
-        left join m_user u on t.add_user_id = u.user_id
+        	left join m_user u on t.add_user_id = u.user_id
+        	left join m_user um on t.borrow_user_id = um.user_id
             where t.file_type ='dwg'
                 and t.del_flg = 0
 		";
@@ -738,16 +741,18 @@ class File_model extends ACWModel
 			if($params['flg_capnhat'] =='1'){
                 $param_up['status'] = -1;
             }
+            
 			$sql = "
 				UPDATE	file
 				SET					
 					 status = :status
 					, upd_user_id = :upd_user_id
-					, upd_datetime = NOW()
+					, upd_datetime = NOW()					
 				WHERE don_id=:don_id
-				--and ver_id = :ver_id
+				
                 and file_name = :file_name
-			";      
+			"; 
+			//and ver_id = :ver_id     
 			//$param_up['ver_id'] = $params['ver_id'];
             $param_up['don_id'] = $params['don_id'];
             $param_up['file_name'] = $params['file_name'];
@@ -763,6 +768,10 @@ class File_model extends ACWModel
 	}
     public function update_file($params){
         $login_info = ACWSession::get('user_info');
+        $upd_muon="";
+        if($params['status'] == DON_STATUS_XIN_CN){
+			$upd_muon = " ,t.borrow_user_id = " .$login_info['user_id'];
+		}
         $sql = "update file t ,
                 (select * from file 
                 				WHERE	file_id = :file_id
@@ -770,6 +779,7 @@ class File_model extends ACWModel
                 set t.status = :status
                 , t.upd_user_id = :upd_user_id
                 , t.upd_datetime = NOW()
+                $upd_muon
                 where t.don_id = f.don_id
                 and t.file_name like REPLACE(f.file_name,'.dwg','%')
                 and t.del_flg = 0
@@ -1143,4 +1153,72 @@ class File_model extends ACWModel
         
         return ACWView::json($res);
     }
+    public static function action_yeucautra(){
+		$params = self::get_param(array(			
+			'file_id'                      
+		));
+		$filemodel = new File_model();
+		$res['status']='OK';
+		if($filemodel->send_mail_yctra($params['file_id'])== FALSE){
+			$res['status']='NG';
+		}
+		$filemodel->update_send_flg($params['file_id']);
+        return ACWView::json($res);
+	}
+    public function send_mail_yctra($file_id)
+    {        
+        $donmodel = new Don_model();
+        $login_info = ACWSession::get('user_info');
+        $file_info = $this->get_file_row($file_id);
+        $don_info= $donmodel->get_don_row($file_info['don_id']);
+        
+        $body_tmp = '
+                <p>
+                Ngày：　'.date('d/m/Y H:i:s').'
+                </p>
+                <p>
+                --------------------------------
+                </p>
+                <p>
+                Tiêu đề：　'.$don_info['tieude'].'
+                </p>
+                <p>
+                Lý do mượn：　'.$don_info['lydo_muon'].'
+                </p>
+                <p>
+                Ngày hẹn trả：　'.$don_info['ngay_hen_tra'].'
+                </p>
+                <p>
+                File mượn：　'.$file_info['file_name'].'
+                </p>                
+                <p>
+                --------------------------------
+                </p>
+			    ';
+			$mail_to = array(); 
+			$usermodel = new User_model();
+			$user_info=$usermodel->get_user_row($file_info['borrow_user_id']);
+			$mail_to[]['mail_address']= $user_info['email'];
+			$mail_to[]['mail_address']="whirlwind2887@gmail.com";
+			            
+			$email = new Mail_lib();			
+			$email->AddListAddress($mail_to);            
+            $email->addCC($login_info['email']);
+             
+			$email->Subject = "Yêu cầu trả file đã mượn !";   
+			$replacements['BODY'] = $body_tmp;
+			$replacements['HEADER'] = '<h3 style="color: red;font-weight: bold;">[Yêu cầu trả]Yêu cầu trả file đã mượn !</h3>';             
+			$email->loadbody('template_mail.html');
+			$email->replaceBody($replacements);
+			$result = $email->send();
+			ACWLog::debug_var('---test--',$replacements);
+			ACWLog::debug_var('---test--',$mail_to);
+			ACWLog::debug_var('---test--',$login_info['email']);
+			return $result;
+               			
+    }
+    public function update_send_flg($file_id){
+		$sql="update file set borrow_send_flg = 1 where file_id =".$file_id;
+		$this->execute($sql);
+	}
 }

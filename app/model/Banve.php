@@ -22,11 +22,13 @@ class Banve_model extends ACWModel
 	*/
 	public static function action_index()
 	{
-        $param = self::get_param(array('s_banve_no','s_banve_name'));
+        $param = self::get_param(array('s_banve_no','s_banve_name','bvid'));
 		/*$param = array(
 			'section_type' =>null//=> json_encode(Section_common_model::get_type())
 			,'common_spec' =>null// Section_common_model::get_icon_all()
 			);*/
+
+
 		return ACWView::template('banve.html', $param);
 	}
 	public static function action_excel()
@@ -553,9 +555,9 @@ class Banve_model extends ACWModel
         $sql .=" order by banve_no";
         return $this->query($sql);
     }
-	public function get_banve_all($param)
+	public function get_banve_all($param,$flg_move = FALSE)
 	{
-        $this->begin_transaction();
+        //$this->begin_transaction();
 		$sql = "SELECT
 				  chd.banve_id AS id
 				,chd.banve_no AS category_name
@@ -596,9 +598,13 @@ class Banve_model extends ACWModel
         }else{
             $param_sql['banve_name']= "%";
         }
+        if($flg_move){
+			$sql .=" and COALESCE(chd.level,0) <> 5";
+		}
         if($flg_check){
-            $this->query("select f_get_all_banve(:banve_no,:banve_name)",$param_sql);
-            $sql .="and chd.banve_id in (select distinct banve_id from temp_banve)";
+        	//$this->execute("CREATE TEMPORARY TABLE IF NOT EXISTS temp_banve  (banve_id int,chk_mk int,parent_id int,chk_parent int);");
+            //$this->query("select f_get_all_banve(:banve_no,:banve_name)",$param_sql);
+            //$sql .= "and chd.banve_id in (select distinct banve_id from temp_banve)";
             /*$sql .= "and chd.banve_id in (select banve_id 
                     from banve
                     where del_flg = 0
@@ -614,10 +620,45 @@ class Banve_model extends ACWModel
                     where   find_in_set(parent_id, @pv) > 0
                     and     @pv := concat(@pv, ',', banve_id))
                     ";*/
+            /*$sql .=" and chd.banve_id in
+            (select  banve_id
+              from    banve,
+                       (select @pv := (select group_concat(parent_id separator ',') 
+                        from banve
+                        where del_flg = 0
+                        and banve_no like :banve_no
+												and lower(banve_name) like  lower(:banve_name) )
+                       ) initialisation
+            where   find_in_set(banve_id, @pv) > 0
+                    and     @pv := concat(@pv, ',', parent_id)
+			union 
+			select  banve_id
+			from    banve,
+			        (select @pv2 := (select group_concat(banve_id separator ',') 
+			        from banve
+			        where del_flg = 0
+			            and banve_no like :banve_no
+			            and lower(banve_name) like  lower(:banve_name) )
+			        ) initialisation
+			where   find_in_set(parent_id, @pv2) > 0
+				and     @pv2 := concat(@pv2, ',', banve_id)
+			union 
+			select banve_id         
+			from banve
+			where del_flg = 0
+				and banve_no like :banve_no
+				and lower(banve_name) like  lower(:banve_name)
+			)";*/
+			$res = $this->query("select f_get_all_banve_new(:banve_no,:banve_name) as bv_id ",$param_sql);
+			$list_id ="1";
+			if(count($res) >0 ){
+				$list_id = $res[0]['bv_id'];
+			}
+			$sql .=" and FIND_IN_SET( banve_id,'$list_id') ";
         }
         
-		$res = $this->query($sql);
-        $this->commit();
+		$res = $this->query($sql);		
+        //$this->commit();
         return $res;
 	}
 	/**
@@ -930,5 +971,92 @@ ORDER BY parent_id;";
         }
         return false;
     }
+    public static function action_movebv()
+	{
+		/*$params = self::get_param(array('banve_id'));
+
+		$db = new Banve_model();
+		$param_s['s_banve_no']= '9891001';
+		$param_s['s_banve_name']= '';
+		$list = $db->get_banve_all($param_s); 
+		$out = $params;
+		$out['json_series_list'] = json_encode( $list);
+
+		return ACWView::template('banve/move.html', $out);*/
+		
+		$param = self::get_param(array(
+			's_banve_no'
+			,'s_banve_name'	
+			//'banve_id'		
+			));
+		$db = new Banve_model();
+		//$param['s_banve_no']= '9891001';
+		//$list = $db->get_banve_all($param,TRUE);
+		//return ACWView::template($result);
+		
+		$out = $param;
+		$out['select_series_head_id'] = 0;
+		//$out['list']= array();
+		return ACWView::template('banve/move.html', $out);
+				
+	}
+	public static function action_move()
+	{		
+		$param = self::get_param(array(
+			'banve_id'
+			,'to_parent_id'						
+			));
+		$db = new Banve_model();
+		$result['status'] ='OK';
+		$result['msg'] = "Di chuyển thành công !";		
+		if($param['banve_id']==$param['to_parent_id']){
+			$result['status'] ='NG';
+			$result['msg'] ='Không thể di chuyển vào chính nó';
+			return ACWView::json($result);
+		}
+		$row = $db->get_banve_byid($param['to_parent_id']);
+		if($row['level']=='5'){
+			$result['status'] ='NG';
+			$result['msg'] ='Không thể di chuyển vào bản vẽ phôi';
+		}else{
+			$db->move_banve($param);
+		}
+		
+		return ACWView::json($result);
+				
+	}
+	public function move_banve($param){
+		$sql=" update banve 
+				set parent_id = :to_parent_id
+				,upd_datetime = NOW()
+				,upd_user_id = :user_id
+				where banve_id =:banve_id ";
+		$login_info = ACWSession::get('user_info');
+		$param['user_id'] = $login_info['user_id']; 
+		$this->execute($sql,$param);
+	}
+	public function get_banve_byid($banve_id)
+	{
+		$r = $this->query("SELECT t.banve_name,t.banve_no,t.kho_giay,t.level
+                            FROM banve t                        
+                            WHERE	 t.del_flg = 0
+                            		and	t.banve_id = :banve_id
+			", array ('banve_id' => $banve_id));
+		if(count($r) >0)
+			return $r[0];
+		else
+			return null;
+	}
+	public static function action_movetree()
+	{
+        $param = self::get_param(array(
+			'top_banve_id'	
+			));
+		$db = new Banve_model();
+		$row = $db->get_banve_byid($param['top_banve_id']);
+		$param_seach['s_banve_no'] = $row['banve_no'];
+		$result = $db->get_banve_all($param_seach,true);
+		return ACWView::json($result);
+	}
 }
 /* ファイルの終わり */

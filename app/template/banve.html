@@ -63,20 +63,48 @@
 		</div><!-- / .container -->
 	</div><!-- / .bg -->
 <div id="copy_dialog"></div>
+<div id="move_dialog"></div>
 <%include 'include/argo_ajax.html'%>
 <%include 'include/tree_view.html'%>
 <script type='text/javascript'>
 $(function() {
     
     $('#menu_banve').addClass('selected');
-	var selected_category_id = null;
+
 	var add_section_no;
 	var sort_mode = false;	// ソートモード
 	var section_data = [];
         var _is_edit_category = false;
     var _has_ctg_child = false; 
     TreeView.override_on_click_open("#tree_view li", 'ltree');    
-
+	var bvid_reload = null;
+	var item_select = null;
+	
+	var tree_ajax = new Argo_ajax('json');
+	tree_ajax.done_func = function(tree_data) {
+		tree_json_data = tree_data;
+		tree_reload();
+		if (sort_mode) {
+			// ソートモード継続
+			change_sort_mode();
+		}
+		if(bvid_reload != null){	
+			console.log(bvid_reload);
+			
+			var list = 	bvid_reload.split(",");
+			for(var i=(list.length -1); i>=0;i--){
+				if(i>0){
+					$('#tree_view_img_open_'+list[i]).click();	
+				}else{
+					$('#ltree_'+list[i]).find('a')[0].click();
+				}
+			}
+			bvid_reload = null;
+		}
+	};
+	<%if isset($bvid) && strlen($bvid)>0%>
+		bvid_reload = '<%$bvid%>';
+	<%/if%>
 	var html_ajax = new Argo_ajax('html');
 	html_ajax.done_func = function(data) {
 		if (data === '') {
@@ -84,7 +112,7 @@ $(function() {
 			Argo_ajax.message_box_error("", '<%$lang["BVE008"]%>'); //Không có dữ liệu;
 			// ツリー再描画
 			$arr_s = $('#search_form').serializeArray();
-			tree_ajax.connect('POST', 'banve/tree',$arr_s);
+			tree_ajax.connect('GET', 'banve/tree',$arr_s);
 			return;
 		}
 		// HTML追加
@@ -98,12 +126,36 @@ $(function() {
 			if (data.error.length > 0) {
 				Argo_ajax.message_box_error('', data.error[0]['info']);
 			}
-		} else {
-            Argo_ajax.message_box(' ', '<%$lang["BVE009"]%>');//Cập nhật thành công !
-			$('#edit_contents_html').empty();
+		} else {          
+			Argo_ajax.message_box(' ', '<%$lang["BVE009"]%>',function(){
+				//var all_parent = TreeView.get_all_parent(tree_json_data,selected_category_id);
+				//console.log(tree_json_data);
+				//console.log(all_parent);
+				 
+				window.location.href ="<%$smarty.const.ACW_BASE_URL%>banve?bvid="+item_select;
+				//$arr_s = $('#search_form').serializeArray();
+				//tree_ajax.connect('GET', 'banve/tree',$arr_s);
+			}
+			);//Cập nhật thành công !  
+			//$('#edit_contents_html').empty();
 			// ツリー更新
-            $arr_s = $('#search_form').serializeArray();
-			tree_ajax.connect('POST', 'banve/tree',$arr_s);
+            /*$arr_s = $('#search_form').serializeArray();
+			tree_ajax.connect('GET', 'banve/tree',$arr_s);	*/
+			/*$('#btn_search').click();
+			return;	*/	
+			
+			return ;
+			/*var tree_ajax_new = new Argo_ajax('json');
+			tree_ajax_new.done_func = function(tree_data) {
+				tree_json_data = tree_data;
+				tree_reload();
+				if (sort_mode) {
+					// ソートモード継続
+					change_sort_mode();
+				}
+			};
+			$arr_s = $('#search_form').serializeArray();
+			tree_ajax_new.connect('GET', 'banve/tree',$arr_s);*/
 		}
 	};
 
@@ -116,7 +168,7 @@ $(function() {
 			}
 		} else {
             $arr_s = $('#search_form').serializeArray();
-			tree_ajax.connect('POST', 'banve/tree',$arr_s);
+			tree_ajax.connect('GET', 'banve/tree',$arr_s);
 		}
 	};
 
@@ -433,7 +485,12 @@ $(function() {
         }
         else{
         	_has_ctg_child = false;
-        }        
+        } 
+        var ctg_id = selected_category_id.replace("ltree_","");
+        var all_parent = TreeView.get_all_parent(tree_json_data,ctg_id);
+        top_parent_id = all_parent[all_parent.length - 2];
+        item_select =ctg_id+','+ all_parent.join();
+		//console.log(item_select);		       
 	};
 
 	TreeView.set_topic_path();
@@ -455,19 +512,10 @@ $(function() {
                     l_fold = TreeView.fold('tree_view', true,$(".tree_fold"));
                 }               
 	};
-	
-	var tree_ajax = new Argo_ajax('json');
-	tree_ajax.done_func = function(tree_data) {
-		tree_json_data = tree_data;
-		tree_reload();
-		if (sort_mode) {
-			// ソートモード継続
-			change_sort_mode();
-		}
-	};
+		
 	//tree_ajax.connect('GET', 'banve/tree');
     $arr_s = $('#search_form').serializeArray();
-    tree_ajax.connect('POST', 'banve/tree',$arr_s);
+    tree_ajax.connect('GET', 'banve/tree',$arr_s);
     var check_before_save = function () {
         $chk_flg= true;
         if($('#dungchung').val() !='1'){
@@ -525,14 +573,36 @@ $(function() {
 	$('#btn_clear').click(function(){
 		$('#search_form').find("textarea, :text, select").val("");
 	});
-    
+	 $(document).off('click', '#category_move');
+    $(document).on('click', '#category_move', function() {
+		var html_ajax = new Argo_ajax("html");
+		html_ajax.done_func = function(html) {
+			$("#move_dialog").dialog({
+				autoOpen: false,
+				width: 500,
+				height: 550,
+				modal: true,
+				resize:false,
+				title:"Chọn bản vẽ cấp cha để di chuyển vào"
+			});
+
+			$("#move_dialog").html(html);
+			$("#move_dialog").dialog("open");
+		};
+	        //scrollFolder();
+		html_ajax.connect("POST", "banve/movebv", {
+			"s_banve_no": $('#banve_no').val()		
+		});
+		//$arr_s = $('#search_form').serializeArray();
+        //tree_ajax.connect('POST', 'banve/movebv',$arr_s);
+	});
 });
-        
+        var top_parent_id = null;
+        var selected_category_id = null;
         var l_fold = false;
         $( ".tree_fold" ).click(function() {
             l_fold = TreeView.fold('tree_view', l_fold,$(".tree_fold"));
-        });
-
+        });	
 </script>
 </body>
 <!-- InstanceEnd --></html>
