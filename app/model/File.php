@@ -1199,7 +1199,7 @@ class File_model extends ACWModel
 			$usermodel = new User_model();
 			$user_info=$usermodel->get_user_row($file_info['borrow_user_id']);
 			$mail_to[]['mail_address']= $user_info['email'];
-			$mail_to[]['mail_address']="whirlwind2887@gmail.com";
+			//$mail_to[]['mail_address']="whirlwind2887@gmail.com";
 			            
 			$email = new Mail_lib();			
 			$email->AddListAddress($mail_to);            
