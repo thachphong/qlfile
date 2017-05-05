@@ -1,0 +1,289 @@
+<link href="<%$smarty.const.ACW_BASE_URL%>shared/css/relation_dialog.css" rel="stylesheet" type="text/css" />
+<link href="<%$smarty.const.ACW_BASE_URL%>shared/css/right_tree.css" rel="stylesheet" type="text/css" />
+<div class="container">
+	<div class="series_wrap">
+		<div class="title_wrap clear_fix">
+			<h2><img src="shared/img/icon_file2.gif" />関連商品登録</h2>
+		</div>
+		<div class="info_wrap height4">
+			<div class="hl_wrap">
+				<h3>シリーズ情報</h3>
+				<ul class="btn_wrap">
+                                        <!--Add Start - Trung VNIT - 2014/08/14 -->
+                                        <li><input type="button" value="閉じる" class="img_opacity btn_relation_close" /></li>
+                                        <!--Add End - Trung VNIT - 2014/08/14 -->
+					<li><input type="button" id="save_button_relation" value="保存" /></li>
+				</ul>
+			</div>
+			<div class="edit_wrap related height6">
+				<h3 class="hl">関連付けられたシリーズ</h3>
+				<div class="tree_wrap height5">
+					<ul id="series_list_relation">
+					</ul>			
+				</div><!-- / .side_contents -->
+			</div><!-- / .edit_wrap -->
+
+			<div class="move_wrap height5">
+				<ul>
+					<li><a href="javascript:void(0);" class="img_opacity disabled" id="series_add_button_relation"><img src="<%$smarty.const.ACW_BASE_URL%>shared/img/btn_move_l.gif" /></a></li>
+					<li><a href="javascript:void(0);" class="img_opacity disabled" id="series_del_button_relation"><img src="<%$smarty.const.ACW_BASE_URL%>shared/img/btn_move_r.gif" /></a></li>
+				</ul>
+			</div><!-- / .edit_wrap -->
+
+			<div class="edit_wrap height6">
+				<h3 class="hl">選択元商品ツリー</h3>
+                                <!--Add Start - Trung VNIT - 2014/08/29-->
+                                <input type='button' value='<%$smarty.const.UNFOLD_TEXT%>' class='tree_fold_r fold_r' />
+				<!--Add End - Trung VNIT - 2014/08/29-->
+				<div class="right_tree_wrap height5" id="tree_view_r_relation">
+				</div>
+			</div><!-- / .edit_wrap -->
+		</div><!-- / .info_wrap -->
+	</div><!-- / .series_wrap -->
+</div>
+<script type='text/javascript'>
+$(function() {
+	var selected_left_id = "ltree_s_<%$select_series_head_id%>";	// 選択された左ツリーのカテゴリID
+	var selected_right_id = null;	// 選択された右ツリーのカテゴリID
+	var selected_series_id = null;	// 選択されたシリーズのID
+	var category_filter = false;	// カテゴリフィルタ
+	var tree_init_data = null;	// ツリーの初期データ
+	var data_update = false;	// アップデートしたかどうか
+	var SERIES_LI = '';
+	<%foreach $list as $itemlist%>
+		SERIES_LI += '<li id="li_series_relation_<%$itemlist.t_series_head_id%>"><a class="relation_series" href="javascript:void(0);" id="series_relation_<%$itemlist.t_series_head_id%>"><%$itemlist.series_name%></a></li>';
+	<%/foreach%>
+	var json_ajax = new Argo_ajax('json');
+	TreeView.override_on_click_open("#tree_view_r_relation li", 'rtree');//Add NBKD-494 - Minh Vnit 2014/09/17
+	json_ajax.done_func = function(data) {
+		// 更新
+		if (data.error) {
+			if (data.error.length > 0) {
+				Argo_ajax.message_box_error("", data.error[0]['info']); //Edit NBKD-1071 TinVNIT 02/27/2015
+			}
+		} else {
+			// リスト部分を空白にする
+			//selected_left_id = null;
+			data_update = false;
+			Argo_ajax.message_box(' ', '保存が完了しました',function(){
+				$("#tree_view_r_relation").empty();//Add NBKD-494 - Minh Vnit 2014/09/17
+				$("#relation_dialog").dialog("close");
+            	load_series($("#lang").val(), null);
+            });//Edit - Trung VNIT - 2014/08/04
+                    _is_click_item = true;//Add - Trung VNIT - 2014/08/29
+		}
+	};
+
+        //Add Start - Trung VNIT - 2014/08/14
+        $('.btn_relation_close').click(function(){
+        	$("#tree_view_r_relation").empty();//Add NBKD-494 - Minh Vnit 2014/09/17
+            $("#relation_dialog").dialog("close");
+        });
+        //Add End - Trung VNIT - 2014/08/14
+
+	// 追加ボタン
+	$('#series_add_button_relation').click(function(){
+		if (selected_right_id == null || selected_left_id == null) {
+			return;
+		}
+		var spl = selected_right_id.split('_');
+		
+		if (spl.length != 3) {
+			return;	// 不明
+		}
+		
+		if ($('#series_relation_' + spl[2]).length > 0) {
+			// 既にある
+			return;
+		}
+		if (selected_left_id == ('ltree_s_' + spl[2])) {
+			// 自分と同一だ
+			Argo_ajax.message_box_error("", '自分自身は関連付けすることができません。'); //Edit NBKD-1071 TinVNIT 02/27/2015
+			return;
+		}
+		data_update = true;
+		var sel_series = $('#' + selected_right_id).children('div').find('a');
+		var series_name = sel_series.text();
+		$('#series_list_relation').append('<li id="li_series_relation_' + spl[2] +  '"><a class="relation_series" href="javascript:void(0);" id="series_relation_' + spl[2] +  '">' + series_name + '</a></li>');
+	});
+
+	// 削除ボタン
+	$('#series_del_button_relation').click(function(){
+		if (selected_series_id == null) {
+			return;
+		}
+		var li_id = $('#' + selected_series_id).attr('id');
+		
+		$('#li_' + li_id).remove();
+		data_update = true;
+		selected_series_id = null;
+		//Add Start - Minh VNIT - 2014/08/04
+		$("#series_del_button_relation").addClass("disabled");
+		//Add End - Minh VNIT - 2014/08/04
+	});
+
+	var save_relation = function () {
+                Argo_ajax.ok_cancel_box(' ', '商品を関連付けます。よろしいですか',function(){//Add Start - Trung VNIT - 2014/08/04
+                    var data = [];
+                    var spl = selected_left_id.split('_');
+                    if (spl.length != 3) {
+                            return;	// 不明
+                    }
+                    data.push({"name": "series_head_id", "value": spl[2]});
+                    // リストから追加
+                    $('#series_list_relation').find('.relation_series').each(function () {
+                            var cid = $(this).attr('id');
+                            var cspl = cid.split('_');
+                            data.push({"name": "relation_id[]", "value": cspl[2]});
+                    });
+                    data.push({"name": "m_lang_id", "value": $('#lang').val()});//Add - NBKD-1107 - TrungVNIT - 2015/05/29    
+                    // Edit start - miyazaki U_SYS - 2014/12/01
+                    if ($(document).find("#yoyaku_mode").size() > 0) {
+                            data.push({"name": "disp_mode", "value": 0});
+                            json_ajax.connect('POST', 'yoyakurelation/update', data);
+                    } else {
+                            json_ajax.connect('POST', 'relation/update', data);
+                    }
+                    // Edit end - miyazaki U_SYS - 2014/12/01
+                });//Add End - Trung VNIT - 2014/08/04
+	};
+
+	// 保存ボタン
+	$('#save_button_relation').click(function(){
+		if (selected_left_id == null || data_update == false) {
+			return;
+		}
+		save_relation();
+	});
+
+	// シリーズ選択
+	$(document).on('click', '.relation_series', function() {
+		// 前回の選択を消す
+		$('#series_list_relation').find('.selected').removeClass('selected');
+		$(this).parent().addClass('selected');
+		selected_series_id = $(this).attr('id');
+		//Add Start - Minh VNIT - 2014/08/04
+		$("#series_del_button_relation").removeClass("disabled");
+		//Add End - Minh VNIT - 2014/08/04
+	});
+
+	// サイズ変更スクリプト
+	$(window).on("load resize", function(){
+		setHeightWidth();
+	});
+	function setHeightWidth(){
+		var wh = $(window).height();
+		$("#relation_dialog .height1").height(wh - 268);	// ツリー
+		$("#relation_dialog .height5").height(wh - 348);	// 設定画面
+        $("#relation_dialog .height6").width(340);
+	}
+	
+	// カテゴリ選択削除（右）
+	var remove_selected_r = function () {
+		// 前回の選択を消す
+		$('#tree_view_r_relation').find('.category_selected').removeClass('category_selected');
+	};
+
+	TreeView.set_topic_path();	// 初期表示
+
+	// シリーズリスト設定
+	var set_series_list = function () {
+		$('#series_list_relation').empty();
+		if (SERIES_LI == "") {
+			//$('#series_list').append('<li>シリーズ未選択</li>');
+			return;
+		}
+		else
+		{
+			$('#series_list_relation').append(SERIES_LI);
+		}
+	};
+
+	
+
+
+	// カテゴリツリービュー設定
+	var category_select = function (elm) {
+		var cate_li = $(elm).parent().parent();
+		if (cate_li.hasClass('series') == false) {
+			return;	// シリーズしか選択できない
+		}
+		var selid = cate_li.attr("id");
+		var spl = selid.split('_');
+		if (spl.length != 3) {
+			return;	// 不明
+		}
+		if (spl[0] == 'rtree') {
+			// 右ツリー選択
+			remove_selected_r();
+			selected_right_id = selid;
+			// 選択
+			$(elm).addClass("category_selected");
+			//Add Start - Minh VNIT - 2014/08/04
+			$("#series_add_button_relation").removeClass("disabled");
+			//Add End - Minh VNIT - 2014/08/04
+		}
+	};
+
+	// ツリーを今記憶しているデータで再描画
+	var tree_reload = function (tree_data) {
+		var filval = (category_filter == true) ? $('#category_name').val() : '';
+		var seriesval = (category_filter == true) ? $('#series_name').val() : '';
+		selected_category_id = null;
+		$('#tree_view_r_relation').empty();
+		$('#tree_view_r_relation').append('<ul class="categories top"></ul>');
+		// シリーズフィルタ
+		tree_data = TreeView.filter(tree_data, "", "");
+		TreeView.set("#tree_view_r_relation .top", tree_data, category_select);
+		// ID変更
+		TreeView.replace_id("#tree_view_r_relation li", 'rtree');
+
+		// 左だけにフィルタ
+		tree_data = TreeView.filter(tree_data, filval, seriesval);
+		set_series_list();	// 初期表示
+			
+	};
+
+	
+	setHeightWidth();
+	setTimeout(function() {
+		// ツリー更新用
+		var tree_ajax = new Argo_ajax('json');
+		tree_ajax.done_func = function(tree_data) {
+			TreeView.init_series(tree_data.list);
+			if (tree_init_data == null) {
+				// 初期ツリー
+				tree_init_data = tree_data.list;
+			}
+			tree_reload(tree_data.list);
+		};
+		
+		if ('<%$select_series_head_id%>' == '') {
+                        var param = {'m_lang_id' : $('#lang').val()}; //Add - NBKD-1107 - TrungVNIT - 2015/05/29
+			tree_ajax.connect('GET', 'relation/tree', param);
+		} else {
+			var id = '<%$select_series_head_id%>';
+			var param = {
+				'select_series_head_id':id,
+                                'm_lang_id' : $('#lang').val() //Add - NBKD-1107 - TrungVNIT - 2015/05/29
+			};
+			tree_ajax.connect('GET', 'relation/tree', param);
+		}
+	}, 100);
+	
+	// Edit start - miyazaki U_SYS - 2014/12/11
+	if ($(document).find("#yoyaku_mode").size() > 0) {
+		$(".info_wrap").css("background-color", "<%$smarty.const.AkAGANE_YOYAKU_ITEM_BACK_COLOR%>");
+	} else {
+		$(".info_wrap").css("background-color", "");
+	}
+	// Edit end - miyazaki U_SYS - 2014/12/11
+});
+        
+        //Add Start - Trung VNIT - 2014/08/29
+        var r_fold = false;
+        $( ".tree_fold_r" ).click(function() {
+            r_fold = TreeView.fold('tree_view_r_relation', r_fold,$(".tree_fold_r"));
+        });
+        //Add End - Trung VNIT - 2014/08/29
+</script>

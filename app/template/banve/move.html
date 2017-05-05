@@ -1,0 +1,189 @@
+<link href="<%$smarty.const.ACW_BASE_URL%>shared/css/relation_dialog.css" rel="stylesheet" type="text/css" />
+<link href="<%$smarty.const.ACW_BASE_URL%>shared/css/right_tree.css" rel="stylesheet" type="text/css" />
+<div class="container">
+	<div class="series_wrap" style="padding-top: 10px">		
+		<div class="info_wrap height4" style="height: 450px">
+			<div class="hl_wrap">
+				<!--<h3>シリーズ情報</h3>-->
+				<ul class="btn_wrap">
+					<!--<li><input type='button' value='<%$smarty.const.UNFOLD_TEXT%>' class='tree_fold_r' /></li>-->
+                    <li><input type="button" value="Thoát" class="img_opacity btn_relation_close" id="btn_close_move"/></li>
+					<li><input type="button" id="save_button_relation" value="OK" /></li>
+				</ul>
+			</div>			
+			
+			<div class="edit_wrap height6" style="height:410px">
+				<div class="right_tree_wrap height5" id="tree_view_r_relation" style="height:400px;width: 420px;">
+				</div>
+			</div><!-- / .edit_wrap -->
+		</div><!-- / .info_wrap -->
+	</div><!-- / .series_wrap -->
+</div>
+<script type='text/javascript'>
+$(function() {
+	var selected_left_id = "ltree_s_<%$select_series_head_id%>";	// 選択された左ツリーのカテゴリID
+	var selected_right_id = null;	// 選択された右ツリーのカテゴリID
+	var selected_series_id = null;	// 選択されたシリーズのID
+	var category_filter = false;	// カテゴリフィルタ
+	var tree_init_data = null;	// ツリーの初期データ
+	var data_update = false;	// アップデートしたかどうか
+	var SERIES_LI = '';
+	var r_fold = false;
+	var json_ajax = new Argo_ajax('json');
+	TreeView.override_on_click_open("#tree_view_r_relation li", 'rtree');
+	json_ajax.done_func = function(data) {
+		// 更新
+		if (data.error) {
+			if (data.error.length > 0) {
+				Argo_ajax.message_box_error("", data.error[0]['info']); 
+			}
+		} else {
+			// リスト部分を空白にする
+			//selected_left_id = null;
+			data_update = false;
+			Argo_ajax.message_box(' ', '保存が完了しました',function(){
+				$("#tree_view_r_relation").empty();
+				$("#relation_dialog").dialog("close");
+            	load_series($("#lang").val(), null);
+            });
+                    _is_click_item = true;
+		}
+	};
+	$(document).off('click', '#btn_close_move');
+    $(document).on('click', '#btn_close_move', function() {   
+    	console.log('aaa');	
+        $("#move_dialog").dialog("close");
+    });
+      
+	
+	$('#save_button_relation').click(function(){
+		var json_move_ajax = new Argo_ajax('json');
+		var param = [];
+		param.push({"name": "banve_id", "value": selected_category_id.replace('ltree_','')});
+		param.push({"name": "to_parent_id", "value": selected_right_id.replace('rtree_','')});
+		json_move_ajax.done_func = function(data) {		
+			if (data.status != 'OK') {
+				Argo_ajax.message_box_error("", data.msg);
+			} else {
+				Argo_ajax.message_box('', data.msg,function(){
+					//$("#tree_view_r_relation").empty();
+					$("#move_dialog").dialog("close");
+	            	window.location.href ="<%$smarty.const.ACW_BASE_URL%>banve";
+	            });
+			}
+		};
+		json_move_ajax.connect('POST','banve/move',param);
+	});
+
+	// シリーズ選択
+	$(document).on('click', '.relation_series', function() {
+		// 前回の選択を消す
+		$('#series_list_relation').find('.selected').removeClass('selected');
+		$(this).parent().addClass('selected');
+		selected_series_id = $(this).attr('id');	
+		$("#series_del_button_relation").removeClass("disabled");
+	});
+
+	// サイズ変更スクリプト
+	$(window).on("load resize", function(){
+		setHeightWidth();
+	});
+	function setHeightWidth(){
+		var wh = $(window).height();
+		//console.log(wh);
+		/*$("#relation_dialog .height1").height(wh - 268);	// ツリー
+		$("#relation_dialog .height5").height(wh - 100);	// 設定画面
+		$("#relation_dialog .height6").height(200);
+        $("#relation_dialog .height5").width(340);*/
+	}
+	
+	// カテゴリ選択削除（右）
+	var remove_selected_r = function () {
+		// 前回の選択を消す
+		$('#tree_view_r_relation').find('.category_selected').removeClass('category_selected');
+	};
+
+	TreeView.set_topic_path();	// 初期表示
+
+	
+
+	
+
+
+	// カテゴリツリービュー設定
+	var category_right_select = function (elm) {
+		var cate_li = $(elm).parent().parent();
+		/*if (cate_li.hasClass('series') == false) {
+			return;	// シリーズしか選択できない
+		}*/
+		var selid = cate_li.attr("id");
+		var spl = selid.split('_');
+		/*if (spl.length != 3) {
+			return;	// 不明
+		}*/
+		console.log(spl[0]);
+		if (spl[0] == 'rtree') {
+			// 右ツリー選択
+			remove_selected_r();
+			selected_right_id = selid;
+			// 選択
+			$(elm).addClass("category_selected");		
+			$("#series_add_button_relation").removeClass("disabled");		
+		}
+	};
+
+	// ツリーを今記憶しているデータで再描画
+	var tree_right_reload = function (tree_data) {
+		/*var filval = (category_filter == true) ? $('#category_name').val() : '';
+		var seriesval = (category_filter == true) ? $('#series_name').val() : '';*/
+		//selected_category_id = null;
+		$('#tree_view_r_relation').empty();
+		$('#tree_view_r_relation').append('<ul class="categories top"></ul>');
+		// シリーズフィルタ
+		//tree_data = TreeView.filter(tree_data, "", "");
+		TreeView.set("#tree_view_r_relation .top", tree_data, category_right_select);
+		// ID変更
+		TreeView.replace_id("#tree_view_r_relation li", 'rtree');
+
+		// 左だけにフィルタ
+		//tree_data = TreeView.filter(tree_data, filval, seriesval);
+		//set_series_list();	// 初期表示
+		r_fold = TreeView.fold('tree_view_r_relation', true,$(".tree_fold_r"));
+		/*r_fold = TreeView.fold('tree_view_r_relation', false,$(".tree_fold_r"));
+		r_fold = TreeView.fold('tree_view_r_relation', true,$(".tree_fold_r"));*/
+			
+	};
+
+	
+	//setHeightWidth();
+	setTimeout(function() {
+		// ツリー更新用
+		var tree_r_ajax = new Argo_ajax('json');
+		tree_r_ajax.done_func = function(tree_data) {
+			//TreeView.init_series(tree_data);
+			if (tree_init_data == null) {
+				// 初期ツリー
+				tree_init_data = tree_data;
+			}
+			tree_right_reload(tree_data);
+		};
+				
+		var param = {
+			"top_banve_id":	top_parent_id         
+		};
+		tree_r_ajax.connect('GET', 'banve/movetree', param);
+		
+	}, 100);
+	
+	if ($(document).find("#yoyaku_mode").size() > 0) {
+		$(".info_wrap").css("background-color", "<%$smarty.const.AkAGANE_YOYAKU_ITEM_BACK_COLOR%>");
+	} else {
+		$(".info_wrap").css("background-color", "");
+	}
+	$(document).off('click', '.tree_fold_r');
+    $(document).on('click', '.tree_fold_r', function() {
+            r_fold = TreeView.fold('tree_view_r_relation', r_fold,$(".tree_fold_r"));
+    });
+});        
+       
+</script>
