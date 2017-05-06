@@ -254,7 +254,13 @@ $(function() {
         	}else if(i ==5){
         		loai_bv ='<%$lang["BVE015"]%>';  //Bản vẽ phôi
         	}
-            select_str +='<option value="'+i+'">'+loai_bv+'</option>';
+        	if(level_no=='3' && i ==4){
+        		select_str +='<option value="'+i+'" selected>'+loai_bv+'</option>';
+        	}else if(level_no=='4' && i ==5){
+        		select_str +='<option value="'+i+'" selected>'+loai_bv+'</option>';
+        	}else{
+        		select_str +='<option value="'+i+'">'+loai_bv+'</option>';
+        	}            
         }			     
         select_str +="</select></td>"; 
         select_str +='<td><input size="30" name="add_child[]" id="add_banve_name_'+add_index+'" class="add_banve_name"></td>';
@@ -429,7 +435,7 @@ $(function() {
 		});
 	});
 	$(document).on('click', '#category_restore', function() {
-		Argo_ajax.ok_cancel_box(' ', '<%$lang["BVE050"]%>', function () {	//Bạn chắc chắn muốn hủy bản vẽ mục này？		
+		Argo_ajax.ok_cancel_box(' ', '<%$lang["BVE054"]%>', function () {	//Bạn chắc chắn muốn hủy bản vẽ mục này？		
 			var my_id = $('#category_form').find('input[name="my_id"]').val();
 			$('#edit_contents_html').empty();		
 			json_ajax.connect('GET', 'banve/restore/' + my_id);
