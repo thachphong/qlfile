@@ -516,7 +516,7 @@ class File_model extends ACWModel
 				inner JOIN (SELECT DISTINCT * from temp_folder) tmp on tmp.folder_id = df.folder_id
         left join m_user u on t.add_user_id = u.user_id
 				left join m_user utt on d.user_ttql = utt.user_id
-				left join banve bv on t.file_name like CONCAT(bv.kho_giay,bv.banve_no,'%') 
+				left join banve bv on t.file_name like CONCAT(bv.kho_giay,bv.banve_no,'%') and bv.del_flg = 0 
             where /*t.`status`=3
                 and*/ t.file_type in ('pdf','rar')
                 and t.del_flg = 0
@@ -1211,9 +1211,9 @@ class File_model extends ACWModel
 			$email->loadbody('template_mail.html');
 			$email->replaceBody($replacements);
 			$result = $email->send();
-			ACWLog::debug_var('---test--',$replacements);
-			ACWLog::debug_var('---test--',$mail_to);
-			ACWLog::debug_var('---test--',$login_info['email']);
+			//ACWLog::debug_var('---test--',$replacements);
+			//ACWLog::debug_var('---test--',$mail_to);
+			//ACWLog::debug_var('---test--',$login_info['email']);
 			return $result;
                			
     }
