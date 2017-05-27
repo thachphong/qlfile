@@ -312,7 +312,7 @@ class Banve_model extends ACWModel
             if(isset($dc_data['banve_no']) && strlen($dc_data['banve_no'])>0){
                 $param['banve_no'] = $dc_data['banve_no'];
                 $param['banve_name'] = $dc_data['banve_name'];
-                $param['kho_giay'] = $dc_data['kho_giay'];
+                //$param['kho_giay'] = $dc_data['kho_giay'];
                 return TRUE;     
             }else{
             	$msg_err= sprintf(Message_model::get_msg('BVE027'), $param['banve_no']);
@@ -558,9 +558,17 @@ class Banve_model extends ACWModel
 	public function get_banve_all($param,$flg_move = FALSE)
 	{
         //$this->begin_transaction();
-		$sql = "SELECT
+		$sql = "select t.id
+				,t.category_name			
+				,t.parent_id
+				,t.is_folder
+				,t.upd_sec
+				,t.level
+				,t.del_flg
+				from ( SELECT
 				  chd.banve_id AS id
 				,chd.banve_no AS category_name
+				,chd.banve_no
 				,chd.parent_id AS parent_id
 				,true AS is_folder
 				,1 AS upd_sec
@@ -572,6 +580,7 @@ class Banve_model extends ACWModel
             SELECT
 				  chd.banve_id AS id
 				,concat(kho_giay,chd.banve_no,'-',chd.banve_name) AS category_name
+				,chd.banve_no
 				,chd.parent_id AS parent_id
 				,true AS is_folder
 				,1 AS upd_sec
@@ -656,7 +665,7 @@ class Banve_model extends ACWModel
 			}
 			$sql .=" and FIND_IN_SET( banve_id,'$list_id') ";
         }
-        
+        $sql.=" ) t  order by t.banve_no";
 		$res = $this->query($sql);		
         //$this->commit();
         return $res;
