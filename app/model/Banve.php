@@ -557,7 +557,7 @@ class Banve_model extends ACWModel
     }
 	public function get_banve_all($param,$flg_move = FALSE)
 	{
-        //$this->begin_transaction();
+        $this->begin_transaction();
 		$sql = "select t.id
 				,t.category_name			
 				,t.parent_id
@@ -611,9 +611,9 @@ class Banve_model extends ACWModel
 			$sql .=" and COALESCE(chd.level,0) <> 5";
 		}
         if($flg_check){
-        	//$this->execute("CREATE TEMPORARY TABLE IF NOT EXISTS temp_banve  (banve_id int,chk_mk int,parent_id int,chk_parent int);");
-            //$this->query("select f_get_all_banve(:banve_no,:banve_name)",$param_sql);
-            //$sql .= "and chd.banve_id in (select distinct banve_id from temp_banve)";
+        	/*$this->execute("CREATE TEMPORARY TABLE IF NOT EXISTS temp_banve  (banve_id int,chk_mk int,parent_id int,chk_parent int) ENGINE=MEMORY ;");
+            $this->query("select f_get_all_banve(:banve_no,:banve_name)",$param_sql);
+            $sql .= " and chd.banve_id in (select distinct banve_id from temp_banve)";*/
             /*$sql .= "and chd.banve_id in (select banve_id 
                     from banve
                     where del_flg = 0
@@ -658,6 +658,7 @@ class Banve_model extends ACWModel
 				and banve_no like :banve_no
 				and lower(banve_name) like  lower(:banve_name)
 			)";*/
+			$this->execute("SET @@session.group_concat_max_len = 10000;");
 			$res = $this->query("select f_get_all_banve_new(:banve_no,:banve_name) as bv_id ",$param_sql);
 			$list_id ="1";
 			if(count($res) >0 ){
@@ -667,7 +668,7 @@ class Banve_model extends ACWModel
         }
         $sql.=" ) t  order by t.banve_no";
 		$res = $this->query($sql);		
-        //$this->commit();
+        $this->commit();
         return $res;
 	}
 	/**
