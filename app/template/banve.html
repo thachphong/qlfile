@@ -570,7 +570,11 @@ $(function() {
         tree_ajax.connect('POST', 'banve/tree',$arr_s);      
         //$('#search_form').submit();
 	});
-            
+    $("#s_banve_no").keydown(function (e) {
+        if (e.keyCode == 13) {
+            $('#btn_search').click();
+        }
+    });        
     $("#s_banve_name").keydown(function (e) {
         if (e.keyCode == 13) {
             $('#btn_search').click();
