@@ -226,7 +226,7 @@ class Folderfile_model extends ACWModel
               t.noidung,
               t.loaidon,
               t.trangthai from don t
-                where t.trangthai = 3
+                where t.trangthai in( 3,9)
                 and del_flg = 0
               and NOT EXISTS (
         		SELECT
