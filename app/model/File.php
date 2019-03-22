@@ -57,7 +57,14 @@ class File_model extends ACWModel
             'flg_old'
 		));
         $db= new File_model();
-        $data = $db->get_file_rows($param);
+        $file_type ="'pdf','rar'";
+        $us = new User_model();
+        $user_login = ACWSession::get('user_info');
+        $info = $us->get_user_row($user_login['user_id']);
+        if($info['dwg']==1){
+			$file_type ="'pdf','rar','dwg'";
+		}
+        $data = $db->get_file_rows($param,$file_type);
 		return ACWView::template('file.html',array(
                                     'data_rows' =>$data
                                     ,'search_file_name'=>$param['search_file_name']
@@ -429,7 +436,8 @@ class File_model extends ACWModel
 			$data_row['del_flg'] = null;
 		} else {
 			$data_row = $model->get_user_row($donvi_id);			
-		}*/
+		}*/		
+		
         $data= $model->get_file_rows($param);
 		return ACWView::template('file/edit.html',array('success_msg'=>$success_msg,
                                  'error_message'=>$error_message,
@@ -487,9 +495,13 @@ class File_model extends ACWModel
 	}
 	
 	
-	public function get_file_rows($param)
+	public function get_file_rows($param,$file_type ='')
 	{
         $login_info = ACWSession::get('user_info');
+        $filter = "'pdf','rar'";
+        if(strlen($file_type)>0){
+			$filter =$file_type;
+		}
         //lay tat ca folder ma user co quyen,co quyen o folder cha thi co quyen o tat ca folder con
         $this->query("select f_get_allfolder_child(:user_id) ",array('user_id'=>$login_info['user_id']));
 		$sql = "SELECT	DISTINCT			 
@@ -518,7 +530,7 @@ class File_model extends ACWModel
 				left join m_user utt on d.user_ttql = utt.user_id
 				left join banve bv on t.file_name like CONCAT(bv.kho_giay,bv.banve_no,'%') and bv.del_flg = 0 
             where /*t.`status`=3
-                and*/ t.file_type in ('pdf','rar')
+                and*/ t.file_type in ($filter)
                 and t.del_flg = 0
 		";
 		$sql_param = array();
@@ -939,6 +951,7 @@ class File_model extends ACWModel
         $res['status']='OK';
         $db = new File_model();
         $result = $db->get_file_row($params['file_id']);
+        $res['file_type'] = $result['status'];
         if($result['status']!=DON_STATUS_TTQL && $result['status']!=DON_STATUS_XIN_CN){
             $res['status']='LOI';
         }

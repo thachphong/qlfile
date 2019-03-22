@@ -94,6 +94,7 @@ class User_model extends ACWModel
             $user_row['duyet'] = null;
             $user_row['trungtam_quanly'] = null;
             $user_row['admin'] = null;
+            $user_row['dwg'] = null;
             $user_row['list_mail'] = '';
 			
 		} else {
@@ -179,6 +180,7 @@ class User_model extends ACWModel
                 ,'lev_ttql'
                 ,'lev_admin'
                 ,'list_mail'
+                ,'lev_dwg'
 		));
 	    $params['lev_in']=($params['lev_in']=='on') ?1:0;
         $params['lev_upload']=($params['lev_upload']=='on') ?1:0;
@@ -187,6 +189,7 @@ class User_model extends ACWModel
         $params['lev_duyet']=($params['lev_duyet']=='on') ?1:0;
         $params['lev_ttql']=($params['lev_ttql']=='on') ?1:0;
         $params['lev_admin']=($params['lev_admin']=='on') ?1:0;
+        $params['lev_dwg']=($params['lev_dwg']=='on') ?1:0;
 		if (self::get_validate_result() === true) {
 			$model = new User_model();
 			$obj = $model->update($params);
@@ -253,13 +256,15 @@ class User_model extends ACWModel
                     and l.kiemtra= :lev_kiemtra
                     and l.duyet =:lev_duyet
                     and l.trungtam_quanly = :lev_ttql
-                    and l.admin =:lev_admin ";
+                    and l.admin =:lev_admin 
+                    and l.dwg =:lev_dwg
+                    ";
         $pam_lev = ACWArray::filter($params, array('lev_in',
-        'lev_upload','lev_phanbo','lev_kiemtra','lev_duyet','lev_ttql','lev_admin'   ));
+        'lev_upload','lev_phanbo','lev_kiemtra','lev_duyet','lev_ttql','lev_admin','lev_dwg'   ));
         $result = $this->query($sql_lev,$pam_lev);
         if(count($result) == 0){
-            $sql_lev = "INSERT INTO level(print,upload,phanbo,kiemtra,duyet,trungtam_quanly,admin)
-            values(:lev_in,:lev_upload,:lev_phanbo,:lev_kiemtra,:lev_duyet, :lev_ttql,:lev_admin )";
+            $sql_lev = "INSERT INTO level(print,upload,phanbo,kiemtra,duyet,trungtam_quanly,admin ,dwg)
+            values(:lev_in,:lev_upload,:lev_phanbo,:lev_kiemtra,:lev_duyet, :lev_ttql,:lev_admin ,:lev_dwg)";
             $this->execute($sql_lev,$pam_lev);
             $result = $this->query("SELECT LAST_INSERT_ID() AS level_id");	
         }   	
@@ -407,7 +412,8 @@ class User_model extends ACWModel
                     l.kiemtra,
                     l.duyet,
                     l.trungtam_quanly,
-                    l.admin
+                    l.admin,
+                    l.dwg
 				FROM
 					m_user usr				
                     left join level l on l.level_id = usr.level

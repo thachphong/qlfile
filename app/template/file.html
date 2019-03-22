@@ -146,9 +146,14 @@ $(function() {
         var info =  id.split("_");
 		var json_ajax = new Argo_ajax("json");
     	json_ajax.done_func = function(data) {
-    		if(data.status=='OK'){                
-                var url = '<%$smarty.const.ACW_BASE_URL%>file/view/'+ info[0]+'/'+info[1]+'/'+info[2];
-                window.open(url, '_blank');
+    		if(data.status=='OK'){  
+    			if(data.file_type ='dwg'){
+    				location.href = '<%$smarty.const.ACW_BASE_URL%>file/download/'+ info[0]+'/'+info[1]+'/'+info[2];
+    			}else{
+    				var url = '<%$smarty.const.ACW_BASE_URL%>file/view/'+ info[0]+'/'+info[1]+'/'+info[2];
+    				window.open(url, '_blank');
+    			}
+                
             }else{
                 Argo_ajax.message_box('',"<%$lang['PRIN013']%>");/*'File này đang cập nhật !'*/
             }
