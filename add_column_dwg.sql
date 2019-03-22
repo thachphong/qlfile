@@ -1,0 +1,1 @@
+alter table level add column dwg int(1) DEFAULT 0
