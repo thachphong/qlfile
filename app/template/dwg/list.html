@@ -1,0 +1,95 @@
+<%foreach $data_rows as $row%>
+			<tr>	
+				<td style="text-align: center;"><input type="checkbox" class="sel_file" value="<%$row.file_id%>" >
+					<input type="hidden" id="filename_<%$row.file_id%>" value="<%$row.file_name%>" />
+				</td>			
+				<td>					
+					<!--<a id="<%$row.don_id%>_<%$row.trangthai%>_<%$row.file_id%>" href="javascript:void(0)" class="view_file"><%$row.file_name%></a>--><%$row.file_name%>
+				</td>
+				<td>
+					
+					<%if $row.user_app_id == $user_id %>
+						<%if $row.dwg_status ==3%>
+							Đã duyệt
+						<%elseif $row.dwg_status ==1%>
+							<input type="button" class="button_red btn_back" id="back_<%$row.dwg_id%>" value="Không">
+							<input type="button" class="button_blue btn_appr" id="appr_<%$row.dwg_id%>" value="Duyệt">
+						<%elseif $row.dwg_status ==2%>
+							Không duyệt
+						<%/if%>
+					<%else if $row.user_req_id == $user_id%>
+						<%if $row.dwg_status ==3%>
+							<input type="button" class="button_green download" value="Download" id="<%$row.don_id%>_<%$row.trangthai%>_<%$row.file_id%>">
+						<%elseif $row.dwg_status ==1%>
+							Chờ duyệt
+						<%elseif $row.dwg_status ==2%>
+							Không duyệt
+						<%/if%>
+					<%/if%>
+				</td>
+				<td><%$row.note|default:''|escape|nl2br nofilter%></td>
+				<td><%$row.banve_name%> </td>
+                <td style="text-align: center;">
+					<%$row.loaidon%>
+				</td>
+                <td>
+					<%$row.user_name%>
+				</td>
+                <td style="text-align: center;">
+					<%$row.add_datetime%>
+				</td>
+               
+			</tr>
+<%/foreach%>
+<script>
+	$('.sel_file').change(function () {
+		var list = $('.sel_file:checked');		
+		if(list.length > 0){			
+			$('#btn_new_req').prop('disabled',false);
+		}else{		
+			$('#btn_new_req').prop('disabled',true);
+		}
+	});
+	
+	$('.download').click(function () {		
+        var id = $(this).attr('id');
+        var info =  id.split("_");
+		var json_ajax = new Argo_ajax("json");
+    	json_ajax.done_func = function(data) {
+    		if(data.status=='OK'){  
+    			location.href = '<%$smarty.const.ACW_BASE_URL%>file/download/'+ info[0]+'/'+info[1]+'/'+info[2];
+            }else{
+                Argo_ajax.message_box('','File này đang cập nhật !');/*'File này đang cập nhật !'*/
+            }
+    	};
+    	json_ajax.connect("POST", "file/checkview", {
+    		"file_id": info[2]
+    	});
+	});
+	$('.btn_back').click(function () {
+		var id = $(this).attr('id');
+        var info =  id.split("_");
+		update_status(info[1],2,'Không duyệt');
+	});
+	$('.btn_appr').click(function () {
+		var id = $(this).attr('id');
+        var info =  id.split("_");
+		update_status(info[1],3,'Đã duyệt');
+	});
+	function update_status(dwg_id,status,text_disp){
+		var json_ajax = new Argo_ajax("json");
+    	json_ajax.done_func = function(data) {
+    		if(data.status=='OK'){  
+    			var pa = $('#appr_'+dwg_id).parent();
+    			$(pa).empty();
+    			$(pa).append(text_disp);    			           
+            }else{
+                Argo_ajax.message_box_error('',"Duyệt không thành công!");
+            }
+    	};
+    	json_ajax.connect("POST", "dwg/updstatus", {
+    		"dwg_id": dwg_id
+    		,'dwg_status':status
+    	});
+	}
+</script>

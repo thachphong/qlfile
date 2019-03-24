@@ -1,0 +1,282 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/base.dwt" codeOutsideHTMLIsLocked="false" --><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<%assign var='lang' value=Message_model::get_message('PRINT')%>
+<title>Download dwg</title><!--In file-->
+		<%include 'include/head.html'%>
+		<link href="<%$smarty.const.ACW_BASE_URL%>shared/css/baitai.css" rel="stylesheet" type="text/css" />
+        <!--<link href="<%$smarty.const.ACW_BASE_URL%>shared/css/tablesort.css" rel="stylesheet" type="text/css" />
+		<script type="text/javascript" src="<%$smarty.const.ACW_BASE_URL%>shared/js/jquery.tablesorter.min.js"></script>-->
+</head>
+<body class="column_1">
+<div class="bg">
+<div class="container">
+		<%include 'include/menu.html'%>
+<div class="contents_wrap"> 
+<!-- InstanceBeginEditable name="top_contents" -->
+	<div class="search_wrap">
+		<form id="search_form" action="<%$smarty.const.ACW_BASE_URL%>dwg" method="POST">
+		<table class="kensaku">
+			<colgroup>
+				<col width="85px" />
+				<col width="200px" />
+				<col width="200px" />
+			</colgroup>
+			<tr>
+				<th><%$lang['PRIN002']%><!--Điều kiện tìm--></th>
+				<td class="first"><%$lang['PRIN003']%><!--Tên file --> <input type="text" maxlength="50" size="30" name="search_file_name" id="search_file_name" value="<%$search_file_name%>" /></td>
+				<td class="al_l"><%$lang['PRIN014']%><!--ban ve --> <input type="text" maxlength="50" size="30" name="search_banve_name" id="search_banve_name" value="<%$search_banve_name%>" /></td>
+				<td class="al_l">
+					<span>Trạng thái</span> <select name="dwg_status">
+						<option></option>
+						<option value="1" <%if $dwg_status==1%>selected<%/if%>>Chờ duyệt</option>
+						<option value="2" <%if $dwg_status==2%>selected<%/if%>>Không duyệt</option>
+						<option value="3" <%if $dwg_status==3%>selected<%/if%>>Đã duyệt</option>
+					</select>
+				</td>
+                                <td class="al_l">
+                                <input class="button_blue" type="button" id="btn_search" value="<%$lang['PRIN004']%>"><!--Tìm-->
+                                <input class="button_blue" type="button" id="btn_clear" value="<%$lang['PRIN005']%>"><!--Xóa--></td></tr>
+		</table>
+		</form>
+	</div>
+	<ul class="topic_path">
+		<li><h2><%$lang['PRIN006']%><!--Danh sách file đã duyệt--></h2></li>
+	</ul>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="side_contents" -->
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="main_contents" -->
+<div class="main_contents">
+<div class="main_innner" style="overflow: hidden">
+	<div class="baitai_wrap" style="padding-left:5px;">
+		<p class="clear_fix" style="text-align: left;"><input disabled="disabled" type="button" class="button_blue" value="Gửi yêu cầu download" id="btn_new_req" /></p>
+		<table id="data_list" class="table_sort height2" style="display: block;    overflow-y: scroll;width:100%" >
+			<thead>
+			<tr>
+				<th style="width: 5%"><input type="checkbox" name="checkall" id="checkall" ></th>
+				<th style="width: 10%;"<span><%$lang['PRIN003']%></span><!--Tên file--></th>      
+				<th style="width: 10%;"><span>Trạng thái</span></th> 
+				<th style="width: 25%;"><span>Ghi chú</span></th>
+                <th style="width: 25%"><span><%$lang['PRIN014']%></span></th> <!--ban ve-->
+                <th style="width: 7%;text-align: center;"><span><%$lang['PRIN008']%></span><!--Loại bản vẽ--></th>
+                <th style="width: 10%;text-align: center;"><span>Người yêu cầu</span><!--Người cập nhật--></th>
+                <th style="width: 10%;text-align: center;"><span>Ngày yêu cầu</span><!--Ngày cập nhật--></th>
+                
+			</tr>
+			</thead>
+			<tbody>
+				<%include 'dwg/list.html'%>
+			</tbody>
+		</table>
+	</div><!-- / .top_wrap -->
+</div><!-- / .main_innner -->
+</div><!-- / .main_contents -->
+<!-- InstanceEndEditable -->
+<%include 'include/footer.html'%>
+</div><!-- / .contents_wrap -->
+</div><!-- / .container -->
+</div><!-- / .bg -->
+<%include 'include/argo_ajax.html'%>
+<script type='text/javascript'>
+$(document).ready(function() {
+
+	$('#menu_in').addClass('selected');
+	$("#edit_dialog").dialog({
+		autoOpen: false,
+		width: 1000,
+		/*height: $(window).height() - 100,*/
+		modal: true,
+		title: 'Thông đơn vị'
+	});
+	
+        //Add Start - Trung VNIT - 2014/08/21
+        var search_user_ajax = new Argo_ajax('json');
+        search_user_ajax.done_func = function(data) {
+            if (data.error) {
+                if (data.error.length > 0) {
+                    $('#data_list tbody').empty();
+                   Argo_ajax.message_box_error('', data.error[0]['info']);
+                }else{
+                    $('#search_form').submit();
+                }
+            }
+        };	
+        
+	// 検索ボタン
+	$('#btn_search').click(function(){        
+		//$('#search_form').submit();
+         $arr = $('#search_form').serializeArray();
+         var search_dwg_ajax = new Argo_ajax('html');
+         search_dwg_ajax.done_func = function(data) {
+          
+            $('#data_list tbody').empty();
+            $('#checkall').prop('checked',false);	
+            $('#data_list tbody').append(data);
+                 
+        };
+         search_dwg_ajax.connect('POST', 'dwg/search', $arr);
+          
+	});
+            
+    $("#search_file_name").keydown(function (e) {
+        if (e.keyCode == 13) {
+                $('#btn_search').click();
+        }
+    });
+ 	$("#search_banve_name").keydown(function (e) {
+        if (e.keyCode == 13) {
+                $('#btn_search').click();
+        }
+    });
+	
+	$('#btn_clear').click(function(){
+		$('#search_form').find("textarea, :text, select").val("");
+	});	
+	
+	$(document).off("click", "#btn_new_req");
+	$(document).on("click", "#btn_new_req", function () {
+		var list = $('.sel_file:checked');	
+		$('#list_file_sel').empty();
+		$('#filelist').empty();
+		$('#edit_form').find("textarea, select").val("");
+		list.each(function(){
+			var id = $(this).val();
+			
+			var file_name = $('#filename_'+id).val();
+			$('#list_file_sel').append("<tr><td>"+file_name+"</td></tr>");
+			$('#filelist').append("<input type='hidden' name='list_req[]' value='"+id+'|'+file_name+"'>");
+		});		
+		$("#req_dialog").dialog('open');
+	})
+	$(document).off("click", "#btn_close_req");
+	$(document).on("click", "#btn_close_req",function(){
+		$("#req_dialog").dialog('close');
+	});
+	$(document).off("click", "#btn_save_req");
+	$(document).on("click", "#btn_save_req",function(){
+		$arr = $('#edit_form').serializeArray();
+         var sendmail_ajax = new Argo_ajax('json');
+         sendmail_ajax.done_func = function(data) {
+            if(data.status =='OK'){
+            	Argo_ajax.message_box('', 'Gửi yêu cầu thành công!');
+            	$('#btn_search').click();
+            }else{
+            	Argo_ajax.message_box_error('',  'Gửi yêu cầu thất bại!');
+            }    
+        };
+        $("#req_dialog").dialog('close');
+        sendmail_ajax.connect('POST', 'dwg/update', $arr);		
+	});
+	
+		
+    $(document).off("click", ".view_file");
+	$(document).on("click", ".view_file", function () {		
+        var id = $(this).attr('id');
+        var info =  id.split("_");
+		var json_ajax = new Argo_ajax("json");
+    	json_ajax.done_func = function(data) {
+    		if(data.status=='OK'){  
+    			if(data.file_type ='dwg'){
+    				location.href = '<%$smarty.const.ACW_BASE_URL%>file/download/'+ info[0]+'/'+info[1]+'/'+info[2];
+    			}else{
+    				var url = '<%$smarty.const.ACW_BASE_URL%>file/view/'+ info[0]+'/'+info[1]+'/'+info[2];
+    				window.open(url, '_blank');
+    			}
+                
+            }else{
+                Argo_ajax.message_box('',"<%$lang['PRIN013']%>");/*'File này đang cập nhật !'*/
+            }
+    	};
+    	json_ajax.connect("POST", "file/checkview", {
+    		"file_id": info[2]
+    	});
+	});
+	
+	$(window).on("load resize", function(){
+		var wh = $(window).height();
+		wi = $(window).width();
+		$(".height2").height(wh - 245);	
+		/*$(".height2").width(w1-30);	*/
+	});
+	//$('#data_list').tablesorter();
+	
+	$("#req_dialog").dialog({
+		autoOpen: false,
+		width: 600,
+		modal: true,
+		title: 'Gửi yêu cầu download'/*Mượn bản vẽ*/
+	});
+});
+$('#checkall').on("change", function () {	
+		//console.log('BBBB');
+		//alert('AAAA');	
+		if($(this).is(':checked')){	
+			$('.sel_file').prop('checked',true);	
+		}else{					
+			$('.sel_file').prop('checked',false);
+			
+		}		
+		var list = $('.sel_file:checked');	
+		if(list.length > 0){			
+			$('#btn_new_req').prop('disabled',false);
+		}else{		
+			$('#btn_new_req').prop('disabled',true);
+		}
+	});
+</script>
+<div id="edit_dialog">	
+</div>
+<div id="req_dialog" class="modal" style="display:none;">
+    <div class="main_contents">
+	<div class="series_wrap" style="padding-top: 10px">
+		<!--<div class="title_wrap clear_fix">
+			<h2>Mượn bản vẽ</h2>
+		</div>-->
+		<div class="info_wrap">
+			<div class="hl_wrap">
+				<ul class="btn_wrap">
+					<li><input type="button" value="Thoát" class="img_opacity" id="btn_close_req" /></li>
+					<li><input type="button" value="Cập nhật" class="img_opacity" id="btn_save_req"  /></li>
+				</ul>
+			</div>
+			<form id="edit_form"  >
+				<div style="padding: 10px;">
+				<table class="table_don" width="100%; padding:10px">					
+					<tr style="background-color:#fff !important;">
+						<td style="width: 110px;">TTQL xét duyệt<span style="color:red; font-weight: normal;">(*)</span></td>
+						<td><select class="width2" name="usr_ttql"  id="usr_ttql" >
+			                    <option></option>
+			                    <%foreach $ttql_list as $ttql%>
+			                        <option value="<%$ttql.user_id%>" ><%$ttql.user_name_disp%></option>
+			                    <%/foreach%>
+			                </select>							
+						</td>
+					</tr>
+					<tr>
+						<td>Lý do <span style="color:red; font-weight: normal;">(*)</span></td>
+						<td><textarea style="width: 97%;height: 70px;margin-top: 10px" name="note" ></textarea>
+						</td>
+					</tr>
+				</table>
+				</div>
+				
+                <div style="display: none" id="filelist"></div>
+                <div style="padding: 10px;">
+                	<table style="width:100%;max-height: 350px; overflow-y: scroll;display:block" >
+	                	<tr>
+	                		<td style="text-align: left;width: 500px;font-weight: bold;">Danh sách file yêu cầu duyệt</td>
+	                	</tr>
+	                	<tbody id="list_file_sel">
+	                		
+	                	</tbody>
+	                </table>  
+                </div>      
+			</form>
+		</div>
+		<!-- / .free_wrap -->
+	</div><!-- / .series_wrap -->
+</div><!-- / .main_contents -->
+</div>
+</body>
+<!-- InstanceEnd --></html>

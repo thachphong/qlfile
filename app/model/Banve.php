@@ -406,7 +406,7 @@ class Banve_model extends ACWModel
                 $maxno= $this->get_banve_maxno($param['level'],$parent_info['banve_no']);
                 $param['banve_no'] = substr( $parent_info['banve_no'],0,3). str_pad($maxno,4,'0',STR_PAD_LEFT) ;
             }else
-            if($param['dungchung'] != '1'){
+            if(isset($param['dungchung'])==FALSE || $param['dungchung'] != '1'){
                 $param['dungchung'] ='0';
             }
 			$this->execute($sql, ACWArray::filter($param, array(
@@ -462,7 +462,7 @@ class Banve_model extends ACWModel
                         $maxno = $this->get_banve_maxno($param_new['level'],$parent_info['banve_no']);
                         $param_new['banve_no']=substr( $parent_info['banve_no'],0,3). str_pad($maxno,4,'0',STR_PAD_LEFT) ;
                     }
-                    if($param_new['dungchung'] != '1'){
+                    if(isset($param_new['dungchung'])==FALSE || $param_new['dungchung'] != '1'){
                         $param_new['dungchung'] ='0';
                     }
                     if ($this->check_banve_id($param_new)){
@@ -707,7 +707,7 @@ class Banve_model extends ACWModel
 	{
 		$r = $this->query("SELECT max(SUBSTR(f.banve_no,4,LENGTH(f.banve_no))) mx FROM banve f
 				WHERE	 f.del_flg = 0
-                and dungchung =0
+                and IFNULL(dungchung,0) =0
 				and	f.level = :level
          and SUBSTR(f.banve_no,1,3) = :parent_no
 			", array ('level' => $level,'parent_no'=>substr($parent_no,0,3)));
